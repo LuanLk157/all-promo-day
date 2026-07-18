@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Promo Day | As Melhores Ofertas da Internet</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, sans-serif;
+        }
+
+        /* 🌞 TEMA CLARO (PADRÃO) */
+        :root {
+            --fundo: #FFFFFF;
+            --fundo-secundario: #F8FAFC;
+            --borda: #E2E8F0;
+            --texto: #1E293B;
+            --texto-claro: #64748B;
+            --destaque: #2563EB;
+            --sucesso: #16A34A;
+            --sombra: 0 4px 16px rgba(0,0,0,0.08);
+            --card: #FFFFFF;
+            --transicao: all 0.3s ease;
+        }
+
+        /* 🟣 TEMA NEON */
+        [data-tema="neon"] {
+            --fundo: #120A1F;
+            --fundo-secundario: #1E1035;
+            --borda: #3B245C;
+            --texto: #FFFFFF;
+            --texto-claro: #A78BFA;
+            --destaque: #39FF14;
+            --sucesso: #00B4FF;
+            --sombra: 0 0 20px rgba(57, 255, 20, 0.15);
+            --card: #1E1035;
+        }
+
+        body {
+            background: var(--fundo);
+            color: var(--texto);
+            line-height: 1.6;
+            transition: var(--transicao);
+        }
+
+        /* AVISO OBRIGATÓRIO */
+        .aviso-afiliado {
+            background: var(--fundo-secundario);
+            border-bottom: 1px solid var(--borda);
+            padding: 0.7rem 5%;
+            font-size: 0.85rem;
+            text-align: center;
+            color: var(--texto-claro);
+        }
+        [data-tema="neon"] .aviso-afiliado {
+            background: rgba(57, 255, 20, 0.05);
+            color: #C74BFF;
+        }
+
+        /* CABEÇALHO */
+        header {
+            background: var(--fundo-secundario);
+            border-bottom: 1px solid var(--borda);
+            padding: 1.5rem 5%;
+            position: relative;
+        }
+        .cabecalho-conteudo {
+            max-width: 1280px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        /* ✨ LOGO COM ONDA — CORRIGIDO PARA OS DOIS TEMAS */
+        .logo {
+            font-size: 2rem;
+            font-weight: 900;
+            letter-spacing: -0.5px;
+            position: relative;
+            display: inline-block;
+            /* Configuração base: texto transparente, cor vem do gradiente */
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            background-size: 500% 100%;
+            animation: ondaCores 12s linear infinite;
+        }
+
+        /* Onda para Tema Claro */
+        .logo {
+            background-image: linear-gradient(
+                90deg,
+                #FF6B35,
+                #F7C548,
+                #16C79A,
+                #4D96FF,
+                #9B5DE5,
+                #FF6B35
+            );
+        }
+
+        /* Onda exclusiva para Tema Neon — sem sobreposição */
+        [data-tema="neon"] .logo {
+            background-image: linear-gradient(
+                90deg,
+                #39FF14,
+                #00B4FF,
+                #C74BFF,
+                #FF2E88,
+                #FFD700,
+                #39FF14
+            );
+            animation-duration: 10s;
+        }
+
+        /* ANIMAÇÃO DA ONDA */
+        @keyframes ondaCores {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 500% 50%; }
+        }
+
+        .botao-tema {
+            padding: 0.6rem 1rem;
+            border: 1px solid var(--borda);
+            border-radius: 8px;
+            background: var(--card);
+            color: var(--texto);
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: var(--transicao);
+        }
+        .botao-tema:hover {
+            border-color: var(--destaque);
+            color: var(--destaque);
+        }
+
+        /* BARRA DE BUSCA E CATEGORIAS */
+        .container {
+            max-width: 1280px;
+            margin: 2rem auto;
+            padding: 0 5%;
+        }
+        #busca {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            border: 2px solid var(--borda);
+            border-radius: 12px;
+            font-size: 1rem;
+            background: var(--card);
+            color: var(--texto);
+            outline: none;
+            margin-bottom: 1.5rem;
+            transition: var(--transicao);
+        }
+        #busca:focus {
+            border-color: var(--destaque);
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+        }
+        [data-tema="neon"] #busca:focus {
+            box-shadow: 0 0 15px rgba(57, 255, 20, 0.2);
+        }
+        .categorias {
+            display: flex;
+            gap: 0.7rem;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+        }
+        .btn-categoria {
+            padding: 0.6rem 1rem;
+            border: 1px solid var(--borda);
+            border-radius: 20px;
+            background: transparent;
+            color: var(--texto);
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: var(--transicao);
+        }
+        .btn-categoria.ativo, .btn-categoria:hover {
+            background: var(--destaque);
+            border-color: var(--destaque);
+            color: var(--fundo);
+        }
+
+        /* PRODUTOS */
+        .grade-produtos {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 1.5rem;
+        }
+        .card-produto {
+            background: var(--card);
+            border-radius: 14px;
+            overflow: hidden;
+            border: 1px solid var(--borda);
+            box-shadow: var(--sombra);
+            transition: var(--transicao);
+        }
+        .card-produto:hover {
+            transform: translateY(-4px);
+            border-color: var(--destaque);
+        }
+        .img-produto {
+            width: 100%;
+            height: 200px;
+            object-fit: contain;
+            background: var(--fundo-secundario);
+            padding: 1rem;
+        }
+        .etiqueta-loja {
+            text-align: center;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.4rem;
+            color: var(--texto-claro);
+            border-bottom: 1px solid var(--borda);
+        }
+        .info-produto {
+            padding: 1.2rem;
+        }
+        .nome-produto {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            line-height: 1.4;
+        }
+        .preco-produto {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--sucesso);
+            margin: 0.8rem 0;
+        }
+        .btn-oferta {
+            display: block;
+            text-align: center;
+            padding: 0.9rem;
+            background: var(--destaque);
+            color: var(--fundo);
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 700;
+            margin-top: 1rem;
+            transition: var(--transicao);
+        }
+        .btn-oferta:hover {
+            opacity: 0.9;
+            transform: scale(1.02);
+        }
+
+        /* RODAPÉ */
+        footer {
+            background: var(--fundo-secundario);
+            border-top: 1px solid var(--borda);
+            padding: 2rem 5%;
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--texto-claro);
+            margin-top: 3rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="aviso-afiliado">
+    ⚠️ Links de afiliado: comprando por aqui você ajuda o projeto sem pagar nada a mais! ✅
+</div>
+
+<header>
+    <div class="cabecalho-conteudo">
+        <div class="logo">All Promo Day</div>
+        <button class="botao-tema" id="alternarTema">🌙 Tema Neon</button>
+    </div>
+</header>
+
+<main class="container">
+    <input type="text" id="busca" placeholder="🔍 Pesquise por qualquer produto...">
+
+    <div class="categorias" id="lista-categorias">
+        <button class="btn-categoria ativo" data-categoria="todos">Todos</button>
+        <button class="btn-categoria" data-categoria="eletrodomesticos">Eletrodomésticos</button>
+        <button class="btn-categoria" data-categoria="banho-cama">Banho e Cama</button>
+        <button class="btn-categoria" data-categoria="decoracao">Decoração</button>
+        <button class="btn-categoria" data-categoria="kids">Kids / Infantil</button>
+        <button class="btn-categoria" data-categoria="gamer">Gamer & Hardware</button>
+        <button class="btn-categoria" data-categoria="moveis">Móveis</button>
+        <button class="btn-categoria" data-categoria="automotivos">Acessórios Automotivos</button>
+        <button class="btn-categoria" data-categoria="pets">Pets</button>
+        <button class="btn-categoria" data-categoria="celulares">Celulares e Acessórios</button>
+        <button class="btn-categoria" data-categoria="esporte">Esporte e Bem-estar</button>
+        <button class="btn-categoria" data-categoria="utilidades">Utilidades e Presentes</button>
+    </div>
+
+    <div class="grade-produtos" id="lista-produtos"></div>
+</main>
+
+<footer>
+    <p>© 2026 All Promo Day | Preços e estoque sujeitos à alteração conforme a loja oficial.</p>
+</footer>
+
+<script>
+// ==================== CONFIGURAÇÃO DE TEMAS ====================
+const corpo = document.body;
+const botaoTema = document.getElementById('alternarTema');
+
+// Carrega tema salvo ou usa claro
+const temaSalvo = localStorage.getItem('allpromo_tema') || 'claro';
+aplicarTema(temaSalvo);
+
+botaoTema.addEventListener('click', () => {
+    const novoTema = corpo.dataset.tema === 'neon' ? 'claro' : 'neon';
+    aplicarTema(novoTema);
+    localStorage.setItem('allpromo_tema', novoTema);
+});
+
+function aplicarTema(tipo) {
+    if(tipo === 'neon') {
+        corpo.dataset.tema = 'neon';
+        botaoTema.textContent = '☀️ Tema Claro';
+    } else {
+        delete corpo.dataset.tema;
+        botaoTema.textContent = '🌙 Tema Neon';
+    }
+}
+
+// ==================== SUA LISTA DE PRODUTOS ====================
+const produtos = [
+    {
+        nome: "Smart GoogleTV 50\" 4K HDR10",
+        preco: "R$ 1.879,06",
+        loja: "Amazon Brasil",
+        categoria: "eletrodomesticos",
+        imagem: "https://m.media-amazon.com/images/I/61oybFahwGL._AC_SL1000_.jpg",
+        link: "https://www.amazon.com.br/Smart-Semp-Polegadas-Bluetooth-Google/dp/B0FPRFS3L1?pd_rd_w=805A6&content-id=amzn1.sym.87e935c8-d687-4dd4-9dbf-8b9bdbb5018e%3Aamzn1.symc.c3d5766d-b606-46b8-ab07-1d9d1da0638a&pf_rd_p=87e935c8-d687-4dd4-9dbf-8b9bdbb5018e&pf_rd_r=8X8TYSAYQR3G514M7RPY&pd_rd_wg=oFq1X&pd_rd_r=9f3a38c6-522e-404c-8f94-532ee186f348&pd_rd_i=B0FPRFS3L1&linkCode=ll2&tag=allpromoday-20&linkId=038db690a7ee503b188d081379745fd3&ref_=as_li_ss_tl"
+    },
+    {
+        nome: "Teclado Mecânico Gamer RGB",
+        preco: "R$ 189,99",
+        loja: "Mercado Livre",
+        categoria: "gamer",
+        imagem: "https://http2.mlstatic.com/D_NQ_NP_2X_894230-MLU73054296879_112023-O.webp",
+        link: "COLOQUE_SEU_LINK_DE_AFILIADO_AQUI"
+    },
+    {
+        nome: "Jogo de Lençol Casal 4 Peças",
+        preco: "R$ 249,90",
+        loja: "Shopee",
+        categoria: "banho-cama",
+        imagem: "https://down-br.img.susercontent.com/file/br-11134207-7r98o-lk0v4g7xq8b9f9",
+        link: "COLOQUE_SEU_LINK_DE_AFILIADO_AQUI"
+    }
+];
+
+// ==================== FUNÇÕES DE EXIBIÇÃO ====================
+let categoriaAtiva = 'todos';
+
+function carregarProdutos() {
+    const busca = document.getElementById('busca').value.toLowerCase();
+    let filtrados = produtos;
+
+    if(categoriaAtiva !== 'todos') {
+        filtrados = filtrados.filter(p => p.categoria === categoriaAtiva);
+    }
+
+    filtrados = filtrados.filter(p => 
+        p.nome.toLowerCase().includes(busca) || 
+        p.loja.toLowerCase().includes(busca)
+    );
+
+    const container = document.getElementById('lista-produtos');
+    container.innerHTML = "";
+
+    if(filtrados.length === 0) {
+        container.innerHTML = `<p style="grid-column: 1/-1; text-align:center; padding:3rem; color:var(--texto-claro)">Nenhum produto encontrado 😕</p>`;
+        return;
+    }
+
+    filtrados.forEach(prod => {
+        container.innerHTML += `
+        <div class="card-produto">
+            <img src="${prod.imagem}" alt="${prod.nome}" class="img-produto" loading="lazy">
+            <div class="etiqueta-loja">Disponível na: ${prod.loja}</div>
+            <div class="info-produto">
+                <h3 class="nome-produto">${prod.nome}</h3>
+                <p class="preco-produto">${prod.preco}</p>
+                <a href="${prod.link}" target="_blank" rel="sponsored noopener noreferrer" class="btn-oferta">Ver Oferta →</a>
+            </div>
+        </div>`;
+    });
+}
+
+document.getElementById('busca').addEventListener('input', carregarProdutos);
+
+document.querySelectorAll('.btn-categoria').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('.btn-categoria').forEach(b => b.classList.remove('ativo'));
+        btn.classList.add('ativo');
+        categoriaAtiva = btn.dataset.categoria;
+        carregarProdutos();
+    });
+});
+
+carregarProdutos();
+</script>
+</body>
+</html>
