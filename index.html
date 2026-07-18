@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>All Promo Day | As Melhores Ofertas da Internet</title>
-        <!-- Ícone e prévia de compartilhamento -->
+    <!-- Ícone e prévia de compartilhamento -->
     <link rel="icon" type="image/png" sizes="1024x1024" href="https://i.imgur.com/tqBkR2C.png">
     <link rel="apple-touch-icon" sizes="1024x1024" href="https://i.imgur.com/tqBkR2C.png">
     <meta property="og:image" content="https://i.imgur.com/tqBkR2C.png">
@@ -83,49 +83,26 @@
             gap: 1rem;
         }
 
-        /* ✨ LOGO COM ONDA — CORRIGIDO PARA OS DOIS TEMAS */
+        /* ✨ LOGO COM ONDA */
         .logo {
             font-size: 2rem;
             font-weight: 900;
             letter-spacing: -0.5px;
             position: relative;
             display: inline-block;
-            /* Configuração base: texto transparente, cor vem do gradiente */
             background-clip: text;
             -webkit-background-clip: text;
             color: transparent;
             background-size: 500% 100%;
             animation: ondaCores 12s linear infinite;
         }
-
-        /* Onda para Tema Claro */
         .logo {
-            background-image: linear-gradient(
-                90deg,
-                #FF6B35,
-                #F7C548,
-                #16C79A,
-                #4D96FF,
-                #9B5DE5,
-                #FF6B35
-            );
+            background-image: linear-gradient(90deg, #FF6B35, #F7C548, #16C79A, #4D96FF, #9B5DE5, #FF6B35);
         }
-
-        /* Onda exclusiva para Tema Neon — sem sobreposição */
         [data-tema="neon"] .logo {
-            background-image: linear-gradient(
-                90deg,
-                #39FF14,
-                #00B4FF,
-                #C74BFF,
-                #FF2E88,
-                #FFD700,
-                #39FF14
-            );
+            background-image: linear-gradient(90deg, #39FF14, #00B4FF, #C74BFF, #FF2E88, #FFD700, #39FF14);
             animation-duration: 10s;
         }
-
-        /* ANIMAÇÃO DA ONDA */
         @keyframes ondaCores {
             0% { background-position: 0% 50%; }
             100% { background-position: 500% 50%; }
@@ -146,7 +123,105 @@
             color: var(--destaque);
         }
 
-        /* BARRA DE BUSCA E CATEGORIAS */
+        /* ==================== MENU LATERAL PARA CELULAR ==================== */
+        .botao-menu {
+            display: none;
+            font-size: 1.5rem;
+            background: var(--card);
+            border: 1px solid var(--borda);
+            border-radius: 8px;
+            padding: 0.5rem 0.8rem;
+            color: var(--texto);
+            cursor: pointer;
+            transition: var(--transicao);
+        }
+        .botao-menu:hover {
+            border-color: var(--destaque);
+            color: var(--destaque);
+        }
+
+        .fundo-menu {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 998;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .fundo-menu.aberto {
+            opacity: 1;
+        }
+
+        .menu-lateral {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 280px;
+            max-width: 85vw;
+            height: 100%;
+            background: var(--fundo-secundario);
+            border-right: 1px solid var(--borda);
+            z-index: 999;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+            overflow-y: auto;
+        }
+        .menu-lateral.aberto {
+            transform: translateX(0);
+        }
+
+        .cabecalho-menu {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--borda);
+        }
+        .cabecalho-menu h3 {
+            margin: 0;
+            color: var(--texto);
+            font-size: 1.2rem;
+        }
+        .botao-fechar {
+            background: transparent;
+            border: none;
+            font-size: 1.3rem;
+            color: var(--texto-claro);
+            cursor: pointer;
+            padding: 0.3rem;
+            transition: var(--transicao);
+        }
+        .botao-fechar:hover {
+            color: var(--destaque);
+        }
+
+        .grupo-filtros {
+            padding: 1.2rem;
+            border-bottom: 1px solid var(--borda);
+        }
+        .grupo-filtros h4 {
+            font-size: 0.95rem;
+            margin-bottom: 0.8rem;
+            color: var(--texto);
+        }
+        .categorias-mobile, .lojas-mobile, .ordenar-mobile {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        .categorias-mobile .btn-categoria, .lojas-mobile .btn-filtro, .ordenar-mobile .btn-filtro {
+            width: 100%;
+            text-align: left;
+            border-radius: 8px;
+            padding: 0.7rem 1rem;
+        }
+
+        /* BARRA DE BUSCA E FILTROS PRINCIPAIS */
         .container {
             max-width: 1280px;
             margin: 2rem auto;
@@ -161,7 +236,7 @@
             background: var(--card);
             color: var(--texto);
             outline: none;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.2rem;
             transition: var(--transicao);
         }
         #busca:focus {
@@ -171,13 +246,20 @@
         [data-tema="neon"] #busca:focus {
             box-shadow: 0 0 15px rgba(57, 255, 20, 0.2);
         }
-        .categorias {
+
+        .area-filtros {
             display: flex;
-            gap: 0.7rem;
             flex-wrap: wrap;
-            margin-bottom: 2rem;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            align-items: center;
         }
-        .btn-categoria {
+        .filtro-grupo {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        .btn-categoria, .btn-filtro {
             padding: 0.6rem 1rem;
             border: 1px solid var(--borda);
             border-radius: 20px;
@@ -187,99 +269,120 @@
             cursor: pointer;
             transition: var(--transicao);
         }
-        .btn-categoria.ativo, .btn-categoria:hover {
+        .btn-categoria.ativo, .btn-filtro.ativo,
+        .btn-categoria:hover, .btn-filtro:hover {
             background: var(--destaque);
             border-color: var(--destaque);
             color: var(--fundo);
         }
 
         /* PRODUTOS */
-.grade-produtos {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 1.5rem;
-}
+        .grade-produtos {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 1.5rem;
+        }
+        .card-produto {
+            background: var(--card);
+            border-radius: 14px;
+            overflow: hidden;
+            border: 1px solid var(--borda);
+            box-shadow: var(--sombra);
+            transition: var(--transicao);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        .card-produto:hover {
+            transform: translateY(-4px);
+            border-color: var(--destaque);
+        }
+        .img-produto {
+            width: 100%;
+            min-height: 200px;
+            max-height: 200px;
+            object-fit: contain;
+            background: var(--fundo-secundario);
+            padding: 1rem;
+            flex-shrink: 0;
+        }
+        .etiqueta-loja {
+            text-align: center;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.4rem;
+            color: var(--texto-claro);
+            border-bottom: 1px solid var(--borda);
+            flex-shrink: 0;
+        }
+        .info-produto {
+            padding: 1.2rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .nome-produto {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            line-height: 1.4;
+            flex-shrink: 0;
+        }
+        .preco-produto {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--sucesso);
+            margin: 0.8rem 0;
+            flex-shrink: 0;
+        }
+        .btn-oferta {
+            display: block;
+            text-align: center;
+            padding: 0.9rem;
+            background: var(--destaque);
+            color: var(--fundo);
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 700;
+            margin-top: auto;
+            transition: var(--transicao);
+            flex-shrink: 0;
+        }
+        .btn-oferta:hover {
+            opacity: 0.9;
+            transform: scale(1.02);
+        }
 
-.card-produto {
-    background: var(--card);
-    border-radius: 14px;
-    overflow: hidden;
-    border: 1px solid var(--borda);
-    box-shadow: var(--sombra);
-    transition: var(--transicao);
-    /* NOVO: Faz todos os cartões terem a mesma altura */
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-}
-
-.card-produto:hover {
-    transform: translateY(-4px);
-    border-color: var(--destaque);
-}
-
-.img-produto {
-    width: 100%;
-    min-height: 200px; /* Garante espaço igual para as fotos */
-    max-height: 200px;
-    object-fit: contain;
-    background: var(--fundo-secundario);
-    padding: 1rem;
-    flex-shrink: 0; /* Não deixa a foto encolher */
-}
-
-.etiqueta-loja {
-    text-align: center;
-    font-size: 0.75rem;
-    font-weight: 600;
-    padding: 0.4rem;
-    color: var(--texto-claro);
-    border-bottom: 1px solid var(--borda);
-    flex-shrink: 0;
-}
-
-.info-produto {
-    padding: 1.2rem;
-    /* NOVO: Ocupa todo o espaço livre e empurra o botão para baixo */
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-}
-
-.nome-produto {
-    font-size: 1rem;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-    line-height: 1.4;
-    flex-shrink: 0;
-}
-
-.preco-produto {
-    font-size: 1.5rem;
-    font-weight: 800;
-    color: var(--sucesso);
-    margin: 0.8rem 0;
-    flex-shrink: 0;
-}
-
-.btn-oferta {
-    display: block;
-    text-align: center;
-    padding: 0.9rem;
-    background: var(--destaque);
-    color: var(--fundo);
-    text-decoration: none;
-    border-radius: 10px;
-    font-weight: 700;
-    margin-top: auto; /* REGRA PRINCIPAL: Fixa o botão embaixo */
-    transition: var(--transicao);
-    flex-shrink: 0;
-}
-
-.btn-oferta:hover {
-    opacity: 0.9;
-    transform: scale(1.02);
-}
+        /* CENTRAL DE SUGESTÕES */
+        .secao-sugestoes {
+            max-width: 800px;
+            margin: 3rem auto;
+            padding: 0 5%;
+            text-align: center;
+        }
+        .secao-sugestoes h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--texto);
+        }
+        .secao-sugestoes p {
+            margin-bottom: 1.5rem;
+            color: var(--texto-claro);
+        }
+        .botao-sugestao {
+            display: inline-block;
+            padding: 0.9rem 2rem;
+            background: var(--destaque);
+            color: var(--fundo);
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 700;
+            transition: var(--transicao);
+        }
+        .botao-sugestao:hover {
+            opacity: 0.9;
+            transform: scale(1.02);
+        }
 
         /* RODAPÉ */
         footer {
@@ -291,6 +394,18 @@
             color: var(--texto-claro);
             margin-top: 3rem;
         }
+
+        /* AJUSTES EXCLUSIVOS PARA CELULAR */
+        @media (max-width: 768px) {
+            .botao-menu { display: block; }
+            .menu-lateral, .fundo-menu { display: block; }
+            .categorias, .filtro-lojas, .filtro-ordenar { display: none; }
+            .cabecalho-conteudo { justify-content: flex-start; gap: 0.8rem; }
+            .logo { flex: 1; font-size: 1.6rem; }
+            .botao-tema { padding: 0.5rem 0.8rem; font-size: 0.8rem; }
+            #busca { margin-bottom: 1rem; }
+            .area-filtros { display: none; }
+        }
     </style>
 </head>
 <body>
@@ -301,30 +416,99 @@
 
 <header>
     <div class="cabecalho-conteudo">
+        <button class="botao-menu" id="abrirMenu" aria-label="Abrir filtros">☰</button>
         <div class="logo">All Promo Day</div>
         <button class="botao-tema" id="alternarTema">🌙 Tema Neon</button>
     </div>
 </header>
 
-<main class="container">
-    <input type="text" id="busca" placeholder="🔍 Pesquise por qualquer produto...">
+<!-- MENU LATERAL COM TODOS OS FILTROS -->
+<div class="fundo-menu" id="fundoMenu"></div>
+<nav class="menu-lateral" id="menuLateral">
+    <div class="cabecalho-menu">
+        <h3>Filtros</h3>
+        <button class="botao-fechar" id="fecharMenu" aria-label="Fechar">✕</button>
+    </div>
 
-    <div class="categorias" id="lista-categorias">
-        <button class="btn-categoria ativo" data-categoria="todos">Todos</button>
-        <button class="btn-categoria" data-categoria="eletrodomesticos">Eletrodomésticos</button>
-        <button class="btn-categoria" data-categoria="banho-cama">Banho e Cama</button>
-        <button class="btn-categoria" data-categoria="decoracao">Decoração</button>
-        <button class="btn-categoria" data-categoria="kids">Kids / Infantil</button>
-        <button class="btn-categoria" data-categoria="gamer">Gamer & Hardware</button>
-        <button class="btn-categoria" data-categoria="moveis">Móveis</button>
-        <button class="btn-categoria" data-categoria="automotivos">Acessórios Automotivos</button>
-        <button class="btn-categoria" data-categoria="pets">Pets</button>
-        <button class="btn-categoria" data-categoria="celulares">Celulares e Acessórios</button>
-        <button class="btn-categoria" data-categoria="esporte">Esporte e Bem-estar</button>
-        <button class="btn-categoria" data-categoria="utilidades">Utilidades e Presentes</button>
+    <div class="grupo-filtros">
+        <h4>Categorias</h4>
+        <div class="categorias-mobile">
+            <button class="btn-categoria ativo" data-categoria="todos">Todos</button>
+            <button class="btn-categoria" data-categoria="eletrodomesticos">Eletrodomésticos</button>
+            <button class="btn-categoria" data-categoria="banho-cama">Banho e Cama</button>
+            <button class="btn-categoria" data-categoria="decoracao">Decoração</button>
+            <button class="btn-categoria" data-categoria="kids">Kids / Infantil</button>
+            <button class="btn-categoria" data-categoria="gamer">Gamer & Hardware</button>
+            <button class="btn-categoria" data-categoria="moveis">Móveis</button>
+            <button class="btn-categoria" data-categoria="automotivos">Acessórios Automotivos</button>
+            <button class="btn-categoria" data-categoria="pets">Pets</button>
+            <button class="btn-categoria" data-categoria="celulares">Celulares e Acessórios</button>
+            <button class="btn-categoria" data-categoria="esporte">Esporte e Bem-estar</button>
+            <button class="btn-categoria" data-categoria="utilidades">Utilidades e Presentes</button>
+        </div>
+    </div>
+
+    <div class="grupo-filtros">
+        <h4>Loja</h4>
+        <div class="lojas-mobile">
+            <button class="btn-filtro ativo" data-loja="todas">Todas</button>
+            <button class="btn-filtro" data-loja="Amazon Brasil">Amazon</button>
+            <button class="btn-filtro" data-loja="Mercado Livre">Mercado Livre</button>
+            <button class="btn-filtro" data-loja="Shopee">Shopee</button>
+        </div>
+    </div>
+
+    <div class="grupo-filtros">
+        <h4>Ordenar por</h4>
+        <div class="ordenar-mobile">
+            <button class="btn-filtro ativo" data-ordem="padrao">Padrão</button>
+            <button class="btn-filtro" data-ordem="menor">Menor Preço</button>
+            <button class="btn-filtro" data-ordem="maior">Maior Preço</button>
+        </div>
+    </div>
+</nav>
+
+<main class="container">
+    <input type="text" id="busca" placeholder="🔍 Pesquise por produto, marca ou modelo...">
+
+    <!-- FILTROS VISÍVEIS NO COMPUTADOR -->
+    <div class="area-filtros">
+        <div class="filtro-grupo categorias">
+            <button class="btn-categoria ativo" data-categoria="todos">Todos</button>
+            <button class="btn-categoria" data-categoria="eletrodomesticos">Eletrodomésticos</button>
+            <button class="btn-categoria" data-categoria="banho-cama">Banho e Cama</button>
+            <button class="btn-categoria" data-categoria="decoracao">Decoração</button>
+            <button class="btn-categoria" data-categoria="kids">Kids</button>
+            <button class="btn-categoria" data-categoria="gamer">Gamer</button>
+            <button class="btn-categoria" data-categoria="moveis">Móveis</button>
+            <button class="btn-categoria" data-categoria="automotivos">Automotivos</button>
+            <button class="btn-categoria" data-categoria="pets">Pets</button>
+            <button class="btn-categoria" data-categoria="celulares">Celulares</button>
+            <button class="btn-categoria" data-categoria="esporte">Esporte</button>
+            <button class="btn-categoria" data-categoria="utilidades">Utilidades</button>
+        </div>
+
+        <div class="filtro-grupo filtro-lojas">
+            <button class="btn-filtro ativo" data-loja="todas">Todas Lojas</button>
+            <button class="btn-filtro" data-loja="Amazon Brasil">Amazon</button>
+            <button class="btn-filtro" data-loja="Mercado Livre">Mercado Livre</button>
+            <button class="btn-filtro" data-loja="Shopee">Shopee</button>
+        </div>
+
+        <div class="filtro-grupo filtro-ordenar">
+            <button class="btn-filtro ativo" data-ordem="padrao">Padrão</button>
+            <button class="btn-filtro" data-ordem="menor">Menor Preço</button>
+            <button class="btn-filtro" data-ordem="maior">Maior Preço</button>
+        </div>
     </div>
 
     <div class="grade-produtos" id="lista-produtos"></div>
+
+    <section class="secao-sugestoes">
+        <h2>💡 Tem uma ideia para melhorar o site?</h2>
+        <p>Sua opinião ajuda a deixar o All Promo Day ainda melhor para todos!</p>
+        <a href="https://docs.google.com/forms/d/e/1FAIpQLSdWjTw2YpKu6UNG-AND1qkb4FkKGMON5dmlUCPP1H-HDfm7UQ/viewform?usp=sharing" target="_blank" rel="noopener noreferrer" class="botao-sugestao">Enviar Sugestão ✍️</a>
+    </section>
 </main>
 
 <footer>
@@ -335,8 +519,6 @@
 // ==================== CONFIGURAÇÃO DE TEMAS ====================
 const corpo = document.body;
 const botaoTema = document.getElementById('alternarTema');
-
-// Carrega tema salvo ou usa claro
 const temaSalvo = localStorage.getItem('allpromo_tema') || 'claro';
 aplicarTema(temaSalvo);
 
@@ -356,66 +538,136 @@ function aplicarTema(tipo) {
     }
 }
 
-// ==================== SUA LISTA DE PRODUTOS ====================
+// ==================== CONTROLE DO MENU LATERAL ====================
+const botaoAbrir = document.getElementById('abrirMenu');
+const botaoFechar = document.getElementById('fecharMenu');
+const menuLateral = document.getElementById('menuLateral');
+const fundoMenu = document.getElementById('fundoMenu');
+
+function alternarMenu(abrir) {
+    menuLateral.classList.toggle('aberto', abrir);
+    fundoMenu.classList.toggle('aberto', abrir);
+    document.body.style.overflow = abrir ? 'hidden' : 'auto';
+}
+
+botaoAbrir.addEventListener('click', () => alternarMenu(true));
+botaoFechar.addEventListener('click', () => alternarMenu(false));
+fundoMenu.addEventListener('click', () => alternarMenu(false));
+
+// ==================== CONFIGURAÇÃO DOS FILTROS ====================
+let categoriaAtiva = 'todos';
+let lojaAtiva = 'todas';
+let ordemAtiva = 'padrao';
+
+// Sincroniza botões de filtro entre menu lateral e página principal
+document.querySelectorAll('.btn-categoria').forEach(btn => {
+    btn.addEventListener('click', () => {
+        categoriaAtiva = btn.dataset.categoria;
+        alternarMenu(false);
+        atualizarBotoes('.btn-categoria', 'categoria', categoriaAtiva);
+        carregarProdutos();
+    });
+});
+
+document.querySelectorAll('.btn-filtro[data-loja]').forEach(btn => {
+    btn.addEventListener('click', () => {
+        lojaAtiva = btn.dataset.loja;
+        alternarMenu(false);
+        atualizarBotoes('[data-loja]', 'loja', lojaAtiva);
+        carregarProdutos();
+    });
+});
+
+document.querySelectorAll('.btn-filtro[data-ordem]').forEach(btn => {
+    btn.addEventListener('click', () => {
+        ordemAtiva = btn.dataset.ordem;
+        alternarMenu(false);
+        atualizarBotoes('[data-ordem]', 'ordem', ordemAtiva);
+        carregarProdutos();
+    });
+});
+
+function atualizarBotoes(seletor, atributo, valor) {
+    document.querySelectorAll(seletor).forEach(b => {
+        b.classList.toggle('ativo', b.dataset[atributo] === valor);
+    });
+}
+
+// ==================== LISTA DE PRODUTOS ====================
 const produtos = [
-    // ==================== AMAZON BRASIL ====================
     {
         nome: "Smart GoogleTV 50\" 4K HDR10",
         preco: "R$ 1.879,06",
+        precoNum: 1879.06,
         loja: "Amazon Brasil",
         categoria: "eletrodomesticos",
         imagem: "https://m.media-amazon.com/images/I/61oybFahwGL._AC_SL1000_.jpg",
         link: "https://www.amazon.com.br/Smart-Semp-Polegadas-Bluetooth-Google/dp/B0FPRFS3L1?pd_rd_w=805A6&content-id=amzn1.sym.87e935c8-d687-4dd4-9dbf-8b9bdbb5018e%3Aamzn1.symc.c3d5766d-b606-46b8-ab07-1d9d1da0638a&pf_rd_p=87e935c8-d687-4dd4-9dbf-8b9bdbb5018e&pf_rd_r=8X8TYSAYQR3G514M7RPY&pd_rd_wg=oFq1X&pd_rd_r=9f3a38c6-522e-404c-8f94-532ee186f348&pd_rd_i=B0FPRFS3L1&linkCode=ll2&tag=allpromoday-20&linkId=038db690a7ee503b188d081379745fd3&ref_=as_li_ss_tl"
     },
-    // ==================== MERCADO LIVRE ====================
     {
         nome: "Teclado Mecânico Gamer RGB",
         preco: "R$ 115,61",
+        precoNum: 115.61,
         loja: "Mercado Livre",
         categoria: "gamer",
         imagem: "https://http2.mlstatic.com/D_NQ_NP_2X_626318-MLB96986865026_112025-F.webp",
         link: "https://meli.la/2jWJxe4"
     },
     {
-        nome: "Kit Upgrade Amd Ryzen 7 5700x + Gigabyte B550m Aorus Elite",
-        preco: "R$ 2148,55",
+        nome: "Kit Upgrade Ryzen 7 5700x + B550m Aorus Elite",
+        preco: "R$ 2.148,55",
+        precoNum: 2148.55,
         loja: "Mercado Livre",
         categoria: "gamer",
         imagem: "https://http2.mlstatic.com/D_NQ_NP_2X_894040-MLB92282331326_092025-F.webp",
         link: "https://meli.la/1d4rQpt"
     },
-    // ==================== SHOPEE ====================
     {
-        nome: "Jogo De Lençol Queen Size 4 Peças 400 Fios Com Elástico Toque de Seda Detalhe Ponto Palito",
+        nome: "Jogo Lençol Queen Size 4 Peças 400 Fios",
         preco: "R$ 104,41",
+        precoNum: 104.41,
         loja: "Shopee",
         categoria: "banho-cama",
         imagem: "https://down-br.img.susercontent.com/file/br-11134207-820lu-mnye65kliio139.webp",
         link: "https://s.shopee.com.br/9Uzysz7yrV"
-    },
+    }
 ];
 
-// ==================== FUNÇÕES DE EXIBIÇÃO ====================
-let categoriaAtiva = 'todos';
-
+// ==================== FUNÇÃO PRINCIPAL DE FILTRO E ORDENAÇÃO ====================
 function carregarProdutos() {
     const busca = document.getElementById('busca').value.toLowerCase();
-    let filtrados = produtos;
+    let filtrados = [...produtos];
 
+    // Filtro por categoria
     if(categoriaAtiva !== 'todos') {
         filtrados = filtrados.filter(p => p.categoria === categoriaAtiva);
     }
 
+    // Filtro por loja
+    if(lojaAtiva !== 'todas') {
+        filtrados = filtrados.filter(p => p.loja === lojaAtiva);
+    }
+
+    // Filtro por busca
     filtrados = filtrados.filter(p => 
         p.nome.toLowerCase().includes(busca) || 
-        p.loja.toLowerCase().includes(busca)
+        p.loja.toLowerCase().includes(busca) ||
+        p.categoria.toLowerCase().includes(busca)
     );
 
+    // Ordenação por preço
+    if(ordemAtiva === 'menor') {
+        filtrados.sort((a, b) => a.precoNum - b.precoNum);
+    } else if(ordemAtiva === 'maior') {
+        filtrados.sort((a, b) => b.precoNum - a.precoNum);
+    }
+
+    // Renderizar
     const container = document.getElementById('lista-produtos');
     container.innerHTML = "";
 
     if(filtrados.length === 0) {
-        container.innerHTML = `<p style="grid-column: 1/-1; text-align:center; padding:3rem; color:var(--texto-claro)">Nenhum produto encontrado 😕</p>`;
+        container.innerHTML = `<p style="grid-column: 1/-1; text-align:center; padding:3rem; color:var(--texto-claro)">Nenhum produto encontrado com esses filtros 😕</p>`;
         return;
     }
 
@@ -434,16 +686,6 @@ function carregarProdutos() {
 }
 
 document.getElementById('busca').addEventListener('input', carregarProdutos);
-
-document.querySelectorAll('.btn-categoria').forEach(btn => {
-    btn.addEventListener('click', () => {
-        document.querySelectorAll('.btn-categoria').forEach(b => b.classList.remove('ativo'));
-        btn.classList.add('ativo');
-        categoriaAtiva = btn.dataset.categoria;
-        carregarProdutos();
-    });
-});
-
 carregarProdutos();
 </script>
 </body>
