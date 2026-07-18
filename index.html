@@ -123,7 +123,7 @@
             color: var(--destaque);
         }
 
-        /* ==================== MENU LATERAL PARA CELULAR ==================== */
+        /* ==================== MENU LATERAL ==================== */
         .botao-menu {
             display: none;
             font-size: 1.5rem;
@@ -134,6 +134,7 @@
             color: var(--texto);
             cursor: pointer;
             transition: var(--transicao);
+            z-index: 100;
         }
         .botao-menu:hover {
             border-color: var(--destaque);
@@ -209,19 +210,34 @@
             margin-bottom: 0.8rem;
             color: var(--texto);
         }
-        .categorias-mobile, .lojas-mobile, .ordenar-mobile {
+        .categorias-mobile {
             display: flex;
             flex-direction: column;
             gap: 0.5rem;
         }
-        .categorias-mobile .btn-categoria, .lojas-mobile .btn-filtro, .ordenar-mobile .btn-filtro {
+        .categorias-mobile .btn-categoria {
             width: 100%;
             text-align: left;
             border-radius: 8px;
             padding: 0.7rem 1rem;
         }
+        .select-filtro {
+            width: 100%;
+            padding: 0.7rem;
+            border: 1px solid var(--borda);
+            border-radius: 8px;
+            background: var(--card);
+            color: var(--texto);
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: var(--transicao);
+        }
+        .select-filtro:focus {
+            outline: none;
+            border-color: var(--destaque);
+        }
 
-        /* BARRA DE BUSCA E FILTROS PRINCIPAIS */
+        /* BARRA DE BUSCA E FILTROS */
         .container {
             max-width: 1280px;
             margin: 2rem auto;
@@ -236,7 +252,7 @@
             background: var(--card);
             color: var(--texto);
             outline: none;
-            margin-bottom: 1.2rem;
+            margin-bottom: 1.5rem;
             transition: var(--transicao);
         }
         #busca:focus {
@@ -247,19 +263,13 @@
             box-shadow: 0 0 15px rgba(57, 255, 20, 0.2);
         }
 
-        .area-filtros {
+        .categorias {
             display: flex;
+            gap: 0.7rem;
             flex-wrap: wrap;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-            align-items: center;
+            margin-bottom: 1.2rem;
         }
-        .filtro-grupo {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-        }
-        .btn-categoria, .btn-filtro {
+        .btn-categoria {
             padding: 0.6rem 1rem;
             border: 1px solid var(--borda);
             border-radius: 20px;
@@ -269,14 +279,39 @@
             cursor: pointer;
             transition: var(--transicao);
         }
-        .btn-categoria.ativo, .btn-filtro.ativo,
-        .btn-categoria:hover, .btn-filtro:hover {
+        .btn-categoria.ativo, .btn-categoria:hover {
             background: var(--destaque);
             border-color: var(--destaque);
             color: var(--fundo);
         }
 
-        /* PRODUTOS */
+        .caixas-filtros {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+        }
+        .caixas-filtros select {
+            min-width: 180px;
+            padding: 0.7rem 1rem;
+            border: 1px solid var(--borda);
+            border-radius: 10px;
+            background: var(--card);
+            color: var(--texto);
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: var(--transicao);
+        }
+        .caixas-filtros select:focus {
+            outline: none;
+            border-color: var(--destaque);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+        [data-tema="neon"] .caixas-filtros select:focus {
+            box-shadow: 0 0 12px rgba(57, 255, 20, 0.15);
+        }
+
+        /* ==================== PRODUTOS COM PREÇOS ALINHADOS ==================== */
         .grade-produtos {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
@@ -310,29 +345,36 @@
             text-align: center;
             font-size: 0.75rem;
             font-weight: 600;
-            padding: 0.4rem;
+            padding: 0.5rem;
             color: var(--texto-claro);
             border-bottom: 1px solid var(--borda);
             flex-shrink: 0;
         }
         .info-produto {
             padding: 1.2rem;
-            flex: 1;
             display: flex;
             flex-direction: column;
+            flex: 1;
         }
         .nome-produto {
             font-size: 1rem;
             font-weight: 600;
-            margin-bottom: 0.5rem;
             line-height: 1.4;
+            margin-bottom: 1rem;
+            /* Limita a 2 linhas para não quebrar o layout */
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
             flex-shrink: 0;
         }
         .preco-produto {
             font-size: 1.5rem;
             font-weight: 800;
             color: var(--sucesso);
-            margin: 0.8rem 0;
+            margin: 0 0 1rem 0;
+            /* Empurra o botão para baixo e mantém preço fixo */
+            margin-top: auto;
             flex-shrink: 0;
         }
         .btn-oferta {
@@ -344,7 +386,6 @@
             text-decoration: none;
             border-radius: 10px;
             font-weight: 700;
-            margin-top: auto;
             transition: var(--transicao);
             flex-shrink: 0;
         }
@@ -399,12 +440,11 @@
         @media (max-width: 768px) {
             .botao-menu { display: block; }
             .menu-lateral, .fundo-menu { display: block; }
-            .categorias, .filtro-lojas, .filtro-ordenar { display: none; }
+            .categorias, .caixas-filtros { display: none; }
             .cabecalho-conteudo { justify-content: flex-start; gap: 0.8rem; }
             .logo { flex: 1; font-size: 1.6rem; }
             .botao-tema { padding: 0.5rem 0.8rem; font-size: 0.8rem; }
             #busca { margin-bottom: 1rem; }
-            .area-filtros { display: none; }
         }
     </style>
 </head>
@@ -422,7 +462,7 @@
     </div>
 </header>
 
-<!-- MENU LATERAL COM TODOS OS FILTROS -->
+<!-- MENU LATERAL -->
 <div class="fundo-menu" id="fundoMenu"></div>
 <nav class="menu-lateral" id="menuLateral">
     <div class="cabecalho-menu">
@@ -450,56 +490,56 @@
 
     <div class="grupo-filtros">
         <h4>Loja</h4>
-        <div class="lojas-mobile">
-            <button class="btn-filtro ativo" data-loja="todas">Todas</button>
-            <button class="btn-filtro" data-loja="Amazon Brasil">Amazon</button>
-            <button class="btn-filtro" data-loja="Mercado Livre">Mercado Livre</button>
-            <button class="btn-filtro" data-loja="Shopee">Shopee</button>
-        </div>
+        <select id="filtroLojaMobile" class="select-filtro">
+            <option value="todas">Todas as Lojas</option>
+            <option value="Amazon Brasil">Amazon</option>
+            <option value="Mercado Livre">Mercado Livre</option>
+            <option value="Shopee">Shopee</option>
+        </select>
     </div>
 
     <div class="grupo-filtros">
         <h4>Ordenar por</h4>
-        <div class="ordenar-mobile">
-            <button class="btn-filtro ativo" data-ordem="padrao">Padrão</button>
-            <button class="btn-filtro" data-ordem="menor">Menor Preço</button>
-            <button class="btn-filtro" data-ordem="maior">Maior Preço</button>
-        </div>
+        <select id="filtroOrdemMobile" class="select-filtro">
+            <option value="padrao">Padrão</option>
+            <option value="menor">Menor Preço</option>
+            <option value="maior">Maior Preço</option>
+        </select>
     </div>
 </nav>
 
 <main class="container">
     <input type="text" id="busca" placeholder="🔍 Pesquise por produto, marca ou modelo...">
 
-    <!-- FILTROS VISÍVEIS NO COMPUTADOR -->
-    <div class="area-filtros">
-        <div class="filtro-grupo categorias">
-            <button class="btn-categoria ativo" data-categoria="todos">Todos</button>
-            <button class="btn-categoria" data-categoria="eletrodomesticos">Eletrodomésticos</button>
-            <button class="btn-categoria" data-categoria="banho-cama">Banho e Cama</button>
-            <button class="btn-categoria" data-categoria="decoracao">Decoração</button>
-            <button class="btn-categoria" data-categoria="kids">Kids</button>
-            <button class="btn-categoria" data-categoria="gamer">Gamer</button>
-            <button class="btn-categoria" data-categoria="moveis">Móveis</button>
-            <button class="btn-categoria" data-categoria="automotivos">Automotivos</button>
-            <button class="btn-categoria" data-categoria="pets">Pets</button>
-            <button class="btn-categoria" data-categoria="celulares">Celulares</button>
-            <button class="btn-categoria" data-categoria="esporte">Esporte</button>
-            <button class="btn-categoria" data-categoria="utilidades">Utilidades</button>
-        </div>
+    <!-- CATEGORIAS E CAIXAS DE SELEÇÃO -->
+    <div class="categorias">
+        <button class="btn-categoria ativo" data-categoria="todos">Todos</button>
+        <button class="btn-categoria" data-categoria="eletrodomesticos">Eletrodomésticos</button>
+        <button class="btn-categoria" data-categoria="banho-cama">Banho e Cama</button>
+        <button class="btn-categoria" data-categoria="decoracao">Decoração</button>
+        <button class="btn-categoria" data-categoria="kids">Kids</button>
+        <button class="btn-categoria" data-categoria="gamer">Gamer</button>
+        <button class="btn-categoria" data-categoria="moveis">Móveis</button>
+        <button class="btn-categoria" data-categoria="automotivos">Automotivos</button>
+        <button class="btn-categoria" data-categoria="pets">Pets</button>
+        <button class="btn-categoria" data-categoria="celulares">Celulares</button>
+        <button class="btn-categoria" data-categoria="esporte">Esporte</button>
+        <button class="btn-categoria" data-categoria="utilidades">Utilidades</button>
+    </div>
 
-        <div class="filtro-grupo filtro-lojas">
-            <button class="btn-filtro ativo" data-loja="todas">Todas Lojas</button>
-            <button class="btn-filtro" data-loja="Amazon Brasil">Amazon</button>
-            <button class="btn-filtro" data-loja="Mercado Livre">Mercado Livre</button>
-            <button class="btn-filtro" data-loja="Shopee">Shopee</button>
-        </div>
+    <div class="caixas-filtros">
+        <select id="filtroLoja">
+            <option value="todas">Todas as Lojas</option>
+            <option value="Amazon Brasil">Amazon</option>
+            <option value="Mercado Livre">Mercado Livre</option>
+            <option value="Shopee">Shopee</option>
+        </select>
 
-        <div class="filtro-grupo filtro-ordenar">
-            <button class="btn-filtro ativo" data-ordem="padrao">Padrão</button>
-            <button class="btn-filtro" data-ordem="menor">Menor Preço</button>
-            <button class="btn-filtro" data-ordem="maior">Maior Preço</button>
-        </div>
+        <select id="filtroOrdem">
+            <option value="padrao">Ordenação: Padrão</option>
+            <option value="menor">Menor Preço</option>
+            <option value="maior">Maior Preço</option>
+        </select>
     </div>
 
     <div class="grade-produtos" id="lista-produtos"></div>
@@ -538,16 +578,22 @@ function aplicarTema(tipo) {
     }
 }
 
-// ==================== CONTROLE DO MENU LATERAL ====================
+// ==================== BOTÃO MENU LATERAL ====================
 const botaoAbrir = document.getElementById('abrirMenu');
 const botaoFechar = document.getElementById('fecharMenu');
 const menuLateral = document.getElementById('menuLateral');
 const fundoMenu = document.getElementById('fundoMenu');
 
 function alternarMenu(abrir) {
-    menuLateral.classList.toggle('aberto', abrir);
-    fundoMenu.classList.toggle('aberto', abrir);
-    document.body.style.overflow = abrir ? 'hidden' : 'auto';
+    if (abrir) {
+        menuLateral.classList.add('aberto');
+        fundoMenu.classList.add('aberto');
+        document.body.style.overflow = 'hidden';
+    } else {
+        menuLateral.classList.remove('aberto');
+        fundoMenu.classList.remove('aberto');
+        document.body.style.overflow = 'auto';
+    }
 }
 
 botaoAbrir.addEventListener('click', () => alternarMenu(true));
@@ -559,39 +605,46 @@ let categoriaAtiva = 'todos';
 let lojaAtiva = 'todas';
 let ordemAtiva = 'padrao';
 
-// Sincroniza botões de filtro entre menu lateral e página principal
 document.querySelectorAll('.btn-categoria').forEach(btn => {
     btn.addEventListener('click', () => {
         categoriaAtiva = btn.dataset.categoria;
         alternarMenu(false);
-        atualizarBotoes('.btn-categoria', 'categoria', categoriaAtiva);
+        document.querySelectorAll('.btn-categoria').forEach(b => b.classList.remove('ativo'));
+        document.querySelectorAll(`[data-categoria="${categoriaAtiva}"]`).forEach(b => b.classList.add('ativo'));
         carregarProdutos();
     });
 });
 
-document.querySelectorAll('.btn-filtro[data-loja]').forEach(btn => {
-    btn.addEventListener('click', () => {
-        lojaAtiva = btn.dataset.loja;
-        alternarMenu(false);
-        atualizarBotoes('[data-loja]', 'loja', lojaAtiva);
-        carregarProdutos();
-    });
+const filtroLoja = document.getElementById('filtroLoja');
+const filtroLojaMobile = document.getElementById('filtroLojaMobile');
+const filtroOrdem = document.getElementById('filtroOrdem');
+const filtroOrdemMobile = document.getElementById('filtroOrdemMobile');
+
+filtroLoja.addEventListener('change', (e) => {
+    lojaAtiva = e.target.value;
+    filtroLojaMobile.value = lojaAtiva;
+    carregarProdutos();
 });
 
-document.querySelectorAll('.btn-filtro[data-ordem]').forEach(btn => {
-    btn.addEventListener('click', () => {
-        ordemAtiva = btn.dataset.ordem;
-        alternarMenu(false);
-        atualizarBotoes('[data-ordem]', 'ordem', ordemAtiva);
-        carregarProdutos();
-    });
+filtroLojaMobile.addEventListener('change', (e) => {
+    lojaAtiva = e.target.value;
+    filtroLoja.value = lojaAtiva;
+    alternarMenu(false);
+    carregarProdutos();
 });
 
-function atualizarBotoes(seletor, atributo, valor) {
-    document.querySelectorAll(seletor).forEach(b => {
-        b.classList.toggle('ativo', b.dataset[atributo] === valor);
-    });
-}
+filtroOrdem.addEventListener('change', (e) => {
+    ordemAtiva = e.target.value;
+    filtroOrdemMobile.value = ordemAtiva;
+    carregarProdutos();
+});
+
+filtroOrdemMobile.addEventListener('change', (e) => {
+    ordemAtiva = e.target.value;
+    filtroOrdem.value = ordemAtiva;
+    alternarMenu(false);
+    carregarProdutos();
+});
 
 // ==================== LISTA DE PRODUTOS ====================
 const produtos = [
@@ -633,41 +686,36 @@ const produtos = [
     }
 ];
 
-// ==================== FUNÇÃO PRINCIPAL DE FILTRO E ORDENAÇÃO ====================
+// ==================== FUNÇÃO PRINCIPAL ====================
 function carregarProdutos() {
     const busca = document.getElementById('busca').value.toLowerCase();
     let filtrados = [...produtos];
 
-    // Filtro por categoria
     if(categoriaAtiva !== 'todos') {
         filtrados = filtrados.filter(p => p.categoria === categoriaAtiva);
     }
 
-    // Filtro por loja
     if(lojaAtiva !== 'todas') {
         filtrados = filtrados.filter(p => p.loja === lojaAtiva);
     }
 
-    // Filtro por busca
     filtrados = filtrados.filter(p => 
         p.nome.toLowerCase().includes(busca) || 
         p.loja.toLowerCase().includes(busca) ||
         p.categoria.toLowerCase().includes(busca)
     );
 
-    // Ordenação por preço
     if(ordemAtiva === 'menor') {
         filtrados.sort((a, b) => a.precoNum - b.precoNum);
     } else if(ordemAtiva === 'maior') {
         filtrados.sort((a, b) => b.precoNum - a.precoNum);
     }
 
-    // Renderizar
     const container = document.getElementById('lista-produtos');
     container.innerHTML = "";
 
     if(filtrados.length === 0) {
-        container.innerHTML = `<p style="grid-column: 1/-1; text-align:center; padding:3rem; color:var(--texto-claro)">Nenhum produto encontrado com esses filtros 😕</p>`;
+        container.innerHTML = `<p style="grid-column: 1/-1; text-align:center; padding:3rem; color:var(--texto-claro)">Nenhum produto encontrado 😕</p>`;
         return;
     }
 
