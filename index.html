@@ -194,69 +194,92 @@
         }
 
         /* PRODUTOS */
-        .grade-produtos {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-            gap: 1.5rem;
-        }
-        .card-produto {
-            background: var(--card);
-            border-radius: 14px;
-            overflow: hidden;
-            border: 1px solid var(--borda);
-            box-shadow: var(--sombra);
-            transition: var(--transicao);
-        }
-        .card-produto:hover {
-            transform: translateY(-4px);
-            border-color: var(--destaque);
-        }
-        .img-produto {
-            width: 100%;
-            height: 200px;
-            object-fit: contain;
-            background: var(--fundo-secundario);
-            padding: 1rem;
-        }
-        .etiqueta-loja {
-            text-align: center;
-            font-size: 0.75rem;
-            font-weight: 600;
-            padding: 0.4rem;
-            color: var(--texto-claro);
-            border-bottom: 1px solid var(--borda);
-        }
-        .info-produto {
-            padding: 1.2rem;
-        }
-        .nome-produto {
-            font-size: 1rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            line-height: 1.4;
-        }
-        .preco-produto {
-            font-size: 1.5rem;
-            font-weight: 800;
-            color: var(--sucesso);
-            margin: 0.8rem 0;
-        }
-        .btn-oferta {
-            display: block;
-            text-align: center;
-            padding: 0.9rem;
-            background: var(--destaque);
-            color: var(--fundo);
-            text-decoration: none;
-            border-radius: 10px;
-            font-weight: 700;
-            margin-top: 1rem;
-            transition: var(--transicao);
-        }
-        .btn-oferta:hover {
-            opacity: 0.9;
-            transform: scale(1.02);
-        }
+.grade-produtos {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1.5rem;
+}
+
+.card-produto {
+    background: var(--card);
+    border-radius: 14px;
+    overflow: hidden;
+    border: 1px solid var(--borda);
+    box-shadow: var(--sombra);
+    transition: var(--transicao);
+    /* NOVO: Faz todos os cartões terem a mesma altura */
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.card-produto:hover {
+    transform: translateY(-4px);
+    border-color: var(--destaque);
+}
+
+.img-produto {
+    width: 100%;
+    min-height: 200px; /* Garante espaço igual para as fotos */
+    max-height: 200px;
+    object-fit: contain;
+    background: var(--fundo-secundario);
+    padding: 1rem;
+    flex-shrink: 0; /* Não deixa a foto encolher */
+}
+
+.etiqueta-loja {
+    text-align: center;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.4rem;
+    color: var(--texto-claro);
+    border-bottom: 1px solid var(--borda);
+    flex-shrink: 0;
+}
+
+.info-produto {
+    padding: 1.2rem;
+    /* NOVO: Ocupa todo o espaço livre e empurra o botão para baixo */
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.nome-produto {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    line-height: 1.4;
+    flex-shrink: 0;
+}
+
+.preco-produto {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--sucesso);
+    margin: 0.8rem 0;
+    flex-shrink: 0;
+}
+
+.btn-oferta {
+    display: block;
+    text-align: center;
+    padding: 0.9rem;
+    background: var(--destaque);
+    color: var(--fundo);
+    text-decoration: none;
+    border-radius: 10px;
+    font-weight: 700;
+    margin-top: auto; /* REGRA PRINCIPAL: Fixa o botão embaixo */
+    transition: var(--transicao);
+    flex-shrink: 0;
+}
+
+.btn-oferta:hover {
+    opacity: 0.9;
+    transform: scale(1.02);
+}
 
         /* RODAPÉ */
         footer {
