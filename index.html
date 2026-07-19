@@ -968,11 +968,16 @@ function renderizarProdutos(listaProdutos) {
         lista.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: var(--texto-claro); padding: 3rem;">Nenhum produto encontrado 😕</p>`;
         return;
     }
-
+// ✅ AQUI É O LUGAR CERTO!
     filtrados.forEach(prod => {
         lista.innerHTML += `
         <div class="card-produto">
+            <!-- ✏️ BOTÃO DE EDITAR JÁ EXISTE AQUI -->
             <button class="btn-editar-card ${usuarioLogado ? 'visivel' : ''}" onclick="abrirEdicao('${prod.id}')" title="Editar produto">✏️</button>
+
+            <!-- 🆕 COLOQUE O BOTÃO DE EXCLUIR LOGO ABAIXO DO DE EDITAR -->
+            <button class="btn-editar-card ${usuarioLogado ? 'visivel' : ''}" style="top: 0.8rem; right: 48px; background: var(--erro);" onclick="excluirProdutoBanco('${prod.id}')" title="Excluir produto">🗑️</button>
+
             <img src="${prod.imagem}" alt="${prod.nome}" class="img-produto" loading="lazy">
             <div class="etiqueta-loja">${prod.loja}</div>
             <div class="info-produto">
