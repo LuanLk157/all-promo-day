@@ -29,6 +29,8 @@
             --sombra: 0 4px 16px rgba(0,0,0,0.08);
             --card: #FFFFFF;
             --transicao: all 0.25s ease;
+            --fundo-modal: rgba(0, 0, 0, 0.6);
+            --desfoque: blur(8px);
         }
 
         [data-tema="neon"] {
@@ -417,6 +419,32 @@
             transform: translateY(-3px);
             border-color: var(--destaque);
         }
+        .btn-editar-card {
+            position: absolute;
+            top: 0.8rem;
+            right: 0.8rem;
+            background: var(--sucesso);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            z-index: 10;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transicao);
+            -webkit-tap-highlight-color: transparent;
+        }
+        .btn-editar-card.visivel {
+            display: flex;
+        }
+        .btn-editar-card:hover {
+            transform: scale(1.1);
+            background: #0e8a3a;
+        }
         .img-produto {
             width: 100%;
             min-height: 200px;
@@ -491,31 +519,35 @@
             transform: scale(1.02);
         }
 
-        .tela-login, .painel-admin {
-            display: none;
+        .modal-centralizado {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: var(--fundo);
+            background: var(--fundo-modal);
+            backdrop-filter: var(--desfoque);
+            display: none;
+            align-items: center;
+            justify-content: center;
             z-index: 10000;
-            overflow-y: auto;
-            padding: 2rem 5%;
+            padding: 1rem;
         }
-        .tela-login.ativa, .painel-admin.ativa {
-            display: block;
+        .modal-centralizado.aberto {
+            display: flex;
         }
-        .caixa-login, .caixa-form {
-            max-width: 500px;
-            margin: 3rem auto;
+        .conteudo-modal {
             background: var(--card);
-            padding: 2rem;
             border-radius: 16px;
+            padding: 2rem;
+            max-width: 520px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
             border: 1px solid var(--borda);
             box-shadow: var(--sombra);
         }
-        .caixa-login h2, .caixa-form h2, .caixa-form h3 {
+        .conteudo-modal h2 {
             text-align: center;
             margin-bottom: 1.5rem;
             color: var(--texto);
@@ -544,16 +576,21 @@
             border-color: var(--destaque);
             box-shadow: 0 0 0 3px rgba(57, 255, 20, 0.15);
         }
-        .btn-entrar, .btn-salvar, .btn-cancelar, .btn-sair, .btn-adicionar {
-            width: 100%;
-            padding: 0.9rem;
+        .botoes-modal {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            justify-content: flex-end;
+            flex-wrap: wrap;
+        }
+        .btn-entrar, .btn-salvar, .btn-adicionar {
+            padding: 0.9rem 1.5rem;
             border: none;
             border-radius: 8px;
             font-size: 1rem;
             font-weight: 700;
             cursor: pointer;
             transition: var(--transicao);
-            margin-top: 0.5rem;
             -webkit-tap-highlight-color: transparent;
         }
         .btn-entrar, .btn-salvar, .btn-adicionar {
@@ -561,13 +598,13 @@
             color: var(--fundo);
         }
         .btn-cancelar {
-            background: var(--borda);
+            padding: 0.9rem 1.5rem;
+            border: 1px solid var(--borda);
+            border-radius: 8px;
+            background: transparent;
             color: var(--texto);
-        }
-        .btn-sair {
-            background: var(--erro);
-            color: white;
-            margin-bottom: 1.5rem;
+            cursor: pointer;
+            transition: var(--transicao);
         }
         .aviso-erro {
             color: var(--erro);
@@ -575,54 +612,6 @@
             margin-top: 0.8rem;
             font-size: 0.9rem;
             display: none;
-        }
-        .lista-admin {
-            max-width: 900px;
-            margin: 2rem auto;
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-        .item-admin {
-            background: var(--card);
-            padding: 1.2rem;
-            border-radius: 12px;
-            border: 1px solid var(--borda);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-        .info-item-admin {
-            flex: 1;
-            min-width: 250px;
-        }
-        .info-item-admin strong {
-            display: block;
-            margin-bottom: 0.2rem;
-        }
-        .acoes-item {
-            display: flex;
-            gap: 0.5rem;
-        }
-        .btn-editar, .btn-excluir {
-            padding: 0.6rem 1rem;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 0.85rem;
-            font-weight: 600;
-            transition: var(--transicao);
-            -webkit-tap-highlight-color: transparent;
-        }
-        .btn-editar {
-            background: var(--sucesso);
-            color: white;
-        }
-        .btn-excluir {
-            background: var(--erro);
-            color: white;
         }
 
         footer {
@@ -646,84 +635,31 @@
             #busca { margin-bottom: 1rem; font-size: 16px; }
             .grade-produtos { grid-template-columns: 1fr; gap: 1.2rem; }
             .btn-oferta { position: relative; z-index: 10; pointer-events: auto; }
-            .item-admin { flex-direction: column; align-items: flex-start; }
-            .acoes-item { width: 100%; justify-content: flex-end; }
             .botao-flutuante { bottom: 1.5rem; right: 1.5rem; }
+            .botoes-modal { justify-content: stretch; }
+            .botoes-modal button { flex: 1; }
         }
     </style>
+
+    <!-- INTEGRAÇÃO FIREBASE COM SUA CONFIGURAÇÃO EXATA -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyC3ZoZTnoIrynJOixenLMGeqQP0WDGXMqw",
+            authDomain: "site-all-promo-day.firebaseapp.com",
+            projectId: "site-all-promo-day",
+            storageBucket: "site-all-promo-day.firebasestorage.app",
+            messagingSenderId: "913430788620",
+            appId: "1:913430788620:web:faad9e21ce69ea6c31cc29",
+            measurementId: "G-LWH5VNYL0X"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const colecaoProdutos = db.collection('produtos');
+    </script>
 </head>
 <body>
-
-<div class="tela-login" id="telaLogin">
-    <div class="caixa-login">
-        <h2>🔐 Acesso Administrativo</h2>
-        <div class="grupo-input">
-            <label for="usuario">Usuário</label>
-            <input type="text" id="usuario" placeholder="Digite seu usuário">
-        </div>
-        <div class="grupo-input">
-            <label for="senha">Senha</label>
-            <input type="password" id="senha" placeholder="Digite sua senha">
-        </div>
-        <button class="btn-entrar" id="btnEntrar">Entrar</button>
-        <div class="aviso-erro" id="avisoErro">Usuário ou senha incorretos!</div>
-        <button class="btn-cancelar" id="btnVoltarSite">Voltar ao Site</button>
-    </div>
-</div>
-
-<div class="painel-admin" id="painelAdmin">
-    <div class="caixa-form">
-        <h2>⚙️ Gerenciar Produtos</h2>
-        <button class="btn-sair" id="btnSair">Sair do Painel</button>
-        <button class="btn-adicionar" id="btnAdicionar">+ Adicionar Novo Produto</button>
-    </div>
-    <div class="lista-admin" id="listaAdmin"></div>
-    <div class="caixa-form" id="formProduto" style="display: none;">
-        <h3 id="tituloForm">Adicionar Novo Produto</h3>
-        <div class="grupo-input">
-            <label>Nome do Produto</label>
-            <input type="text" id="formNome" placeholder="Ex: Smart TV 50 polegadas" required>
-        </div>
-        <div class="grupo-input">
-            <label>Preço (Ex: R$ 1.879,06)</label>
-            <input type="text" id="formPreco" placeholder="R$ 1.879,06" required>
-        </div>
-        <div class="grupo-input">
-            <label>Loja</label>
-            <select id="formLoja" required>
-                <option value="Amazon Brasil">Amazon Brasil</option>
-                <option value="Mercado Livre">Mercado Livre</option>
-                <option value="Shopee">Shopee</option>
-            </select>
-        </div>
-        <div class="grupo-input">
-            <label>Categoria</label>
-            <select id="formCategoria" required>
-                <option value="eletrodomesticos">Eletrodomésticos</option>
-                <option value="banho-cama">Banho e Cama</option>
-                <option value="decoracao">Decoração</option>
-                <option value="kids">Kids / Infantil</option>
-                <option value="gamer">Gamer & Hardware</option>
-                <option value="moveis">Móveis</option>
-                <option value="automotivos">Acessórios Automotivos</option>
-                <option value="pets">Pets</option>
-                <option value="celulares">Celulares e Acessórios</option>
-                <option value="esporte">Esporte e Bem-estar</option>
-                <option value="utilidades">Utilidades e Presentes</option>
-            </select>
-        </div>
-        <div class="grupo-input">
-            <label>Link da Imagem (URL)</label>
-            <input type="text" id="formImagem" placeholder="https://..." required>
-        </div>
-        <div class="grupo-input">
-            <label>Link da Oferta / Afiliado</label>
-            <input type="text" id="formLink" placeholder="https://..." required>
-        </div>
-        <button class="btn-salvar" id="btnSalvar">Salvar Produto</button>
-        <button class="btn-cancelar" id="btnCancelar">Cancelar</button>
-    </div>
-</div>
 
 <div id="sitePublico">
     <div class="aviso-afiliado">
@@ -825,17 +761,138 @@
     </div>
 </div>
 
+<!-- MODAL DE LOGIN (SOMENTE SENHA) -->
+<div class="modal-centralizado" id="modalLogin">
+    <div class="conteudo-modal">
+        <h2>🔐 Acesso Administrativo</h2>
+        <div class="grupo-input">
+            <label>Senha de Acesso</label>
+            <input type="password" id="senhaAdmin" placeholder="Digite a senha..." required>
+        </div>
+        <div class="aviso-erro" id="avisoErro">Senha incorreta!</div>
+        <div class="botoes-modal">
+            <button class="btn-cancelar" id="btnVoltarSite">Voltar ao Site</button>
+            <button class="btn-entrar" id="btnEntrar">Entrar</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL CENTRALIZADO DE ADICIONAR/EDITAR PRODUTO -->
+<div class="modal-centralizado" id="modalProduto">
+    <div class="conteudo-modal">
+        <h2 id="tituloModal">Adicionar Novo Produto</h2>
+        <div class="grupo-input">
+            <label>Nome do Produto</label>
+            <input type="text" id="formNome" placeholder="Ex: Smart TV 50 polegadas" required>
+        </div>
+        <div class="grupo-input">
+            <label>Preço (digite 1234,56 → formato automático R$ 1.234,56)</label>
+            <input type="text" id="formPreco" placeholder="1234,56" required>
+        </div>
+        <div class="grupo-input">
+            <label>Loja</label>
+            <select id="formLoja" required>
+                <option value="Amazon Brasil">Amazon Brasil</option>
+                <option value="Mercado Livre">Mercado Livre</option>
+                <option value="Shopee">Shopee</option>
+            </select>
+        </div>
+        <div class="grupo-input">
+            <label>Categoria</label>
+            <select id="formCategoria" required>
+                <option value="eletrodomesticos">Eletrodomésticos</option>
+                <option value="banho-cama">Banho e Cama</option>
+                <option value="decoracao">Decoração</option>
+                <option value="kids">Kids / Infantil</option>
+                <option value="gamer">Gamer & Hardware</option>
+                <option value="moveis">Móveis</option>
+                <option value="automotivos">Acessórios Automotivos</option>
+                <option value="pets">Pets</option>
+                <option value="celulares">Celulares e Acessórios</option>
+                <option value="esporte">Esporte e Bem-estar</option>
+                <option value="utilidades">Utilidades e Presentes</option>
+            </select>
+        </div>
+        <div class="grupo-input">
+            <label>Link da Imagem (URL)</label>
+            <input type="text" id="formImagem" placeholder="https://..." required>
+        </div>
+        <div class="grupo-input">
+            <label>Link da Oferta / Afiliado</label>
+            <input type="text" id="formLink" placeholder="https://..." required>
+        </div>
+        <div class="botoes-modal">
+            <button class="btn-cancelar" id="btnCancelar">Cancelar</button>
+            <button class="btn-salvar" id="btnSalvar">Salvar</button>
+        </div>
+    </div>
+</div>
+
 <script>
-// ==================== CRÉDENCIAIS CONFORME SOLICITADO ====================
-const CREDENCIAIS = {
-    usuario: "Luan",
-    senha: "Amar3laofdp"
-};
+// ==================== CONFIGURAÇÕES ====================
+const SENHA_ADMIN = "Amar3laofdp";
+let usuarioLogado = false;
+let idEdicao = null;
+let categoriaAtiva = 'todos';
+let lojaAtiva = 'todas';
+let ordemAtiva = 'padrao';
+
+// ==================== FUNÇÕES DE FORMATAÇÃO ====================
+function formatarPreco(valor) {
+    const numero = parseFloat(valor.toString().replace(',', '.'));
+    if (isNaN(numero)) return 'R$ 0,00';
+    return numero.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+}
+
+function extrairPrecoNumerico(valor) {
+    return parseFloat(valor.toString().replace(/[R$\s.]/g, '').replace(',', '.')) || 0;
+}
+
+// ==================== BANCO DE DADOS FIREBASE ====================
+async function carregarProdutosBanco() {
+    try {
+        const snapshot = await colecaoProdutos.orderBy('dataCadastro', 'desc').get();
+        const produtos = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        renderizarProdutos(produtos);
+    } catch (erro) {
+        console.error('Erro ao carregar produtos:', erro);
+        renderizarProdutos(PRODUTOS_PADRAO);
+    }
+}
+
+async function salvarProdutoBanco(dados, idEditar = null) {
+    try {
+        if (idEditar) {
+            await colecaoProdutos.doc(idEditar).update(dados);
+        } else {
+            dados.dataCadastro = firebase.firestore.FieldValue.serverTimestamp();
+            await colecaoProdutos.add(dados);
+        }
+        await carregarProdutosBanco();
+        return true;
+    } catch (erro) {
+        console.error('Erro ao salvar produto:', erro);
+        alert('Erro ao salvar: ' + erro.message);
+        return false;
+    }
+}
+
+async function excluirProdutoBanco(id) {
+    if(confirm('Tem certeza que deseja excluir esse produto?')) {
+        try {
+            await colecaoProdutos.doc(id).delete();
+            await carregarProdutosBanco();
+        } catch (erro) {
+            console.error('Erro ao excluir:', erro);
+            alert('Erro ao excluir: ' + erro.message);
+        }
+    }
+}
 
 // ==================== PRODUTOS PADRÃO ====================
 const PRODUTOS_PADRAO = [
     {
-        id: 1,
+        id: 'padrao1',
         nome: "Smart GoogleTV 50\" 4K HDR10",
         preco: "R$ 1.879,06",
         precoNum: 1879.06,
@@ -845,7 +902,7 @@ const PRODUTOS_PADRAO = [
         link: "https://www.amazon.com.br/Smart-Semp-Polegadas-Bluetooth-Google/dp/B0FPRFS3L1"
     },
     {
-        id: 2,
+        id: 'padrao2',
         nome: "Teclado Mecânico Gamer RGB",
         preco: "R$ 115,61",
         precoNum: 115.61,
@@ -855,7 +912,7 @@ const PRODUTOS_PADRAO = [
         link: "https://meli.la/2jWJxe4"
     },
     {
-        id: 3,
+        id: 'padrao3',
         nome: "Kit Upgrade Ryzen 7 5700x + B550m Aorus Elite",
         preco: "R$ 2.148,55",
         precoNum: 2148.55,
@@ -865,7 +922,7 @@ const PRODUTOS_PADRAO = [
         link: "https://meli.la/1d4rQpt"
     },
     {
-        id: 4,
+        id: 'padrao4',
         nome: "Jogo Lençol Queen Size 4 Peças 400 Fios",
         preco: "R$ 104,41",
         precoNum: 104.41,
@@ -876,31 +933,12 @@ const PRODUTOS_PADRAO = [
     }
 ];
 
-let produtos = JSON.parse(localStorage.getItem('produtos_allpromo')) || PRODUTOS_PADRAO;
-let idEdicao = null;
-let categoriaAtiva = 'todos';
-let lojaAtiva = 'todas';
-let ordemAtiva = 'padrao';
-
-// ==================== FUNÇÕES AUXILIARES ====================
-function salvarProdutos() {
-    localStorage.setItem('produtos_allpromo', JSON.stringify(produtos));
-}
-
-function extrairPrecoNumerico(precoFormatado) {
-    return parseFloat(precoFormatado.replace(/[R$\s.]/g, '').replace(',', '.')) || 0;
-}
-
-function gerarIdUnico() {
-    return Date.now() + Math.floor(Math.random() * 1000);
-}
-
-// ==================== CARREGAR PRODUTOS NO SITE ====================
-function carregarProdutos() {
+// ==================== RENDERIZAR PRODUTOS ====================
+function renderizarProdutos(listaProdutos) {
     const lista = document.getElementById('lista-produtos');
     lista.innerHTML = '';
 
-    let filtrados = [...produtos];
+    let filtrados = [...listaProdutos];
     if(categoriaAtiva !== 'todos') filtrados = filtrados.filter(p => p.categoria === categoriaAtiva);
     if(lojaAtiva !== 'todas') filtrados = filtrados.filter(p => p.loja === lojaAtiva);
 
@@ -924,6 +962,7 @@ function carregarProdutos() {
     filtrados.forEach(prod => {
         lista.innerHTML += `
         <div class="card-produto">
+            <button class="btn-editar-card ${usuarioLogado ? 'visivel' : ''}" onclick="abrirEdicao('${prod.id}')" title="Editar produto">✏️</button>
             <img src="${prod.imagem}" alt="${prod.nome}" class="img-produto" loading="lazy">
             <div class="etiqueta-loja">${prod.loja}</div>
             <div class="info-produto">
@@ -935,32 +974,37 @@ function carregarProdutos() {
     });
 }
 
-// ==================== CARREGAR PRODUTOS NO PAINEL ADM ====================
-function carregarListaAdmin() {
-    const lista = document.getElementById('listaAdmin');
-    lista.innerHTML = '';
-
-    if(produtos.length === 0) {
-        lista.innerHTML = `<p style="text-align:center; color:var(--texto-claro);">Nenhum produto cadastrado ainda.</p>`;
-        return;
-    }
-
-    produtos.forEach(prod => {
-        lista.innerHTML += `
-        <div class="item-admin">
-            <div class="info-item-admin">
-                <strong>${prod.nome}</strong>
-                <span>${prod.preco} • ${prod.loja} • ${prod.categoria}</span>
-            </div>
-            <div class="acoes-item">
-                <button class="btn-editar" onclick="editarProduto(${prod.id})">Editar</button>
-                <button class="btn-excluir" onclick="excluirProduto(${prod.id})">Excluir</button>
-            </div>
-        </div>`;
-    });
+// ==================== FUNÇÕES DE MODAL ====================
+function abrirFormulario() {
+    limparFormulario();
+    document.getElementById('tituloModal').textContent = 'Adicionar Novo Produto';
+    document.getElementById('modalProduto').classList.add('aberto');
+    document.body.style.overflow = 'hidden';
 }
 
-// ==================== FUNÇÕES DE GERENCIAMENTO ====================
+async function abrirEdicao(id) {
+    idEdicao = id;
+    document.getElementById('tituloModal').textContent = 'Editar Produto';
+    
+    try {
+        const doc = await colecaoProdutos.doc(id).get();
+        if(doc.exists) {
+            const prod = doc.data();
+            document.getElementById('formNome').value = prod.nome;
+            document.getElementById('formPreco').value = prod.precoNum;
+            document.getElementById('formLoja').value = prod.loja;
+            document.getElementById('formCategoria').value = prod.categoria;
+            document.getElementById('formImagem').value = prod.imagem;
+            document.getElementById('formLink').value = prod.link;
+        }
+    } catch (erro) {
+        console.error('Erro ao carregar produto:', erro);
+    }
+
+    document.getElementById('modalProduto').classList.add('aberto');
+    document.body.style.overflow = 'hidden';
+}
+
 function limparFormulario() {
     document.getElementById('formNome').value = '';
     document.getElementById('formPreco').value = '';
@@ -971,59 +1015,42 @@ function limparFormulario() {
     idEdicao = null;
 }
 
-function editarProduto(id) {
-    const prod = produtos.find(p => p.id === id);
-    if(!prod) return;
-
-    idEdicao = id;
-    document.getElementById('tituloForm').textContent = 'Editar Produto';
-    document.getElementById('formNome').value = prod.nome;
-    document.getElementById('formPreco').value = prod.preco;
-    document.getElementById('formLoja').value = prod.loja;
-    document.getElementById('formCategoria').value = prod.categoria;
-    document.getElementById('formImagem').value = prod.imagem;
-    document.getElementById('formLink').value = prod.link;
-    document.getElementById('formProduto').style.display = 'block';
+function fecharModal(modalId) {
+    document.getElementById(modalId).classList.remove('aberto');
+    document.body.style.overflow = 'auto';
+    if(modalId === 'modalProduto') limparFormulario();
 }
 
-function excluirProduto(id) {
-    if(confirm('Tem certeza que deseja excluir esse produto?')) {
-        produtos = produtos.filter(p => p.id !== id);
-        salvarProdutos();
-        carregarProdutos();
-        carregarListaAdmin();
-    }
-}
+async function salvarProduto() {
+    const precoBruto = document.getElementById('formPreco').value.trim();
+    const precoFormatado = formatarPreco(precoBruto);
+    const precoNumerico = extrairPrecoNumerico(precoBruto);
 
-function salvarNovoProduto() {
     const dados = {
-        id: idEdicao || gerarIdUnico(),
         nome: document.getElementById('formNome').value.trim(),
-        preco: document.getElementById('formPreco').value.trim(),
-        precoNum: extrairPrecoNumerico(document.getElementById('formPreco').value.trim()),
+        preco: precoFormatado,
+        precoNum: precoNumerico,
         loja: document.getElementById('formLoja').value,
         categoria: document.getElementById('formCategoria').value,
         imagem: document.getElementById('formImagem').value.trim(),
         link: document.getElementById('formLink').value.trim()
     };
 
-    if(idEdicao) {
-        const indice = produtos.findIndex(p => p.id === idEdicao);
-        if(indice !== -1) produtos[indice] = dados;
-    } else {
-        produtos.push(dados);
+    if(!dados.nome || !dados.precoNum || !dados.imagem || !dados.link) {
+        alert('Preencha todos os campos obrigatórios!');
+        return;
     }
 
-    salvarProdutos();
-    carregarProdutos();
-    carregarListaAdmin();
-    limparFormulario();
-    document.getElementById('formProduto').style.display = 'none';
+    const salvo = await salvarProdutoBanco(dados, idEdicao);
+    if(salvo) {
+        fecharModal('modalProduto');
+        alert('Produto salvo com sucesso!');
+    }
 }
 
 // ==================== INICIALIZAÇÃO GERAL ====================
-document.addEventListener('DOMContentLoaded', function() {
-    carregarProdutos();
+document.addEventListener('DOMContentLoaded', async function() {
+    await carregarProdutosBanco();
 
     // Tema
     const corpo = document.body;
@@ -1048,6 +1075,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Botão Flutuante
+
     const btnFlutuante = document.getElementById('btnFlutuante');
     const menuFlutuante = document.getElementById('menuFlutuante');
     btnFlutuante.addEventListener('click', (e) => {
@@ -1062,133 +1090,124 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Categorias
-    document.querySelectorAll('.btn-categoria').forEach(btn => {
-        btn.addEventListener('click', () => {
-            categoriaAtiva = btn.dataset.categoria;
-            document.querySelectorAll('.btn-categoria').forEach(b => b.classList.remove('ativo'));
-            document.querySelectorAll(`[data-categoria="${categoriaAtiva}"]`).forEach(b => b.classList.add('ativo'));
-            carregarProdutos();
-            if(window.innerWidth <= 768) alternarMenu(false);
+    // Acesso Admin
+    document.getElementById('btnAbrirAdmin').addEventListener('click', () => {
+        menuFlutuante.classList.remove('visivel');
+        btnFlutuante.classList.remove('aberto');
+        document.getElementById('modalLogin').classList.add('aberto');
+        document.getElementById('senhaAdmin').value = '';
+        document.getElementById('avisoErro').style.display = 'none';
+        document.body.style.overflow = 'hidden';
+    });
+
+    document.getElementById('btnEntrar').addEventListener('click', () => {
+        const senha = document.getElementById('senhaAdmin').value.trim();
+        if (senha === SENHA_ADMIN) {
+            usuarioLogado = true;
+            fecharModal('modalLogin');
+            carregarProdutosBanco();
+            alert('✅ Acesso liberado! Agora você pode adicionar e editar produtos.');
+        } else {
+            document.getElementById('avisoErro').style.display = 'block';
+        }
+    });
+
+    document.getElementById('btnVoltarSite').addEventListener('click', () => {
+        fecharModal('modalLogin');
+    });
+
+    // Botão Adicionar Produto (aparece após login)
+    document.getElementById('btnAbrirAdmin').addEventListener('click', () => {
+        if (usuarioLogado) {
+            menuFlutuante.innerHTML = `
+                <button class="item-menu destaque" id="btnAdicionar">➕ Adicionar Produto</button>
+                <button class="item-menu" id="btnSair">🚪 Sair do Admin</button>
+                <a href="https://docs.google.com/forms/d/e/1FAIpQLSdWjTw2YpKu6UNG-AND1qkb4FkKGMON5dmlUCPP1H-HDfm7UQ/viewform?usp=sharing" target="_blank" rel="noopener noreferrer" class="item-menu">💡 Enviar Sugestão</a>
+            `;
+            document.getElementById('btnAdicionar').addEventListener('click', abrirFormulario);
+            document.getElementById('btnSair').addEventListener('click', () => {
+                usuarioLogado = false;
+                carregarProdutosBanco();
+                menuFlutuante.classList.remove('visivel');
+                btnFlutuante.classList.remove('aberto');
+                alert('Você saiu do modo administrativo.');
+            });
+        }
+    });
+
+    // Menu Mobile
+    const abrirMenu = document.getElementById('abrirMenu');
+    const fecharMenu = document.getElementById('fecharMenu');
+    const fundoMenu = document.getElementById('fundoMenu');
+    const menuLateral = document.getElementById('menuLateral');
+
+    function alternarMenuMobile(aberto) {
+        fundoMenu.classList.toggle('aberto', aberto);
+        menuLateral.classList.toggle('aberto', aberto);
+        document.body.style.overflow = aberto ? 'hidden' : 'auto';
+    }
+
+    abrirMenu.addEventListener('click', () => alternarMenuMobile(true));
+    fecharMenu.addEventListener('click', () => alternarMenuMobile(false));
+    fundoMenu.addEventListener('click', () => alternarMenuMobile(false));
+
+    // Filtros e Categorias
+    const botoesCategoria = document.querySelectorAll('.btn-categoria');
+    botoesCategoria.forEach(botao => {
+        botao.addEventListener('click', () => {
+            botoesCategoria.forEach(b => b.classList.remove('ativo'));
+            botao.classList.add('ativo');
+            categoriaAtiva = botao.dataset.categoria;
+            alternarMenuMobile(false);
+            carregarProdutosBanco();
         });
     });
 
-    // Filtros
-    const filtroLoja = document.getElementById('filtroLoja');
-    const filtroLojaMobile = document.getElementById('filtroLojaMobile');
-    const filtroOrdem = document.getElementById('filtroOrdem');
-    const filtroOrdemMobile = document.getElementById('filtroOrdemMobile');
-    const busca = document.getElementById('busca');
-
-    busca.addEventListener('input', carregarProdutos);
-    filtroLoja.addEventListener('change', (e) => {
+    document.getElementById('filtroLoja').addEventListener('change', (e) => {
         lojaAtiva = e.target.value;
-        filtroLojaMobile.value = lojaAtiva;
-        carregarProdutos();
+        carregarProdutosBanco();
     });
-    filtroLojaMobile.addEventListener('change', (e) => {
+    document.getElementById('filtroLojaMobile').addEventListener('change', (e) => {
         lojaAtiva = e.target.value;
-        filtroLoja.value = lojaAtiva;
-        alternarMenu(false);
-        carregarProdutos();
+        document.getElementById('filtroLoja').value = lojaAtiva;
+        carregarProdutosBanco();
     });
-    filtroOrdem.addEventListener('change', (e) => {
+
+    document.getElementById('filtroOrdem').addEventListener('change', (e) => {
         ordemAtiva = e.target.value;
-        filtroOrdemMobile.value = ordemAtiva;
-        carregarProdutos();
+        carregarProdutosBanco();
     });
-    filtroOrdemMobile.addEventListener('change', (e) => {
+    document.getElementById('filtroOrdemMobile').addEventListener('change', (e) => {
         ordemAtiva = e.target.value;
-        filtroOrdem.value = ordemAtiva;
-        alternarMenu(false);
-        carregarProdutos();
+        document.getElementById('filtroOrdem').value = ordemAtiva;
+        carregarProdutosBanco();
     });
 
-    // Menu Lateral
-const botaoAbrir = document.getElementById('abrirMenu');
-const botaoFechar = document.getElementById('fecharMenu');
-const menuLateral = document.getElementById('menuLateral');
-const fundoMenu = document.getElementById('fundoMenu');
-function alternarMenu(abrir) {
-    if (abrir) {
-        menuLateral.classList.add('aberto');
-        fundoMenu.classList.add('aberto');
-        document.body.style.overflow = 'hidden';
-    } else {
-        menuLateral.classList.remove('aberto');
-        fundoMenu.classList.remove('aberto');
-        document.body.style.overflow = 'auto';
-    }
-}
-botaoAbrir.addEventListener('click', () => alternarMenu(true));
-botaoFechar.addEventListener('click', () => alternarMenu(false));
-fundoMenu.addEventListener('click', () => alternarMenu(false));
+    // Busca em tempo real
+    document.getElementById('busca').addEventListener('input', debounce(() => {
+        carregarProdutosBanco();
+    }, 350));
 
-// ==================== LOGIN E PAINEL ADMINISTRATIVO ====================
-const telaLogin = document.getElementById('telaLogin');
-const painelAdmin = document.getElementById('painelAdmin');
-const btnAbrirAdmin = document.getElementById('btnAbrirAdmin');
-const btnVoltarSite = document.getElementById('btnVoltarSite');
-const btnEntrar = document.getElementById('btnEntrar');
-const avisoErro = document.getElementById('avisoErro');
-const btnSair = document.getElementById('btnSair');
-const btnAdicionar = document.getElementById('btnAdicionar');
-const btnSalvar = document.getElementById('btnSalvar');
-const btnCancelar = document.getElementById('btnCancelar');
+    // Fechar modais
+    document.getElementById('btnCancelar').addEventListener('click', () => fecharModal('modalProduto'));
+    document.getElementById('btnSalvar').addEventListener('click', salvarProduto);
 
-// Abrir tela de login
-btnAbrirAdmin.addEventListener('click', () => {
-    telaLogin.classList.add('ativa');
-    menuFlutuante.classList.remove('visivel');
-    btnFlutuante.classList.remove('aberto');
-});
+    // Fechar modal ao clicar fora
+    document.querySelectorAll('.modal-centralizado').forEach(modal => {
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) fecharModal(modal.id);
+        });
+    });
 
-// Voltar ao site da tela de login
-btnVoltarSite.addEventListener('click', () => {
-    telaLogin.classList.remove('ativa');
-    avisoErro.style.display = 'none';
-    document.getElementById('usuario').value = '';
-    document.getElementById('senha').value = '';
-});
-
-// Fazer login
-btnEntrar.addEventListener('click', () => {
-    const usu = document.getElementById('usuario').value.trim();
-    const sen = document.getElementById('senha').value.trim();
-    
-    if(usu === CREDENCIAIS.usuario && sen === CREDENCIAIS.senha) {
-        telaLogin.classList.remove('ativa');
-        painelAdmin.classList.add('ativa');
-        carregarListaAdmin();
-    } else {
-        avisoErro.style.display = 'block';
+    // Debounce para busca
+    function debounce(func, delay) {
+        let timeoutId;
+        return (...args) => {
+            clearTimeout(timeoutId);
+            timeoutId = setTimeout(() => func.apply(this, args), delay);
+        };
     }
 });
-
-// Sair do painel admin
-btnSair.addEventListener('click', () => {
-    painelAdmin.classList.remove('ativa');
-    limparFormulario();
-    document.getElementById('formProduto').style.display = 'none';
-});
-
-// Abrir formulário para adicionar novo produto
-btnAdicionar.addEventListener('click', () => {
-    limparFormulario();
-    document.getElementById('tituloForm').textContent = 'Adicionar Novo Produto';
-    document.getElementById('formProduto').style.display = 'block';
-});
-
-// Cancelar edição/adição
-btnCancelar.addEventListener('click', () => {
-    limparFormulario();
-    document.getElementById('formProduto').style.display = 'none';
-});
-
-// Salvar produto
-btnSalvar.addEventListener('click', salvarNovoProduto);
-
-}); // FIM DO DOMContentLoaded
 </script>
 </body>
 </html>
