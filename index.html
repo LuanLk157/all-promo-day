@@ -851,11 +851,20 @@ function extrairPrecoNumerico(valor) {
 // ==================== BANCO DE DADOS FIREBASE ====================
 async function carregarProdutosBanco() {
     try {
-        const snapshot = await colecaoProdutos.orderBy('dataCadastro', 'desc').get();
+        // Removi o orderBy que causava erro em documentos sem dataCadastro
+        const snapshot = await colecaoProdutos.get();
         const produtos = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        renderizarProdutos(produtos);
+        
+        // Se tem produtos salvos, usa eles; senão usa os padrão
+        if (produtos.length > 0) {
+            renderizarProdutos(produtos);
+        } else {
+            console.log('Nenhum produto no banco, usando exemplos...');
+            renderizarProdutos(PRODUTOS_PADRAO);
+        }
     } catch (erro) {
         console.error('Erro ao carregar produtos:', erro);
+        alert('Erro ao ler do banco: ' + erro.message);
         renderizarProdutos(PRODUTOS_PADRAO);
     }
 }
@@ -865,6 +874,7 @@ async function salvarProdutoBanco(dados, idEditar = null) {
         if (idEditar) {
             await colecaoProdutos.doc(idEditar).update(dados);
         } else {
+            // Adiciona data automaticamente para novos produtos
             dados.dataCadastro = firebase.firestore.FieldValue.serverTimestamp();
             await colecaoProdutos.add(dados);
         }
@@ -1075,7 +1085,6 @@ document.addEventListener('DOMContentLoaded', async function() {
     }
 
     // Botão Flutuante
-
     const btnFlutuante = document.getElementById('btnFlutuante');
     const menuFlutuante = document.getElementById('menuFlutuante');
     btnFlutuante.addEventListener('click', (e) => {
@@ -1090,41 +1099,10 @@ document.addEventListener('DOMContentLoaded', async function() {
         }
     });
 
-// Acesso Admin — CORRIGIDO
-document.getElementById('btnAbrirAdmin').addEventListener('click', () => {
-    if (usuarioLogado) {
-        // Se já está logado: abre o menu direto
-        menuFlutuante.innerHTML = `
-            <button class="item-menu destaque" id="btnAdicionar">➕ Adicionar Produto</button>
-            <button class="item-menu" id="btnSair">🚪 Sair do Admin</button>
-            <a href="https://docs.google.com/forms/d/e/1FAIpQLSdWjTw2YpKu6UNG-AND1qkb4FkKGMON5dmlUCPP1H-HDfm7UQ/viewform?usp=sharing" target="_blank" rel="noopener noreferrer" class="item-menu">💡 Enviar Sugestão</a>
-        `;
-        // Adiciona os eventos dos novos botões
-        document.getElementById('btnAdicionar').addEventListener('click', abrirFormulario);
-        document.getElementById('btnSair').addEventListener('click', () => {
-            usuarioLogado = false;
-            carregarProdutosBanco();
-            menuFlutuante.classList.remove('visivel');
-            btnFlutuante.classList.remove('aberto');
-            alert('Você saiu do modo administrativo.');
-        });
-        // Abre o menu flutuante
-        menuFlutuante.classList.add('visivel');
-        btnFlutuante.classList.add('aberto');
-    } else {
-        // Se não está logado: abre a tela de login
-        menuFlutuante.classList.remove('visivel');
-        btnFlutuante.classList.remove('aberto');
-        document.getElementById('modalLogin').classList.add('aberto');
-        document.getElementById('senhaAdmin').value = '';
-        document.getElementById('avisoErro').style.display = 'none';
-        document.body.style.overflow = 'hidden';
-    }
-});
-
-    // Botão Adicionar Produto (aparece após login)
+    // 🔑 LOGIN CORRIGIDO (sem duplicatas)
     document.getElementById('btnAbrirAdmin').addEventListener('click', () => {
         if (usuarioLogado) {
+            // Se já logado: mostra menu de admin direto
             menuFlutuante.innerHTML = `
                 <button class="item-menu destaque" id="btnAdicionar">➕ Adicionar Produto</button>
                 <button class="item-menu" id="btnSair">🚪 Sair do Admin</button>
@@ -1134,11 +1112,35 @@ document.getElementById('btnAbrirAdmin').addEventListener('click', () => {
             document.getElementById('btnSair').addEventListener('click', () => {
                 usuarioLogado = false;
                 carregarProdutosBanco();
-                menuFlutuante.classList.remove('visivel');
-                btnFlutuante.classList.remove('aberto');
                 alert('Você saiu do modo administrativo.');
             });
+            menuFlutuante.classList.add('visivel');
+            btnFlutuante.classList.add('aberto');
+        } else {
+            // Se não logado: abre tela de login
+            menuFlutuante.classList.remove('visivel');
+            btnFlutuante.classList.remove('aberto');
+            document.getElementById('modalLogin').classList.add('aberto');
+            document.getElementById('senhaAdmin').value = '';
+            document.getElementById('avisoErro').style.display = 'none';
+            document.body.style.overflow = 'hidden';
         }
+    });
+
+    document.getElementById('btnEntrar').addEventListener('click', () => {
+        const senha = document.getElementById('senhaAdmin').value.trim();
+        if (senha === SENHA_ADMIN) {
+            usuarioLogado = true;
+            fecharModal('modalLogin');
+            carregarProdutosBanco();
+            alert('✅ Acesso liberado! Agora você pode adicionar e editar produtos.');
+        } else {
+            document.getElementById('avisoErro').style.display = 'block';
+        }
+    });
+
+    document.getElementById('btnVoltarSite').addEventListener('click', () => {
+        fecharModal('modalLogin');
     });
 
     // Menu Mobile
