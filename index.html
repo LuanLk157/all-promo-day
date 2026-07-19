@@ -1090,31 +1090,37 @@ document.addEventListener('DOMContentLoaded', async function() {
         }
     });
 
-    // Acesso Admin
-    document.getElementById('btnAbrirAdmin').addEventListener('click', () => {
+// Acesso Admin — CORRIGIDO
+document.getElementById('btnAbrirAdmin').addEventListener('click', () => {
+    if (usuarioLogado) {
+        // Se já está logado: abre o menu direto
+        menuFlutuante.innerHTML = `
+            <button class="item-menu destaque" id="btnAdicionar">➕ Adicionar Produto</button>
+            <button class="item-menu" id="btnSair">🚪 Sair do Admin</button>
+            <a href="https://docs.google.com/forms/d/e/1FAIpQLSdWjTw2YpKu6UNG-AND1qkb4FkKGMON5dmlUCPP1H-HDfm7UQ/viewform?usp=sharing" target="_blank" rel="noopener noreferrer" class="item-menu">💡 Enviar Sugestão</a>
+        `;
+        // Adiciona os eventos dos novos botões
+        document.getElementById('btnAdicionar').addEventListener('click', abrirFormulario);
+        document.getElementById('btnSair').addEventListener('click', () => {
+            usuarioLogado = false;
+            carregarProdutosBanco();
+            menuFlutuante.classList.remove('visivel');
+            btnFlutuante.classList.remove('aberto');
+            alert('Você saiu do modo administrativo.');
+        });
+        // Abre o menu flutuante
+        menuFlutuante.classList.add('visivel');
+        btnFlutuante.classList.add('aberto');
+    } else {
+        // Se não está logado: abre a tela de login
         menuFlutuante.classList.remove('visivel');
         btnFlutuante.classList.remove('aberto');
         document.getElementById('modalLogin').classList.add('aberto');
         document.getElementById('senhaAdmin').value = '';
         document.getElementById('avisoErro').style.display = 'none';
         document.body.style.overflow = 'hidden';
-    });
-
-    document.getElementById('btnEntrar').addEventListener('click', () => {
-        const senha = document.getElementById('senhaAdmin').value.trim();
-        if (senha === SENHA_ADMIN) {
-            usuarioLogado = true;
-            fecharModal('modalLogin');
-            carregarProdutosBanco();
-            alert('✅ Acesso liberado! Agora você pode adicionar e editar produtos.');
-        } else {
-            document.getElementById('avisoErro').style.display = 'block';
-        }
-    });
-
-    document.getElementById('btnVoltarSite').addEventListener('click', () => {
-        fecharModal('modalLogin');
-    });
+    }
+});
 
     // Botão Adicionar Produto (aparece após login)
     document.getElementById('btnAbrirAdmin').addEventListener('click', () => {
