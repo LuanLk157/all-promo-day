@@ -10,683 +10,114 @@
     <meta property="og:title" content="All Promo Day | As Melhores Ofertas">
     <meta property="og:description" content="Promoções da Amazon, Mercado Livre e Shopee — tudo em um só lugar!">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Roboto, sans-serif;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; }
         :root {
-            --fundo: #FFFFFF;
-            --fundo-secundario: #F8FAFC;
-            --borda: #E2E8F0;
-            --texto: #1E293B;
-            --texto-claro: #64748B;
-            --destaque: #2563EB;
-            --sucesso: #16A34A;
-            --erro: #EF4444;
-            --sombra: 0 4px 16px rgba(0,0,0,0.08);
-            --card: #FFFFFF;
-            --transicao: all 0.25s ease;
-            --fundo-modal: rgba(0, 0, 0, 0.6);
-            --desfoque: blur(8px);
+            --fundo: #FFFFFF; --fundo-secundario: #F8FAFC; --borda: #E2E8F0;
+            --texto: #1E293B; --texto-claro: #64748B; --destaque: #2563EB;
+            --sucesso: #16A34A; --erro: #EF4444; --sombra: 0 4px 16px rgba(0,0,0,0.08);
+            --card: #FFFFFF; --transicao: all 0.25s ease;
+            --fundo-modal: rgba(0, 0, 0, 0.6); --desfoque: blur(8px);
         }
-
         [data-tema="neon"] {
-            --fundo: #120A1F;
-            --fundo-secundario: #1E1035;
-            --borda: #3B245C;
-            --texto: #FFFFFF;
-            --texto-claro: #A78BFA;
-            --destaque: #39FF14;
-            --sucesso: #00B4FF;
-            --erro: #FF4757;
-            --sombra: 0 0 20px rgba(57, 255, 20, 0.15);
+            --fundo: #120A1F; --fundo-secundario: #1E1035; --borda: #3B245C;
+            --texto: #FFFFFF; --texto-claro: #A78BFA; --destaque: #39FF14;
+            --sucesso: #00B4FF; --erro: #FF4757; --sombra: 0 0 20px rgba(57, 255, 20, 0.15);
             --card: #1E1035;
         }
-
-        body {
-            background: var(--fundo);
-            color: var(--texto);
-            line-height: 1.6;
-            transition: var(--transicao);
-            min-height: 100vh;
+        body { background: var(--fundo); color: var(--texto); line-height: 1.6; transition: var(--transicao); min-height: 100vh; }
+        .aviso-afiliado { background: var(--fundo-secundario); border-bottom: 1px solid var(--borda); padding: 0.7rem 5%; font-size: 0.85rem; text-align: center; color: var(--texto-claro); }
+        [data-tema="neon"] .aviso-afiliado { background: rgba(57, 255, 20, 0.05); color: #C74BFF; }
+        header { background: var(--fundo-secundario); border-bottom: 1px solid var(--borda); padding: 1.2rem 5%; position: sticky; top: 0; z-index: 100; }
+        .cabecalho-conteudo { max-width: 1280px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; }
+        .cabecalho-conteudo #buscaDesktop { flex: 1; max-width: 550px; padding: 0.65rem 1rem; font-size: 0.95rem; border: 2px solid var(--borda); border-radius: 12px; background: var(--card); color: var(--texto); outline: none; }
+        .cabecalho-conteudo #buscaDesktop:focus { border-color: var(--destaque); box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1); }
+        #buscaMobile { display: none; width: 100%; padding: 1rem 1.5rem; border: 2px solid var(--borda); border-radius: 12px; font-size: 1rem; background: var(--card); color: var(--texto); outline: none; margin-bottom: 1.2rem; }
+        #buscaMobile:focus { border-color: var(--destaque); }
+        [data-tema="neon"] #buscaMobile:focus { box-shadow: 0 0 15px rgba(57, 255, 20, 0.2); }
+        .logo { font-size: 1.8rem; font-weight: 900; letter-spacing: -0.5px; background-clip: text; -webkit-background-clip: text; color: transparent; background-image: linear-gradient(90deg, #FF6B35, #F7C548, #16C79A, #4D96FF, #9B5DE5, #FF6B35); background-size: 500% 100%; animation: ondaCores 12s linear infinite; }
+        [data-tema="neon"] .logo { background-image: linear-gradient(90deg, #39FF14, #00B4FF, #C74BFF, #FF2E88, #FFD700, #39FF14); animation-duration: 10s; }
+        @keyframes ondaCores { 0% { background-position: 0% 50%; } 100% { background-position: 500% 50%; } }
+        .botao-tema { padding: 0.5rem 0.8rem; border: 1px solid var(--borda); border-radius: 8px; background: var(--card); color: var(--texto); cursor: pointer; font-size: 0.85rem; transition: var(--transicao); -webkit-tap-highlight-color: transparent; }
+        .botao-tema:hover, .botao-tema:active { border-color: var(--destaque); color: var(--destaque); }
+        .botao-flutuante { position: fixed; bottom: 2rem; right: 2rem; z-index: 9999; display: flex; flex-direction: column; align-items: flex-end; gap: 0.8rem; }
+        .btn-principal { width: 56px; height: 56px; border-radius: 50%; border: none; background: var(--destaque); color: white; font-size: 1.5rem; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.15); transition: var(--transicao); -webkit-tap-highlight-color: transparent; display: flex; align-items: center; justify-content: center; }
+        .btn-principal.aberto { transform: rotate(45deg); background: var(--erro); }
+        .menu-flutuante { display: none; flex-direction: column; gap: 0.6rem; background: var(--card); border-radius: 12px; padding: 1rem; box-shadow: var(--sombra); border: 1px solid var(--borda); min-width: 200px; }
+        .menu-flutuante.visivel { display: flex; }
+        .item-menu { padding: 0.7rem; border-radius: 8px; border: none; background: transparent; color: var(--texto); font-size: 0.9rem; text-align: left; cursor: pointer; transition: var(--transicao); -webkit-tap-highlight-color: transparent; text-decoration: none; }
+        .item-menu:hover, .item-menu:active { background: rgba(37, 99, 235, 0.08); color: var(--destaque); padding-left: 1rem; }
+        .item-menu.destaque { color: var(--destaque); font-weight: 600; }
+        .botao-menu { display: none; font-size: 1.5rem; background: var(--card); border: 1px solid var(--borda); border-radius: 8px; padding: 0.5rem 0.7rem; color: var(--texto); cursor: pointer; transition: var(--transicao); z-index: 101; position: relative; -webkit-tap-highlight-color: transparent; }
+        .botao-menu:hover, .botao-menu:active { border-color: var(--destaque); color: var(--destaque); }
+        .fundo-menu { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 998; opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s ease; }
+        .fundo-menu.aberto { opacity: 1; visibility: visible; }
+        .menu-lateral { position: fixed; top: 0; left: 0; width: 280px; max-width: 85vw; height: 100%; background: var(--fundo-secundario); border-right: 1px solid var(--borda); z-index: 999; transform: translateX(-100%); transition: transform 0.3s ease; overflow-y: auto; overscroll-behavior: contain; }
+        .menu-lateral.aberto { transform: translateX(0); }
+        .cabecalho-menu { display: flex; justify-content: space-between; align-items: center; padding: 1.2rem; border-bottom: 1px solid var(--borda); position: sticky; top: 0; background: var(--fundo-secundario); }
+        .cabecalho-menu h3 { margin: 0; color: var(--texto); font-size: 1.2rem; }
+        .botao-fechar { background: transparent; border: none; font-size: 1.4rem; color: var(--texto-claro); cursor: pointer; padding: 0.3rem; transition: var(--transicao); -webkit-tap-highlight-color: transparent; }
+        .botao-fechar:hover, .botao-fechar:active { color: var(--destaque); }
+        .grupo-filtros { padding: 1.2rem; border-bottom: 1px solid var(--borda); }
+        .grupo-filtros h4 { font-size: 0.95rem; margin-bottom: 0.8rem; color: var(--texto); }
+        .categorias-mobile { display: flex; flex-direction: column; gap: 0.5rem; }
+        .categorias-mobile .btn-categoria { width: 100%; text-align: left; border-radius: 8px; padding: 0.7rem 1rem; border: 1px solid var(--borda); background: transparent; color: var(--texto); font-size: 0.9rem; cursor: pointer; transition: var(--transicao); -webkit-tap-highlight-color: transparent; }
+        .categorias-mobile .btn-categoria.ativo, .categorias-mobile .btn-categoria:active { background: var(--destaque); border-color: var(--destaque); color: var(--fundo); }
+        .select-filtro { width: 100%; padding: 0.7rem; border: 1px solid var(--borda); border-radius: 8px; background: var(--card); color: var(--texto); font-size: 0.9rem; cursor: pointer; transition: var(--transicao); }
+        .select-filtro:focus { outline: none; border-color: var(--destaque); }
+        .container { max-width: 1280px; margin: 1.5rem auto; padding: 0 5%; position: relative; z-index: 1; }
+        .categorias { display: flex; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 1rem; }
+        .btn-categoria { padding: 0.55rem 0.9rem; border: 1px solid var(--borda); border-radius: 20px; background: transparent; color: var(--texto); font-size: 0.85rem; cursor: pointer; transition: var(--transicao); -webkit-tap-highlight-color: transparent; }
+        .btn-categoria.ativo, .btn-categoria:hover, .btn-categoria:active { background: var(--destaque); border-color: var(--destaque); color: var(--fundo); }
+        .caixas-filtros { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.8rem; }
+        .caixas-filtros select { min-width: 170px; padding: 0.65rem 1rem; border: 1px solid var(--borda); border-radius: 10px; background: var(--card); color: var(--texto); font-size: 0.9rem; cursor: pointer; transition: var(--transicao); }
+        .caixas-filtros select:focus { outline: none; border-color: var(--destaque); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
+        [data-tema="neon"] .caixas-filtros select:focus { box-shadow: 0 0 12px rgba(57, 255, 20, 0.15); }
+        .grade-produtos { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1.5rem; position: relative; z-index: 1; }
+        .card-produto { background: var(--card); border-radius: 14px; overflow: hidden; border: 1px solid var(--borda); box-shadow: var(--sombra); transition: var(--transicao); display: flex; flex-direction: column; height: 100%; position: relative; z-index: 2; }
+        .card-produto:hover { transform: translateY(-3px); border-color: var(--destaque); }
+        .btn-editar-card { position: absolute; top: 0.8rem; right: 0.8rem; background: var(--sucesso); color: white; border: none; border-radius: 50%; width: 32px; height: 32px; font-size: 0.9rem; cursor: pointer; z-index: 10; display: none; align-items: center; justify-content: center; transition: var(--transicao); -webkit-tap-highlight-color: transparent; }
+        .btn-editar-card.visivel { display: flex; }
+        .btn-editar-card:hover { transform: scale(1.1); background: #0e8a3a; }
+        .btn-excluir-card { position: absolute; top: 0.8rem; right: 48px; background: var(--erro); color: white; border: none; border-radius: 50%; width: 32px; height: 32px; font-size: 0.9rem; cursor: pointer; z-index: 10; display: none; align-items: center; justify-content: center; transition: var(--transicao); -webkit-tap-highlight-color: transparent; }
+        .btn-excluir-card.visivel { display: flex; }
+        .btn-excluir-card:hover { transform: scale(1.1); background: #d62839; }
+        .img-produto { width: 100%; min-height: 200px; max-height: 200px; object-fit: contain; background: var(--fundo-secundario); padding: 1rem; flex-shrink: 0; position: relative; z-index: 1; }
+        .etiqueta-loja { text-align: center; font-size: 0.75rem; font-weight: 600; padding: 0.5rem; color: var(--texto-claro); border-bottom: 1px solid var(--borda); flex-shrink: 0; position: relative; z-index: 1; }
+        .info-produto { padding: 1.2rem; display: flex; flex-direction: column; flex: 1; position: relative; z-index: 1; }
+        .nome-produto { font-size: 1rem; font-weight: 600; line-height: 1.4; margin-bottom: 1rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; flex-shrink: 0; position: relative; z-index: 1; }
+        .preco-produto { font-size: 1.5rem; font-weight: 800; color: var(--sucesso); margin: 0 0 1rem 0; margin-top: auto; flex-shrink: 0; position: relative; z-index: 1; }
+        .btn-oferta { display: block; text-align: center; padding: 0.9rem; background: var(--destaque); color: var(--fundo); text-decoration: none; border-radius: 10px; font-weight: 700; transition: var(--transicao); flex-shrink: 0; position: relative; z-index: 10; pointer-events: auto; -webkit-tap-highlight-color: transparent; }
+        .btn-oferta:hover, .btn-oferta:active { opacity: 0.9; transform: scale(1.02); }
+        .modal-centralizado { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--fundo-modal); backdrop-filter: var(--desfoque); display: none; align-items: center; justify-content: center; z-index: 10000; padding: 1rem; }
+        .modal-centralizado.aberto { display: flex; }
+        .conteudo-modal { background: var(--card); border-radius: 16px; padding: 2rem; max-width: 520px; width: 100%; max-height: 90vh; overflow-y: auto; border: 1px solid var(--borda); box-shadow: var(--sombra); }
+        .conteudo-modal h2 { text-align: center; margin-bottom: 1.5rem; color: var(--texto); }
+        .grupo-input { margin-bottom: 1rem; }
+        .grupo-input label { display: block; margin-bottom: 0.5rem; font-size: 0.9rem; color: var(--texto-claro); font-weight: 500; }
+        .grupo-input input, .grupo-input select { width: 100%; padding: 0.8rem; border: 1px solid var(--borda); border-radius: 8px; background: var(--fundo-secundario); color: var(--texto); font-size: 0.95rem; }
+        .grupo-input input:focus, .grupo-input select:focus { outline: none; border-color: var(--destaque); box-shadow: 0 0 0 3px rgba(57, 255, 20, 0.15); }
+        .botoes-modal { display: flex; gap: 1rem; margin-top: 1.5rem; justify-content: flex-end; flex-wrap: wrap; }
+        .btn-entrar, .btn-salvar, .btn-adicionar { padding: 0.9rem 1.5rem; border: none; border-radius: 8px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: var(--transicao); -webkit-tap-highlight-color: transparent; background: var(--destaque); color: var(--fundo); }
+        .btn-cancelar { padding: 0.9rem 1.5rem; border: 1px solid var(--borda); border-radius: 8px; background: transparent; color: var(--texto); cursor: pointer; transition: var(--transicao); }
+        .aviso-erro { color: var(--erro); text-align: center; margin-top: 0.8rem; font-size: 0.9rem; display: none; }
+        footer { background: var(--fundo-secundario); border-top: 1px solid var(--borda); padding: 2rem 5%; text-align: center; font-size: 0.85rem; color: var(--texto-claro); margin-top: 3rem; position: relative; z-index: 1; }
+        @media (max-width: 768px) {
+            header { padding: 1rem 5%; }
+            .botao-menu { display: block; }
+            .categorias, .caixas-filtros { display: none; }
+            .cabecalho-conteudo { justify-content: flex-start; gap: 0.8rem; flex-wrap: wrap; }
+            .logo { flex: 1; font-size: 1.5rem; }
+            .cabecalho-conteudo #buscaDesktop { display: none !important; }
+            #buscaMobile { display: block !important; }
+            .botao-tema { padding: 0.5rem 0.7rem; font-size: 0.75rem; }
+            .grade-produtos { grid-template-columns: 1fr; gap: 1.2rem; }
+            .btn-oferta { position: relative; z-index: 10; pointer-events: auto; }
+            .botao-flutuante { bottom: 1.5rem; right: 1.5rem; }
+            .botoes-modal { justify-content: stretch; }
+            .botoes-modal button { flex: 1; }
         }
-
-        .aviso-afiliado {
-            background: var(--fundo-secundario);
-            border-bottom: 1px solid var(--borda);
-            padding: 0.7rem 5%;
-            font-size: 0.85rem;
-            text-align: center;
-            color: var(--texto-claro);
-        }
-        [data-tema="neon"] .aviso-afiliado {
-            background: rgba(57, 255, 20, 0.05);
-            color: #C74BFF;
-        }
-
-        header {
-            background: var(--fundo-secundario);
-            border-bottom: 1px solid var(--borda);
-            padding: 1.2rem 5%;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-        .cabecalho-conteudo {
-            max-width: 1280px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 1rem;
-            flex-wrap: wrap;
-        }
-
-        /* ✅ Busca que aparece só no PC */
-.cabecalho-conteudo #buscaDesktop {
-    flex: 1;
-    max-width: 550px;
-    padding: 0.65rem 1rem;
-    font-size: 0.95rem;
-    border: 2px solid var(--borda);
-    border-radius: 12px;
-    background: var(--card);
-    color: var(--texto);
-    outline: none;
-}
-.cabecalho-conteudo #buscaDesktop:focus {
-    border-color: var(--destaque);
-    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
-}
-
-/* ✅ Busca que aparece só no celular (escondida no PC) */
-#buscaMobile {
-    display: none;
-    width: 100%;
-    padding: 1rem 1.5rem;
-    border: 2px solid var(--borda);
-    border-radius: 12px;
-    font-size: 1rem;
-    background: var(--card);
-    color: var(--texto);
-    outline: none;
-    margin-bottom: 1.2rem;
-}
-#buscaMobile:focus {
-    border-color: var(--destaque);
-}
-        [data-tema="neon"] #buscaMobile:focus {
-    box-shadow: 0 0 15px rgba(57, 255, 20, 0.2);
-}
-        .logo {
-            font-size: 1.8rem;
-            font-weight: 900;
-            letter-spacing: -0.5px;
-            background-clip: text;
-            -webkit-background-clip: text;
-            color: transparent;
-            background-image: linear-gradient(90deg, #FF6B35, #F7C548, #16C79A, #4D96FF, #9B5DE5, #FF6B35);
-            background-size: 500% 100%;
-            animation: ondaCores 12s linear infinite;
-        }
-        [data-tema="neon"] .logo {
-            background-image: linear-gradient(90deg, #39FF14, #00B4FF, #C74BFF, #FF2E88, #FFD700, #39FF14);
-            animation-duration: 10s;
-        }
-        @keyframes ondaCores {
-            0% { background-position: 0% 50%; }
-            100% { background-position: 500% 50%; }
-        }
-
-        .botao-tema {
-            padding: 0.5rem 0.8rem;
-            border: 1px solid var(--borda);
-            border-radius: 8px;
-            background: var(--card);
-            color: var(--texto);
-            cursor: pointer;
-            font-size: 0.85rem;
-            transition: var(--transicao);
-            -webkit-tap-highlight-color: transparent;
-        }
-        .botao-tema:hover, .botao-tema:active {
-            border-color: var(--destaque);
-            color: var(--destaque);
-        }
-
-        .botao-flutuante {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            gap: 0.8rem;
-        }
-        .btn-principal {
-            width: 56px;
-            height: 56px;
-            border-radius: 50%;
-            border: none;
-            background: var(--destaque);
-            color: white;
-            font-size: 1.5rem;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            transition: var(--transicao);
-            -webkit-tap-highlight-color: transparent;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .btn-principal.aberto {
-            transform: rotate(45deg);
-            background: var(--erro);
-        }
-        .menu-flutuante {
-            display: none;
-            flex-direction: column;
-            gap: 0.6rem;
-            background: var(--card);
-            border-radius: 12px;
-            padding: 1rem;
-            box-shadow: var(--sombra);
-            border: 1px solid var(--borda);
-            min-width: 200px;
-        }
-        .menu-flutuante.visivel {
-            display: flex;
-        }
-        .item-menu {
-            padding: 0.7rem;
-            border-radius: 8px;
-            border: none;
-            background: transparent;
-            color: var(--texto);
-            font-size: 0.9rem;
-            text-align: left;
-            cursor: pointer;
-            transition: var(--transicao);
-            -webkit-tap-highlight-color: transparent;
-            text-decoration: none;
-        }
-        .item-menu:hover, .item-menu:active {
-            background: rgba(37, 99, 235, 0.08);
-            color: var(--destaque);
-            padding-left: 1rem;
-        }
-        .item-menu.destaque {
-            color: var(--destaque);
-            font-weight: 600;
-        }
-
-        .botao-menu {
-            display: none;
-            font-size: 1.5rem;
-            background: var(--card);
-            border: 1px solid var(--borda);
-            border-radius: 8px;
-            padding: 0.5rem 0.7rem;
-            color: var(--texto);
-            cursor: pointer;
-            transition: var(--transicao);
-            z-index: 101;
-            position: relative;
-            -webkit-tap-highlight-color: transparent;
-        }
-        .botao-menu:hover, .botao-menu:active {
-            border-color: var(--destaque);
-            color: var(--destaque);
-        }
-
-        .fundo-menu {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 998;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
-        }
-        .fundo-menu.aberto {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .menu-lateral {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 280px;
-            max-width: 85vw;
-            height: 100%;
-            background: var(--fundo-secundario);
-            border-right: 1px solid var(--borda);
-            z-index: 999;
-            transform: translateX(-100%);
-            transition: transform 0.3s ease;
-            overflow-y: auto;
-            overscroll-behavior: contain;
-        }
-        .menu-lateral.aberto {
-            transform: translateX(0);
-        }
-
-        .cabecalho-menu {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1.2rem;
-            border-bottom: 1px solid var(--borda);
-            position: sticky;
-            top: 0;
-            background: var(--fundo-secundario);
-        }
-        .cabecalho-menu h3 {
-            margin: 0;
-            color: var(--texto);
-            font-size: 1.2rem;
-        }
-        .botao-fechar {
-            background: transparent;
-            border: none;
-            font-size: 1.4rem;
-            color: var(--texto-claro);
-            cursor: pointer;
-            padding: 0.3rem;
-            transition: var(--transicao);
-            -webkit-tap-highlight-color: transparent;
-        }
-        .botao-fechar:hover, .botao-fechar:active {
-            color: var(--destaque);
-        }
-
-        .grupo-filtros {
-            padding: 1.2rem;
-            border-bottom: 1px solid var(--borda);
-        }
-        .grupo-filtros h4 {
-            font-size: 0.95rem;
-            margin-bottom: 0.8rem;
-            color: var(--texto);
-        }
-        .categorias-mobile {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-        .categorias-mobile .btn-categoria {
-            width: 100%;
-            text-align: left;
-            border-radius: 8px;
-            padding: 0.7rem 1rem;
-            border: 1px solid var(--borda);
-            background: transparent;
-            color: var(--texto);
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: var(--transicao);
-            -webkit-tap-highlight-color: transparent;
-        }
-        .categorias-mobile .btn-categoria.ativo, .categorias-mobile .btn-categoria:active {
-            background: var(--destaque);
-            border-color: var(--destaque);
-            color: var(--fundo);
-        }
-        .select-filtro {
-            width: 100%;
-            padding: 0.7rem;
-            border: 1px solid var(--borda);
-            border-radius: 8px;
-            background: var(--card);
-            color: var(--texto);
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: var(--transicao);
-        }
-        .select-filtro:focus {
-            outline: none;
-            border-color: var(--destaque);
-        }
-
-        .container {
-            max-width: 1280px;
-            margin: 1.5rem auto;
-            padding: 0 5%;
-            position: relative;
-            z-index: 1;
-        }
-        .categorias {
-            display: flex;
-            gap: 0.6rem;
-            flex-wrap: wrap;
-            margin-bottom: 1rem;
-        }
-        .btn-categoria {
-            padding: 0.55rem 0.9rem;
-            border: 1px solid var(--borda);
-            border-radius: 20px;
-            background: transparent;
-            color: var(--texto);
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: var(--transicao);
-            -webkit-tap-highlight-color: transparent;
-        }
-        .btn-categoria.ativo, .btn-categoria:hover, .btn-categoria:active {
-            background: var(--destaque);
-            border-color: var(--destaque);
-            color: var(--fundo);
-        }
-
-        .caixas-filtros {
-            display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
-            margin-bottom: 1.8rem;
-        }
-        .caixas-filtros select {
-            min-width: 170px;
-            padding: 0.65rem 1rem;
-            border: 1px solid var(--borda);
-            border-radius: 10px;
-            background: var(--card);
-            color: var(--texto);
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: var(--transicao);
-        }
-        .caixas-filtros select:focus {
-            outline: none;
-            border-color: var(--destaque);
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-        }
-        [data-tema="neon"] .caixas-filtros select:focus {
-            box-shadow: 0 0 12px rgba(57, 255, 20, 0.15);
-        }
-
-        .grade-produtos {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-            gap: 1.5rem;
-            position: relative;
-            z-index: 1;
-        }
-        .card-produto {
-            background: var(--card);
-            border-radius: 14px;
-            overflow: hidden;
-            border: 1px solid var(--borda);
-            box-shadow: var(--sombra);
-            transition: var(--transicao);
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            position: relative;
-            z-index: 2;
-        }
-        .card-produto:hover {
-            transform: translateY(-3px);
-            border-color: var(--destaque);
-        }
-        .btn-editar-card {
-            position: absolute;
-            top: 0.8rem;
-            right: 0.8rem;
-            background: var(--sucesso);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 32px;
-            height: 32px;
-            font-size: 0.9rem;
-            cursor: pointer;
-            z-index: 10;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            transition: var(--transicao);
-            -webkit-tap-highlight-color: transparent;
-        }
-        .btn-editar-card.visivel {
-            display: flex;
-        }
-        .btn-editar-card:hover {
-            transform: scale(1.1);
-            background: #0e8a3a;
-        }
-        .btn-excluir-card {
-            position: absolute;
-            top: 0.8rem;
-            right: 48px;
-            background: var(--erro);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 32px;
-            height: 32px;
-            font-size: 0.9rem;
-            cursor: pointer;
-            z-index: 10;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            transition: var(--transicao);
-            -webkit-tap-highlight-color: transparent;
-        }
-        .btn-excluir-card.visivel {
-            display: flex;
-        }
-        .btn-excluir-card:hover {
-            transform: scale(1.1);
-            background: #d62839;
-        }
-        .img-produto {
-            width: 100%;
-            min-height: 200px;
-            max-height: 200px;
-            object-fit: contain;
-            background: var(--fundo-secundario);
-            padding: 1rem;
-            flex-shrink: 0;
-            position: relative;
-            z-index: 1;
-        }
-        .etiqueta-loja {
-            text-align: center;
-            font-size: 0.75rem;
-            font-weight: 600;
-            padding: 0.5rem;
-            color: var(--texto-claro);
-            border-bottom: 1px solid var(--borda);
-            flex-shrink: 0;
-            position: relative;
-            z-index: 1;
-        }
-        .info-produto {
-            padding: 1.2rem;
-            display: flex;
-            flex-direction: column;
-            flex: 1;
-            position: relative;
-            z-index: 1;
-        }
-        .nome-produto {
-            font-size: 1rem;
-            font-weight: 600;
-            line-height: 1.4;
-            margin-bottom: 1rem;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-            flex-shrink: 0;
-            position: relative;
-            z-index: 1;
-        }
-        .preco-produto {
-            font-size: 1.5rem;
-            font-weight: 800;
-            color: var(--sucesso);
-            margin: 0 0 1rem 0;
-            margin-top: auto;
-            flex-shrink: 0;
-            position: relative;
-            z-index: 1;
-        }
-        .btn-oferta {
-            display: block;
-            text-align: center;
-            padding: 0.9rem;
-            background: var(--destaque);
-            color: var(--fundo);
-            text-decoration: none;
-            border-radius: 10px;
-            font-weight: 700;
-            transition: var(--transicao);
-            flex-shrink: 0;
-            position: relative;
-            z-index: 10;
-            pointer-events: auto;
-            -webkit-tap-highlight-color: transparent;
-        }
-        .btn-oferta:hover, .btn-oferta:active {
-            opacity: 0.9;
-            transform: scale(1.02);
-        }
-
-        .modal-centralizado {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: var(--fundo-modal);
-            backdrop-filter: var(--desfoque);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 10000;
-            padding: 1rem;
-        }
-        .modal-centralizado.aberto {
-            display: flex;
-        }
-        .conteudo-modal {
-            background: var(--card);
-            border-radius: 16px;
-            padding: 2rem;
-            max-width: 520px;
-            width: 100%;
-            max-height: 90vh;
-            overflow-y: auto;
-            border: 1px solid var(--borda);
-            box-shadow: var(--sombra);
-        }
-        .conteudo-modal h2 {
-            text-align: center;
-            margin-bottom: 1.5rem;
-            color: var(--texto);
-        }
-        .grupo-input {
-            margin-bottom: 1rem;
-        }
-        .grupo-input label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-size: 0.9rem;
-            color: var(--texto-claro);
-            font-weight: 500;
-        }
-        .grupo-input input, .grupo-input select {
-            width: 100%;
-            padding: 0.8rem;
-            border: 1px solid var(--borda);
-            border-radius: 8px;
-            background: var(--fundo-secundario);
-            color: var(--texto);
-            font-size: 0.95rem;
-        }
-        .grupo-input input:focus, .grupo-input select:focus {
-            outline: none;
-            border-color: var(--destaque);
-            box-shadow: 0 0 0 3px rgba(57, 255, 20, 0.15);
-        }
-        .botoes-modal {
-            display: flex;
-            gap: 1rem;
-            margin-top: 1.5rem;
-            justify-content: flex-end;
-            flex-wrap: wrap;
-        }
-        .btn-entrar, .btn-salvar, .btn-adicionar {
-            padding: 0.9rem 1.5rem;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: var(--transicao);
-            -webkit-tap-highlight-color: transparent;
-        }
-        .btn-entrar, .btn-salvar, .btn-adicionar {
-            background: var(--destaque);
-            color: var(--fundo);
-        }
-        .btn-cancelar {
-            padding: 0.9rem 1.5rem;
-            border: 1px solid var(--borda);
-            border-radius: 8px;
-            background: transparent;
-            color: var(--texto);
-            cursor: pointer;
-            transition: var(--transicao);
-        }
-        .aviso-erro {
-            color: var(--erro);
-            text-align: center;
-            margin-top: 0.8rem;
-            font-size: 0.9rem;
-            display: none;
-        }
-
-        footer {
-            background: var(--fundo-secundario);
-            border-top: 1px solid var(--borda);
-            padding: 2rem 5%;
-            text-align: center;
-            font-size: 0.85rem;
-            color: var(--texto-claro);
-            margin-top: 3rem;
-            position: relative;
-            z-index: 1;
-        }
-
-@media (max-width: 768px) {
-    header { padding: 1rem 5%; }
-    .botao-menu { display: block; }
-    .categorias, .caixas-filtros { display: none; }
-    .cabecalho-conteudo { justify-content: flex-start; gap: 0.8rem; flex-wrap: wrap; }
-    .logo { flex: 1; font-size: 1.5rem; }
-    .cabecalho-conteudo #buscaDesktop { display: none !important; }
-    #buscaMobile { display: block !important; }
-    .botao-tema { padding: 0.5rem 0.7rem; font-size: 0.75rem; }
-    .grade-produtos { grid-template-columns: 1fr; gap: 1.2rem; }
-    .btn-oferta { position: relative; z-index: 10; pointer-events: auto; }
-    .botao-flutuante { bottom: 1.5rem; right: 1.5rem; }
-    .botoes-modal { justify-content: stretch; }
-    .botoes-modal button { flex: 1; }
-}
     </style>
 
-    <!-- INTEGRAÇÃO FIREBASE COM SUA CONFIGURAÇÃO EXATA -->
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
     <script>
@@ -705,12 +136,8 @@
     </script>
 </head>
 <body>
-
 <div id="sitePublico">
-    <div class="aviso-afiliado">
-        ⚠️ Links de afiliado: comprando por aqui você ajuda o projeto e ganha descontos sem pagar nada a mais! ✅
-    </div>
-
+    <div class="aviso-afiliado">⚠️ Links de afiliado: comprando por aqui você ajuda o projeto e ganha descontos sem pagar nada a mais! ✅</div>
 <header>
     <div class="cabecalho-conteudo">
         <button class="botao-menu" id="abrirMenu" aria-label="Abrir filtros">☰</button>
@@ -719,7 +146,6 @@
         <button class="botao-tema" id="alternarTema">🌙 Tema Neon</button>
     </div>
 </header>
-
     <div class="fundo-menu" id="fundoMenu"></div>
     <nav class="menu-lateral" id="menuLateral">
         <div class="cabecalho-menu">
@@ -761,7 +187,6 @@
             </select>
         </div>
     </nav>
-
     <main class="container">
     <input type="text" id="buscaMobile" placeholder="🔍 Pesquise por produto, marca ou modelo...">
         <div class="categorias">
@@ -793,11 +218,7 @@
         </div>
         <div class="grade-produtos" id="lista-produtos"></div>
     </main>
-
-    <footer>
-        <p>© 2026 All Promo Day | Preços e estoque sujeitos à alteração conforme a loja oficial.</p>
-    </footer>
-
+    <footer><p>© 2026 All Promo Day | Preços e estoque sujeitos à alteração conforme a loja oficial.</p></footer>
     <div class="botao-flutuante">
         <div class="menu-flutuante" id="menuFlutuante">
             <button class="item-menu destaque" id="btnAbrirAdmin">⚙️ Acesso Administrativo</button>
@@ -806,8 +227,6 @@
         <button class="btn-principal" id="btnFlutuante">+</button>
     </div>
 </div>
-
-<!-- MODAL DE LOGIN (SOMENTE SENHA) -->
 <div class="modal-centralizado" id="modalLogin">
     <div class="conteudo-modal">
         <h2>🔐 Acesso Administrativo</h2>
@@ -822,8 +241,6 @@
         </div>
     </div>
 </div>
-
-<!-- MODAL CENTRALIZADO DE ADICIONAR/EDITAR PRODUTO -->
 <div class="modal-centralizado" id="modalProduto">
     <div class="conteudo-modal">
         <h2 id="tituloModal">Adicionar Novo Produto</h2>
@@ -873,7 +290,6 @@
         </div>
     </div>
 </div>
-
 <script>
 // ==================== CONFIGURAÇÕES ====================
 const SENHA_ADMIN = "Amar3laofdp";
@@ -883,47 +299,44 @@ let categoriaAtiva = 'todos';
 let lojaAtiva = 'todas';
 let ordemAtiva = 'padrao';
 
-// ==================== FUNÇÕES DE FORMATAÇÃO ====================
+// ==================== FUNÇÕES AUXILIARES ====================
+function debounce(func, delay) {
+    let timeoutId;
+    return (...args) => { clearTimeout(timeoutId); timeoutId = setTimeout(() => func.apply(this, args), delay); };
+}
 function formatarPreco(valor) {
     const numero = parseFloat(valor.toString().replace(',', '.'));
     if (isNaN(numero)) return 'R$ 0,00';
     return numero.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 }
-
 function extrairPrecoNumerico(valor) {
     return parseFloat(valor.toString().replace(/[R$\s.]/g, '').replace(',', '.')) || 0;
 }
 
-// ==================== BANCO DE DADOS FIREBASE ====================
+// ==================== PRODUTOS PADRÃO ====================
+const PRODUTOS_PADRAO = [
+    { id: 'padrao1', nome: "teste - Smart GoogleTV 50\" 4K HDR10", preco: "R$ 1.879,06", precoNum: 1879.06, loja: "Amazon Brasil", categoria: "eletrodomesticos", imagem: "https://m.media-amazon.com/images/I/61oybFahwGL._AC_SL1000_.jpg", link: "https://www.amazon.com.br/Smart-Semp-Polegadas-Bluetooth-Google/dp/B0FPRFS3L1" },
+    { id: 'padrao2', nome: "teste - Teclado Mecânico Gamer RGB", preco: "R$ 115,61", precoNum: 115.61, loja: "Mercado Livre", categoria: "gamer", imagem: "https://http2.mlstatic.com/D_NQ_NP_2X_626318-MLB96986865026_112025-F.webp", link: "https://meli.la/2jWJxe4" },
+    { id: 'padrao3', nome: "Teste - Kit Upgrade Ryzen 7 5700x + B550m Aorus Elite", preco: "R$ 2.148,55", precoNum: 2148.55, loja: "Mercado Livre", categoria: "gamer", imagem: "https://http2.mlstatic.com/D_NQ_NP_2X_894040-MLB92282331326_092025-F.webp", link: "https://meli.la/1d4rQpt" },
+    { id: 'padrao4', nome: "Teste - Jogo Lençol Queen Size 4 Peças 400 Fios", preco: "R$ 104,41", precoNum: 104.41, loja: "Shopee", categoria: "banho-cama", imagem: "https://down-br.img.susercontent.com/file/br-11134207-820lu-mnye65kliio139.webp", link: "https://s.shopee.com.br/9Uzysz7yrV" }
+];
+
+// ==================== BANCO DE DADOS ====================
 async function carregarProdutosBanco() {
     try {
-        // Removi o orderBy que causava erro em documentos sem dataCadastro
         const snapshot = await colecaoProdutos.get();
         const produtos = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        
-        // Se tem produtos salvos, usa eles; senão usa os padrão
-        if (produtos.length > 0) {
-            renderizarProdutos(produtos);
-        } else {
-            console.log('Nenhum produto no banco, usando exemplos...');
-            renderizarProdutos(PRODUTOS_PADRAO);
-        }
+        renderizarProdutos(produtos.length > 0 ? produtos : PRODUTOS_PADRAO);
     } catch (erro) {
         console.error('Erro ao carregar produtos:', erro);
         alert('Erro ao ler do banco: ' + erro.message);
         renderizarProdutos(PRODUTOS_PADRAO);
     }
 }
-
 async function salvarProdutoBanco(dados, idEditar = null) {
     try {
-        if (idEditar) {
-            await colecaoProdutos.doc(idEditar).update(dados);
-        } else {
-            // Adiciona data automaticamente para novos produtos
-            dados.dataCadastro = firebase.firestore.FieldValue.serverTimestamp();
-            await colecaoProdutos.add(dados);
-        }
+        if (idEditar) await colecaoProdutos.doc(idEditar).update(dados);
+        else { dados.dataCadastro = firebase.firestore.FieldValue.serverTimestamp(); await colecaoProdutos.add(dados); }
         await carregarProdutosBanco();
         return true;
     } catch (erro) {
@@ -932,82 +345,27 @@ async function salvarProdutoBanco(dados, idEditar = null) {
         return false;
     }
 }
-
 async function excluirProdutoBanco(id) {
     if(confirm('Tem certeza que deseja excluir esse produto?')) {
-        try {
-            await colecaoProdutos.doc(id).delete();
-            await carregarProdutosBanco();
-        } catch (erro) {
-            console.error('Erro ao excluir:', erro);
-            alert('Erro ao excluir: ' + erro.message);
-        }
+        try { await colecaoProdutos.doc(id).delete(); await carregarProdutosBanco(); }
+        catch (erro) { console.error('Erro ao excluir:', erro); alert('Erro ao excluir: ' + erro.message); }
     }
 }
-
-// ==================== PRODUTOS PADRÃO ====================
-const PRODUTOS_PADRAO = [
-    {
-        id: 'padrao1',
-        nome: "teste - Smart GoogleTV 50\" 4K HDR10",
-        preco: "R$ 1.879,06",
-        precoNum: 1879.06,
-        loja: "Amazon Brasil",
-        categoria: "eletrodomesticos",
-        imagem: "https://m.media-amazon.com/images/I/61oybFahwGL._AC_SL1000_.jpg",
-        link: "https://www.amazon.com.br/Smart-Semp-Polegadas-Bluetooth-Google/dp/B0FPRFS3L1"
-    },
-    {
-        id: 'padrao2',
-        nome: "teste - Teclado Mecânico Gamer RGB",
-        preco: "R$ 115,61",
-        precoNum: 115.61,
-        loja: "Mercado Livre",
-        categoria: "gamer",
-        imagem: "https://http2.mlstatic.com/D_NQ_NP_2X_626318-MLB96986865026_112025-F.webp",
-        link: "https://meli.la/2jWJxe4"
-    },
-    {
-        id: 'padrao3',
-        nome: "Teste - Kit Upgrade Ryzen 7 5700x + B550m Aorus Elite",
-        preco: "R$ 2.148,55",
-        precoNum: 2148.55,
-        loja: "Mercado Livre",
-        categoria: "gamer",
-        imagem: "https://http2.mlstatic.com/D_NQ_NP_2X_894040-MLB92282331326_092025-F.webp",
-        link: "https://meli.la/1d4rQpt"
-    },
-    {
-        id: 'padrao4',
-        nome: "Teste - Jogo Lençol Queen Size 4 Peças 400 Fios",
-        preco: "R$ 104,41",
-        precoNum: 104.41,
-        loja: "Shopee",
-        categoria: "banho-cama",
-        imagem: "https://down-br.img.susercontent.com/file/br-11134207-820lu-mnye65kliio139.webp",
-        link: "https://s.shopee.com.br/9Uzysz7yrV"
-    }
-];
 
 // ==================== RENDERIZAR PRODUTOS ====================
 function renderizarProdutos(listaProdutos) {
     const lista = document.getElementById('lista-produtos');
+    if (!lista) return;
     lista.innerHTML = '';
 
     let filtrados = [...listaProdutos];
     if(categoriaAtiva !== 'todos') filtrados = filtrados.filter(p => p.categoria === categoriaAtiva);
     if(lojaAtiva !== 'todas') filtrados = filtrados.filter(p => p.loja === lojaAtiva);
 
-const campoBusca = window.innerWidth >= 768 
-    ? document.getElementById('buscaDesktop') 
-    : document.getElementById('buscaMobile');
-const termoBusca = campoBusca ? campoBusca.value.toLowerCase().trim() : '';
+    const campoBusca = window.innerWidth >= 768 ? document.getElementById('buscaDesktop') : document.getElementById('buscaMobile');
+    const termoBusca = campoBusca ? campoBusca.value.toLowerCase().trim() : '';
     if(termoBusca) {
-        filtrados = filtrados.filter(p => 
-            p.nome.toLowerCase().includes(termoBusca) || 
-            p.loja.toLowerCase().includes(termoBusca) ||
-            p.categoria.toLowerCase().includes(termoBusca)
-        );
+        filtrados = filtrados.filter(p => p.nome.toLowerCase().includes(termoBusca) || p.loja.toLowerCase().includes(termoBusca) || p.categoria.toLowerCase().includes(termoBusca));
     }
 
     if(ordemAtiva === 'menor') filtrados.sort((a, b) => a.precoNum - b.precoNum);
@@ -1017,14 +375,11 @@ const termoBusca = campoBusca ? campoBusca.value.toLowerCase().trim() : '';
         lista.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: var(--texto-claro); padding: 3rem;">Nenhum produto encontrado 😕</p>`;
         return;
     }
-// ✅ AQUI É O LUGAR CERTO!
+
     filtrados.forEach(prod => {
         lista.innerHTML += `
         <div class="card-produto">
-            <!-- ✏️ BOTÃO DE EDITAR JÁ EXISTE AQUI -->
             <button class="btn-editar-card ${usuarioLogado ? 'visivel' : ''}" onclick="abrirEdicao('${prod.id}')" title="Editar produto">✏️</button>
-
-            <!-- 🆕 COLOQUE O BOTÃO DE EXCLUIR LOGO ABAIXO DO DE EDITAR -->
             <button class="btn-excluir-card ${usuarioLogado ? 'visivel' : ''}" onclick="excluirProdutoBanco('${prod.id}')" title="Excluir produto">🗑️</button>
             <img src="${prod.imagem}" alt="${prod.nome}" class="img-produto" loading="lazy">
             <div class="etiqueta-loja">${prod.loja}</div>
@@ -1038,17 +393,9 @@ const termoBusca = campoBusca ? campoBusca.value.toLowerCase().trim() : '';
 }
 
 // ==================== FUNÇÕES DE MODAL ====================
-function abrirFormulario() {
-    limparFormulario();
-    document.getElementById('tituloModal').textContent = 'Adicionar Novo Produto';
-    document.getElementById('modalProduto').classList.add('aberto');
-    document.body.style.overflow = 'hidden';
-}
-
+function abrirFormulario() { limparFormulario(); document.getElementById('tituloModal').textContent = 'Adicionar Novo Produto'; document.getElementById('modalProduto').classList.add('aberto'); document.body.style.overflow = 'hidden'; }
 async function abrirEdicao(id) {
-    idEdicao = id;
-    document.getElementById('tituloModal').textContent = 'Editar Produto';
-    
+    idEdicao = id; document.getElementById('tituloModal').textContent = 'Editar Produto';
     try {
         const doc = await colecaoProdutos.doc(id).get();
         if(doc.exists) {
@@ -1060,55 +407,31 @@ async function abrirEdicao(id) {
             document.getElementById('formImagem').value = prod.imagem;
             document.getElementById('formLink').value = prod.link;
         }
-    } catch (erro) {
-        console.error('Erro ao carregar produto:', erro);
-    }
-
-    document.getElementById('modalProduto').classList.add('aberto');
-    document.body.style.overflow = 'hidden';
+    } catch (erro) { console.error('Erro ao carregar produto:', erro); }
+    document.getElementById('modalProduto').classList.add('aberto'); document.body.style.overflow = 'hidden';
 }
-
 function limparFormulario() {
-    document.getElementById('formNome').value = '';
-    document.getElementById('formPreco').value = '';
-    document.getElementById('formLoja').selectedIndex = 0;
-    document.getElementById('formCategoria').selectedIndex = 0;
-    document.getElementById('formImagem').value = '';
-    document.getElementById('formLink').value = '';
-    idEdicao = null;
+    document.getElementById('formNome').value = ''; document.getElementById('formPreco').value = '';
+    document.getElementById('formLoja').selectedIndex = 0; document.getElementById('formCategoria').selectedIndex = 0;
+    document.getElementById('formImagem').value = ''; document.getElementById('formLink').value = ''; idEdicao = null;
 }
-
 function fecharModal(modalId) {
     document.getElementById(modalId).classList.remove('aberto');
     document.body.style.overflow = 'auto';
     if(modalId === 'modalProduto') limparFormulario();
 }
-
 async function salvarProduto() {
     const precoBruto = document.getElementById('formPreco').value.trim();
     const precoFormatado = formatarPreco(precoBruto);
     const precoNumerico = extrairPrecoNumerico(precoBruto);
-
     const dados = {
-        nome: document.getElementById('formNome').value.trim(),
-        preco: precoFormatado,
-        precoNum: precoNumerico,
-        loja: document.getElementById('formLoja').value,
-        categoria: document.getElementById('formCategoria').value,
-        imagem: document.getElementById('formImagem').value.trim(),
-        link: document.getElementById('formLink').value.trim()
+        nome: document.getElementById('formNome').value.trim(), preco: precoFormatado, precoNum: precoNumerico,
+        loja: document.getElementById('formLoja').value, categoria: document.getElementById('formCategoria').value,
+        imagem: document.getElementById('formImagem').value.trim(), link: document.getElementById('formLink').value.trim()
     };
-
-    if(!dados.nome || !dados.precoNum || !dados.imagem || !dados.link) {
-        alert('Preencha todos os campos obrigatórios!');
-        return;
-    }
-
+    if(!dados.nome || !dados.precoNum || !dados.imagem || !dados.link) { alert('Preencha todos os campos obrigatórios!'); return; }
     const salvo = await salvarProdutoBanco(dados, idEdicao);
-    if(salvo) {
-        fecharModal('modalProduto');
-        alert('Produto salvo com sucesso!');
-    }
+    if(salvo) { fecharModal('modalProduto'); alert('Produto salvo com sucesso!'); }
 }
 
 // ==================== INICIALIZAÇÃO GERAL ====================
@@ -1119,161 +442,74 @@ document.addEventListener('DOMContentLoaded', async function() {
     const corpo = document.body;
     const botaoTema = document.getElementById('alternarTema');
     const temaSalvo = localStorage.getItem('allpromo_tema') || 'claro';
-    aplicarTema(temaSalvo);
-
+    if(temaSalvo === 'neon') corpo.dataset.tema = 'neon';
     botaoTema.addEventListener('click', () => {
         const novoTema = corpo.dataset.tema === 'neon' ? 'claro' : 'neon';
-        aplicarTema(novoTema);
+        if(novoTema === 'neon') corpo.dataset.tema = 'neon';
+        else delete corpo.dataset.tema;
         localStorage.setItem('allpromo_tema', novoTema);
+        botaoTema.textContent = novoTema === 'neon' ? '☀️ Tema Claro' : '🌙 Tema Neon';
     });
-
-    function aplicarTema(tipo) {
-        if(tipo === 'neon') {
-            corpo.dataset.tema = 'neon';
-            botaoTema.textContent = '☀️ Tema Claro';
-        } else {
-            delete corpo.dataset.tema;
-            botaoTema.textContent = '🌙 Tema Neon';
-        }
-    }
 
     // Botão Flutuante
     const btnFlutuante = document.getElementById('btnFlutuante');
     const menuFlutuante = document.getElementById('menuFlutuante');
-    btnFlutuante.addEventListener('click', (e) => {
-        e.stopPropagation();
-        btnFlutuante.classList.toggle('aberto');
-        menuFlutuante.classList.toggle('visivel');
-    });
-    document.addEventListener('click', (e) => {
-        if (!e.target.closest('.botao-flutuante')) {
-            btnFlutuante.classList.remove('aberto');
-            menuFlutuante.classList.remove('visivel');
-        }
-    });
+    btnFlutuante.addEventListener('click', (e) => { e.stopPropagation(); btnFlutuante.classList.toggle('aberto'); menuFlutuante.classList.toggle('visivel'); });
+    document.addEventListener('click', (e) => { if (!e.target.closest('.botao-flutuante')) { btnFlutuante.classList.remove('aberto'); menuFlutuante.classList.remove('visivel'); } });
 
-    // 🔑 LOGIN CORRIGIDO (sem duplicatas)
+    // Login Admin
     document.getElementById('btnAbrirAdmin').addEventListener('click', () => {
         if (usuarioLogado) {
-            // Se já logado: mostra menu de admin direto
             menuFlutuante.innerHTML = `
                 <button class="item-menu destaque" id="btnAdicionar">➕ Adicionar Produto</button>
                 <button class="item-menu" id="btnSair">🚪 Sair do Admin</button>
                 <a href="https://docs.google.com/forms/d/e/1FAIpQLSdWjTw2YpKu6UNG-AND1qkb4FkKGMON5dmlUCPP1H-HDfm7UQ/viewform?usp=sharing" target="_blank" rel="noopener noreferrer" class="item-menu">💡 Enviar Sugestão</a>
             `;
             document.getElementById('btnAdicionar').addEventListener('click', abrirFormulario);
-            document.getElementById('btnSair').addEventListener('click', () => {
-                usuarioLogado = false;
-                carregarProdutosBanco();
-                alert('Você saiu do modo administrativo.');
-            });
-            menuFlutuante.classList.add('visivel');
-            btnFlutuante.classList.add('aberto');
+            document.getElementById('btnSair').addEventListener('click', () => { usuarioLogado = false; carregarProdutosBanco(); alert('Você saiu do modo administrativo.'); });
+            menuFlutuante.classList.add('visivel'); btnFlutuante.classList.add('aberto');
         } else {
-            // Se não logado: abre tela de login
-            menuFlutuante.classList.remove('visivel');
-            btnFlutuante.classList.remove('aberto');
-            document.getElementById('modalLogin').classList.add('aberto');
-            document.getElementById('senhaAdmin').value = '';
-            document.getElementById('avisoErro').style.display = 'none';
-            document.body.style.overflow = 'hidden';
+            menuFlutuante.classList.remove('visivel'); btnFlutuante.classList.remove('aberto');
+            document.getElementById('modalLogin').classList.add('aberto'); document.getElementById('senhaAdmin').value = ''; document.getElementById('avisoErro').style.display = 'none'; document.body.style.overflow = 'hidden';
         }
     });
-
     document.getElementById('btnEntrar').addEventListener('click', () => {
-        const senha = document.getElementById('senhaAdmin').value.trim();
-        if (senha === SENHA_ADMIN) {
-            usuarioLogado = true;
-            fecharModal('modalLogin');
-            carregarProdutosBanco();
-            alert('✅ Acesso liberado! Agora você pode adicionar e editar produtos.');
-        } else {
-            document.getElementById('avisoErro').style.display = 'block';
-        }
+        if (document.getElementById('senhaAdmin').value.trim() === SENHA_ADMIN) { usuarioLogado = true; fecharModal('modalLogin'); carregarProdutosBanco(); alert('✅ Acesso liberado!'); }
+        else document.getElementById('avisoErro').style.display = 'block';
     });
-
-    document.getElementById('btnVoltarSite').addEventListener('click', () => {
-        fecharModal('modalLogin');
-    });
+    document.getElementById('btnVoltarSite').addEventListener('click', () => fecharModal('modalLogin'));
 
     // Menu Mobile
     const abrirMenu = document.getElementById('abrirMenu');
     const fecharMenu = document.getElementById('fecharMenu');
     const fundoMenu = document.getElementById('fundoMenu');
     const menuLateral = document.getElementById('menuLateral');
-
-    function alternarMenuMobile(aberto) {
-        fundoMenu.classList.toggle('aberto', aberto);
-        menuLateral.classList.toggle('aberto', aberto);
-        document.body.style.overflow = aberto ? 'hidden' : 'auto';
-    }
-
+    function alternarMenuMobile(aberto) { fundoMenu.classList.toggle('aberto', aberto); menuLateral.classList.toggle('aberto', aberto); document.body.style.overflow = aberto ? 'hidden' : 'auto'; }
     abrirMenu.addEventListener('click', () => alternarMenuMobile(true));
     fecharMenu.addEventListener('click', () => alternarMenuMobile(false));
     fundoMenu.addEventListener('click', () => alternarMenuMobile(false));
 
     // Filtros e Categorias
-    const botoesCategoria = document.querySelectorAll('.btn-categoria');
-    botoesCategoria.forEach(botao => {
+    document.querySelectorAll('.btn-categoria').forEach(botao => {
         botao.addEventListener('click', () => {
-            botoesCategoria.forEach(b => b.classList.remove('ativo'));
-            botao.classList.add('ativo');
-            categoriaAtiva = botao.dataset.categoria;
-            alternarMenuMobile(false);
-            carregarProdutosBanco();
+            document.querySelectorAll('.btn-categoria').forEach(b => b.classList.remove('ativo'));
+            botao.classList.add('ativo'); categoriaAtiva = botao.dataset.categoria; alternarMenuMobile(false); carregarProdutosBanco();
         });
     });
+    document.getElementById('filtroLoja').addEventListener('change', (e) => { lojaAtiva = e.target.value; carregarProdutosBanco(); });
+    document.getElementById('filtroLojaMobile').addEventListener('change', (e) => { lojaAtiva = e.target.value; document.getElementById('filtroLoja').value = lojaAtiva; carregarProdutosBanco(); alternarMenuMobile(false); });
+    document.getElementById('filtroOrdem').addEventListener('change', (e) => { ordemAtiva = e.target.value; carregarProdutosBanco(); });
+    document.getElementById('filtroOrdemMobile').addEventListener('change', (e) => { ordemAtiva = e.target.value; document.getElementById('filtroOrdem').value = ordemAtiva; carregarProdutosBanco(); alternarMenuMobile(false); });
 
-    document.getElementById('filtroLoja').addEventListener('change', (e) => {
-        lojaAtiva = e.target.value;
-        carregarProdutosBanco();
-    });
-    document.getElementById('filtroLojaMobile').addEventListener('change', (e) => {
-        lojaAtiva = e.target.value;
-        document.getElementById('filtroLoja').value = lojaAtiva;
-        carregarProdutosBanco();
-    });
+    // Busca
+    const executarBusca = debounce(carregarProdutosBanco, 350);
+    document.getElementById('buscaDesktop').addEventListener('input', executarBusca);
+    document.getElementById('buscaMobile').addEventListener('input', executarBusca);
 
-    document.getElementById('filtroOrdem').addEventListener('change', (e) => {
-        ordemAtiva = e.target.value;
-        carregarProdutosBanco();
-    });
-    document.getElementById('filtroOrdemMobile').addEventListener('change', (e) => {
-        ordemAtiva = e.target.value;
-        document.getElementById('filtroOrdem').value = ordemAtiva;
-        carregarProdutosBanco();
-    });
-
-    // 🔍 Busca em tempo real (funciona em PC e Celular)
-    function executarBusca() {
-        carregarProdutosBanco();
-    }
-
-    // Busca do cabeçalho (Desktop)
-    document.getElementById('buscaDesktop').addEventListener('input', debounce(executarBusca, 350));
-
-    // Busca do conteúdo (Mobile)
-    document.getElementById('buscaMobile').addEventListener('input', debounce(executarBusca, 350));
-    
-    // Fechar modais
+    // Ações dos modais
     document.getElementById('btnCancelar').addEventListener('click', () => fecharModal('modalProduto'));
     document.getElementById('btnSalvar').addEventListener('click', salvarProduto);
-
-    // Fechar modal ao clicar fora
-    document.querySelectorAll('.modal-centralizado').forEach(modal => {
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) fecharModal(modal.id);
-        });
-    });
-
-    // Debounce para busca
-    function debounce(func, delay) {
-        let timeoutId;
-        return (...args) => {
-            clearTimeout(timeoutId);
-            timeoutId = setTimeout(() => func.apply(this, args), delay);
-        };
-    }
+    document.querySelectorAll('.modal-centralizado').forEach(modal => { modal.addEventListener('click', (e) => { if (e.target === modal) fecharModal(modal.id); }); });
 });
 </script>
 </body>
