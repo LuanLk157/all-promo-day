@@ -635,15 +635,15 @@
             z-index: 1;
         }
 
-     @media (max-width: 768px) {
+@media (max-width: 768px) {
     header { padding: 1rem 5%; }
     .botao-menu { display: block; }
     .categorias, .caixas-filtros { display: none; }
-    .cabecalho-conteudo { justify-content: space-between; gap: 0.8rem; }
-    .logo { font-size: 1.5rem; }
-    /* Busca VOLTA para o lugar original no celular */
-    .cabecalho-conteudo #busca { display: none; }
-    #busca { display: block; margin-bottom: 1rem; font-size: 16px; }
+    .cabecalho-conteudo { justify-content: flex-start; gap: 0.8rem; flex-wrap: wrap; }
+    .logo { flex: 1; font-size: 1.5rem; }
+    /* No celular: busca sai do cabeçalho e aparece normalmente abaixo */
+    .cabecalho-conteudo #busca { display: none !important; }
+    main #busca { display: block !important; width: 100%; margin-bottom: 1rem; font-size: 16px; }
     .botao-tema { padding: 0.5rem 0.7rem; font-size: 0.75rem; }
     .grade-produtos { grid-template-columns: 1fr; gap: 1.2rem; }
     .btn-oferta { position: relative; z-index: 10; pointer-events: auto; }
