@@ -82,8 +82,17 @@
             justify-content: space-between;
             align-items: center;
             gap: 1rem;
+            flex-wrap: Wrap;
         }
 
+         /* ✅ Barra de pesquisa dentro do cabeçalho */
+         .cabecalho-conteudo #busca {
+           flex: 1;
+          max-width: 550px;
+          margin: 0;
+          padding: 0.65rem 1rem;
+          font-size: 0.95rem;
+        }
         .logo {
             font-size: 1.8rem;
             font-weight: 900;
@@ -627,18 +636,24 @@
         }
 
         @media (max-width: 768px) {
-            .botao-menu { display: block; }
-            .categorias, .caixas-filtros { display: none; }
-            .cabecalho-conteudo { justify-content: flex-start; gap: 0.8rem; }
-            .logo { flex: 1; font-size: 1.5rem; }
-            .botao-tema { padding: 0.5rem 0.7rem; font-size: 0.75rem; }
-            #busca { margin-bottom: 1rem; font-size: 16px; }
-            .grade-produtos { grid-template-columns: 1fr; gap: 1.2rem; }
-            .btn-oferta { position: relative; z-index: 10; pointer-events: auto; }
-            .botao-flutuante { bottom: 1.5rem; right: 1.5rem; }
-            .botoes-modal { justify-content: stretch; }
-            .botoes-modal button { flex: 1; }
-        }
+    header { padding: 1rem 5%; }
+    .botao-menu { display: block; }
+    .categorias, .caixas-filtros { display: none; }
+    .cabecalho-conteudo { justify-content: flex-start; gap: 0.8rem; }
+    .logo { flex: 1; font-size: 1.5rem; }
+    .cabecalho-conteudo #busca {
+        order: 3;
+        width: 100%;
+        max-width: 100%;
+        font-size: 16px;
+    }
+    .botao-tema { padding: 0.5rem 0.7rem; font-size: 0.75rem; }
+    .grade-produtos { grid-template-columns: 1fr; gap: 1.2rem; }
+    .btn-oferta { position: relative; z-index: 10; pointer-events: auto; }
+    .botao-flutuante { bottom: 1.5rem; right: 1.5rem; }
+    .botoes-modal { justify-content: stretch; }
+    .botoes-modal button { flex: 1; }
+}
     </style>
 
     <!-- INTEGRAÇÃO FIREBASE COM SUA CONFIGURAÇÃO EXATA -->
@@ -670,6 +685,7 @@
         <div class="cabecalho-conteudo">
             <button class="botao-menu" id="abrirMenu" aria-label="Abrir filtros">☰</button>
             <div class="logo">All Promo Day</div>
+            <input type="text" id="busca" placeholder="🔍 Pesquise por produto, marca ou modelo...">
             <button class="botao-tema" id="alternarTema">🌙 Tema Neon</button>
         </div>
     </header>
@@ -717,7 +733,6 @@
     </nav>
 
     <main class="container">
-        <input type="text" id="busca" placeholder="🔍 Pesquise por produto, marca ou modelo...">
         <div class="categorias">
             <button class="btn-categoria ativo" data-categoria="todos">Todos</button>
             <button class="btn-categoria" data-categoria="eletrodomesticos">Eletrodomésticos</button>
