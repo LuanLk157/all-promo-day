@@ -972,7 +972,8 @@ function renderizarProdutos(listaProdutos) {
     if(categoriaAtiva !== 'todos') filtrados = filtrados.filter(p => p.categoria === categoriaAtiva);
     if(lojaAtiva !== 'todas') filtrados = filtrados.filter(p => p.loja === lojaAtiva);
 
-    const termoBusca = document.getElementById('buscaMobile').value.toLowerCase().trim();
+const campoBusca = document.getElementById('buscaMobile');
+const termoBusca = campoBusca ? campoBusca.value.toLowerCase().trim() : '';
     if(termoBusca) {
         filtrados = filtrados.filter(p => 
             p.nome.toLowerCase().includes(termoBusca) || 
