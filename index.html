@@ -82,17 +82,45 @@
             justify-content: space-between;
             align-items: center;
             gap: 1rem;
-            flex-wrap: Wrap;
+            flex-wrap: wrap;
         }
 
-         /* ✅ Barra de pesquisa dentro do cabeçalho */
-         .cabecalho-conteudo #busca {
-           flex: 1;
-          max-width: 550px;
-          margin: 0;
-          padding: 0.65rem 1rem;
-          font-size: 0.95rem;
-        }
+        /* ✅ Busca que aparece só no PC */
+.cabecalho-conteudo #buscaDesktop {
+    flex: 1;
+    max-width: 550px;
+    padding: 0.65rem 1rem;
+    font-size: 0.95rem;
+    border: 2px solid var(--borda);
+    border-radius: 12px;
+    background: var(--card);
+    color: var(--texto);
+    outline: none;
+}
+.cabecalho-conteudo #buscaDesktop:focus {
+    border-color: var(--destaque);
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+}
+
+/* ✅ Busca que aparece só no celular (escondida no PC) */
+#buscaMobile {
+    display: none;
+    width: 100%;
+    padding: 1rem 1.5rem;
+    border: 2px solid var(--borda);
+    border-radius: 12px;
+    font-size: 1rem;
+    background: var(--card);
+    color: var(--texto);
+    outline: none;
+    margin-bottom: 1.2rem;
+}
+#buscaMobile:focus {
+    border-color: var(--destaque);
+}
+        [data-tema="neon"] #buscaMobile:focus {
+    box-shadow: 0 0 15px rgba(57, 255, 20, 0.2);
+}
         .logo {
             font-size: 1.8rem;
             font-weight: 900;
@@ -335,26 +363,6 @@
             position: relative;
             z-index: 1;
         }
-        #busca {
-            width: 100%;
-            padding: 1rem 1.5rem;
-            border: 2px solid var(--borda);
-            border-radius: 12px;
-            font-size: 1rem;
-            background: var(--card);
-            color: var(--texto);
-            outline: none;
-            margin-bottom: 1.2rem;
-            transition: var(--transicao);
-        }
-        #busca:focus {
-            border-color: var(--destaque);
-            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
-        }
-        [data-tema="neon"] #busca:focus {
-            box-shadow: 0 0 15px rgba(57, 255, 20, 0.2);
-        }
-
         .categorias {
             display: flex;
             gap: 0.6rem;
@@ -641,9 +649,8 @@
     .categorias, .caixas-filtros { display: none; }
     .cabecalho-conteudo { justify-content: flex-start; gap: 0.8rem; flex-wrap: wrap; }
     .logo { flex: 1; font-size: 1.5rem; }
-    /* No celular: busca sai do cabeçalho e aparece normalmente abaixo */
-    .cabecalho-conteudo #busca { display: none !important; }
-    main #busca { display: block !important; width: 100%; margin-bottom: 1rem; font-size: 16px; }
+    .cabecalho-conteudo #buscaDesktop { display: none !important; }
+    #buscaMobile { display: block !important; }
     .botao-tema { padding: 0.5rem 0.7rem; font-size: 0.75rem; }
     .grade-produtos { grid-template-columns: 1fr; gap: 1.2rem; }
     .btn-oferta { position: relative; z-index: 10; pointer-events: auto; }
@@ -678,13 +685,14 @@
         ⚠️ Links de afiliado: comprando por aqui você ajuda o projeto e ganha descontos sem pagar nada a mais! ✅
     </div>
 
-    <header>
-        <div class="cabecalho-conteudo">
-            <button class="botao-menu" id="abrirMenu" aria-label="Abrir filtros">☰</button>
-            <div class="logo">All Promo Day</div>
-            <button class="botao-tema" id="alternarTema">🌙 Tema Neon</button>
-        </div>
-    </header>
+<header>
+    <div class="cabecalho-conteudo">
+        <button class="botao-menu" id="abrirMenu" aria-label="Abrir filtros">☰</button>
+        <div class="logo">All Promo Day</div>
+        <input type="text" id="buscaDesktop" placeholder="🔍 Pesquise por produto, marca ou modelo...">
+        <button class="botao-tema" id="alternarTema">🌙 Tema Neon</button>
+    </div>
+</header>
 
     <div class="fundo-menu" id="fundoMenu"></div>
     <nav class="menu-lateral" id="menuLateral">
@@ -729,7 +737,7 @@
     </nav>
 
     <main class="container">
-        <input type="text" id="busca" placeholder="🔍 Pesquise por produto, marca ou modelo...">
+    <input type="text" id="buscaMobile" placeholder="🔍 Pesquise por produto, marca ou modelo...">
         <div class="categorias">
             <button class="btn-categoria ativo" data-categoria="todos">Todos</button>
             <button class="btn-categoria" data-categoria="eletrodomesticos">Eletrodomésticos</button>
@@ -1209,9 +1217,9 @@ document.addEventListener('DOMContentLoaded', async function() {
     });
 
     // Busca em tempo real
-    document.getElementById('busca').addEventListener('input', debounce(() => {
-        carregarProdutosBanco();
-    }, 350));
+   document.getElementById('buscaMobile').addEventListener('input', debounce(() => {
+    carregarProdutosBanco();
+}, 350));
 
     // Fechar modais
     document.getElementById('btnCancelar').addEventListener('click', () => fecharModal('modalProduto'));
