@@ -116,6 +116,12 @@
             .botoes-modal { justify-content: stretch; }
             .botoes-modal button { flex: 1; }
         }
+        /* Estilos do Painel ADM */
+        .aba-painel { text-align:left; padding:0.7rem 1rem; border-radius:8px; border:none; background:transparent; color:var(--texto); cursor:pointer; transition: var(--transicao); }
+        .aba-painel.ativa { background:var(--destaque); color:white; }
+        .btn.sucesso { background: var(--sucesso); color: white; border: none; padding: 0.5rem 0.8rem; border-radius: 6px; cursor: pointer; margin-right: 0.3rem; }
+        .btn.perigo { background: var(--erro); color: white; border: none; padding: 0.5rem 0.8rem; border-radius: 6px; cursor: pointer; }
+        .ordenar-coluna { cursor: pointer; }
     </style>
 
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -173,7 +179,7 @@
             <h4>Loja</h4>
             <select id="filtroLojaMobile" class="select-filtro">
                 <option value="todas">Todas as Lojas</option>
-                <option value="Amazon Brasil">Amazon</option>
+                <option value="Amazon Brasil">Amazon Brasil</option>
                 <option value="Mercado Livre">Mercado Livre</option>
                 <option value="Shopee">Shopee</option>
             </select>
@@ -206,7 +212,7 @@
         <div class="caixas-filtros">
             <select id="filtroLoja">
                 <option value="todas">Todas as Lojas</option>
-                <option value="Amazon Brasil">Amazon</option>
+                <option value="Amazon Brasil">Amazon Brasil</option>
                 <option value="Mercado Livre">Mercado Livre</option>
                 <option value="Shopee">Shopee</option>
             </select>
@@ -255,6 +261,7 @@
         <div class="grupo-input">
             <label>Loja</label>
             <select id="formLoja" required>
+                <option value="">Selecione...</option>
                 <option value="Amazon Brasil">Amazon Brasil</option>
                 <option value="Mercado Livre">Mercado Livre</option>
                 <option value="Shopee">Shopee</option>
@@ -290,6 +297,90 @@
         </div>
     </div>
 </div>
+
+<!-- Painel Administrativo -->
+<div id="painelAdm" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:var(--fundo); z-index:99999;">
+    <div style="display:flex; height:100%;">
+        <nav style="width:260px; background:var(--fundo-secundario); border-right:1px solid var(--borda); padding:1.5rem; display:flex; flex-direction:column; gap:0.5rem;">
+            <div style="font-size:1.3rem; font-weight:700; color:var(--destaque); margin-bottom:1.5rem;">⚙️ Painel ADM</div>
+            <button class="aba-painel ativa" data-aba="adicionar">🆕 Adicionar Produto</button>
+            <button class="aba-painel" data-aba="revisar">📋 Revisar Produtos</button>
+            <button class="aba-painel" data-aba="config">⚙️ Configurações</button>
+            <div style="margin-top:auto;">
+                <button id="btnSairAdm" style="width:100%; padding:0.7rem; border-radius:8px; border:1px solid var(--borda); background:transparent; color:var(--erro); cursor:pointer;">🚪 Sair</button>
+            </div>
+        </nav>
+        <main style="flex:1; padding:2rem; overflow-y:auto;">
+            <div style="display:flex; gap:0.8rem; align-items:center; padding:1rem; background:var(--card); border-radius:10px; border:1px solid var(--borda); margin-bottom:1.5rem;">
+                <span>🔗</span>
+                <input type="text" id="linkRapidoAdm" placeholder="Cole o link do produto aqui para cadastrar rápido..." style="flex:1; padding:0.6rem; border:1px solid var(--borda); border-radius:8px; background:var(--fundo-secundario); color:var(--texto);">
+                <button id="btnImportarLink" style="padding:0.6rem 1.2rem; background:var(--destaque); color:white; border:none; border-radius:8px; cursor:pointer;">Importar</button>
+            </div>
+            <div id="abaAdicionar" class="conteudo-aba" style="display:block;">
+                <h2 style="margin-bottom:1.5rem;">🆕 Adicionar Novo Produto</h2>
+                <div class="grupo-input">
+                    <label>Nome do Produto</label>
+                    <input type="text" id="admNome" required>
+                </div>
+                <div class="grupo-input">
+                    <label>Loja</label>
+                    <select id="admLoja" required>
+                        <option value="">Selecione...</option>
+                        <option value="Amazon Brasil">Amazon Brasil</option>
+                        <option value="Mercado Livre">Mercado Livre</option>
+                        <option value="Shopee">Shopee</option>
+                    </select>
+                </div>
+                <div class="grupo-input">
+                    <label>Preço (R$)</label>
+                    <input type="text" id="admPreco" placeholder="Ex: 189,90" required>
+                </div>
+                <div class="grupo-input">
+                    <label>Link da Imagem (URL)</label>
+                    <input type="text" id="admImagem" required>
+                </div>
+                <div class="grupo-input">
+                    <label>Link da Oferta / Afiliado</label>
+                    <input type="text" id="admLink" required>
+                </div>
+                <div class="grupo-input" style="background:rgba(245,158,11,0.08); padding:0.8rem; border-radius:8px; border:1px solid rgba(245,158,11,0.3);">
+                    <label style="font-weight:600;">Status Atual:</label>
+                    <span style="color:#F59E0B; font-weight:500;">🟡 Pendente</span>
+                    <p style="font-size:0.8rem; margin-top:0.3rem; color:var(--texto-claro);">Será alterado automaticamente para Ativo quando todos os dados estiverem corretos.</p>
+                </div>
+                <div class="botoes-modal" style="margin-top:1.5rem;">
+                    <button type="button" class="btn-cancelar" id="btnCancelarProduto">Cancelar</button>
+                    <button type="button" class="btn-salvar" id="btnSalvarProduto">Salvar</button>
+                </div>
+            </div>
+            <div id="abaRevisar" class="conteudo-aba" style="display:none;">
+                <h2 style="margin-bottom:1.5rem;">📋 Revisar Todos os Produtos</h2>
+                <div style="margin-bottom:1rem; display:flex; gap:0.5rem;">
+                    <button id="btnAtivarSelecionados" class="btn sucesso">✅ Ativar Selecionados</button>
+                    <button id="btnDesativarSelecionados" class="btn perigo">❌ Desativar Selecionados</button>
+                </div>
+                <table style="width:100%; border-collapse:separate; border-spacing:0; border-radius:10px; overflow:hidden; background:var(--card); border:1px solid var(--borda);">
+                    <thead>
+                        <tr style="background:var(--fundo-secundario);">
+                            <th style="padding:1rem; text-align:left;"><input type="checkbox" id="selecionarTodos"></th>
+                            <th class="ordenar-coluna" data-coluna="nome" style="padding:1rem; text-align:left;">Nome do Produto ↕</th>
+                            <th class="ordenar-coluna" data-coluna="loja" style="padding:1rem; text-align:left;">Loja ↕</th>
+                            <th class="ordenar-coluna" data-coluna="preco" style="padding:1rem; text-align:left;">Preço ↕</th>
+                            <th class="ordenar-coluna" data-coluna="status" style="padding:1rem; text-align:left;">Status ↕</th>
+                            <th style="padding:1rem; text-align:left;">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="listaProdutosAdm"></tbody>
+                </table>
+            </div>
+            <div id="abaConfig" class="conteudo-aba" style="display:none;">
+                <h2 style="margin-bottom:1.5rem;">⚙️ Configurações</h2>
+                <p style="color:var(--texto-claro);">Espaço reservado para ajustes futuros.</p>
+            </div>
+        </main>
+    </div>
+</div>
+
 <script>
 // ==================== CONFIGURAÇÕES ====================
 const SENHA_ADMIN = "Amar3laofdp";
@@ -298,21 +389,77 @@ let idEdicao = null;
 let categoriaAtiva = 'todos';
 let lojaAtiva = 'todas';
 let ordemAtiva = 'padrao';
+let ordenacao = { coluna: null, ciclo: 0 };
+let produtosBanco = [];
 
-// ==================== FUNÇÕES AUXILIARES ====================
+// ==================== FUNÇÕES AUXILIARES CORRIGIDAS DEFINITIVAMENTE ====================
 function debounce(func, delay) {
     let timeoutId;
-    return (...args) => { clearTimeout(timeoutId); timeoutId = setTimeout(() => func.apply(this, args), delay); };
-}
-function formatarPreco(valor) {
-    const numero = parseFloat(valor.toString().replace(',', '.'));
-    if (isNaN(numero)) return 'R$ 0,00';
-    return numero.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-}
-function extrairPrecoNumerico(valor) {
-    return parseFloat(valor.toString().replace(/[R$\s.]/g, '').replace(',', '.')) || 0;
+    return (...args) => {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => func.apply(this, args), delay);
+    };
 }
 
+function formatarPreco(valor) {
+    if (!valor && valor !== 0) return 'R$ 0,00';
+    let texto = String(valor);
+    // Remove apenas símbolo R$ e espaços
+    texto = texto.replace(/[R$\s]/g, '');
+    // Se tem vírgula → ela é o decimal, apaga pontos de milhar
+    if (texto.includes(',')) {
+        texto = texto.replace(/\./g, '');
+        texto = texto.replace(',', '.');
+    }
+    // Se não tem vírgula → últimos 2 dígitos são centavos
+    else if (texto.length > 2) {
+        texto = texto.slice(0, -2) + '.' + texto.slice(-2);
+    }
+    const numero = parseFloat(texto);
+    if (isNaN(numero)) return 'R$ 0,00';
+    return numero.toLocaleString('pt-BR', {
+        style: 'currency',
+        currency: 'BRL',
+        minimumFractionDigits: 2
+    });
+}
+
+function extrairPrecoNumerico(valor) {
+    if (!valor && valor !== 0) return 0;
+    let texto = String(valor);
+    texto = texto.replace(/[R$\s]/g, '');
+    if (texto.includes(',')) {
+        texto = texto.replace(/\./g, '');
+        texto = texto.replace(',', '.');
+    }
+    else if (texto.length > 2) {
+        texto = texto.slice(0, -2) + '.' + texto.slice(-2);
+    }
+    const numero = parseFloat(texto);
+    return isNaN(numero) ? 0 : numero;
+}
+    
+function abrirPainelAdm() {
+    if(usuarioLogado) {
+        document.getElementById('painelAdm').style.display = 'block';
+        carregarListaProdutosAdm();
+    }
+}
+
+function fecharPainelAdm() {
+    document.getElementById('painelAdm').style.display = 'none';
+}
+
+function validarDadosProduto(dados) {
+    const erros = [];
+    if(!dados.nome || dados.nome.length < 5) erros.push('Nome muito curto ou vazio');
+    if(/[_#$*]/.test(dados.nome)) erros.push('Nome contém caracteres inválidos');
+    if(!dados.preco || isNaN(parseFloat(dados.preco.replace(',','.')))) erros.push('Preço inválido');
+    if(!dados.linkImagem || !dados.linkImagem.startsWith('http')) erros.push('Link da imagem inválido');
+    if(!dados.linkOferta || !dados.linkOferta.startsWith('http')) erros.push('Link de afiliado inválido');
+    return erros;
+}
+    
 // ==================== PRODUTOS PADRÃO ====================
 const PRODUTOS_PADRAO = [
     { id: 'padrao1', nome: "teste - Smart GoogleTV 50\" 4K HDR10", preco: "R$ 1.879,06", precoNum: 1879.06, loja: "Amazon Brasil", categoria: "eletrodomesticos", imagem: "https://m.media-amazon.com/images/I/61oybFahwGL._AC_SL1000_.jpg", link: "https://www.amazon.com.br/Smart-Semp-Polegadas-Bluetooth-Google/dp/B0FPRFS3L1" },
@@ -327,10 +474,12 @@ async function carregarProdutosBanco() {
         const snapshot = await colecaoProdutos.get();
         const produtos = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         renderizarProdutos(produtos.length > 0 ? produtos : PRODUTOS_PADRAO);
+        return produtos.length > 0 ? produtos : PRODUTOS_PADRAO;
     } catch (erro) {
         console.error('Erro ao carregar produtos:', erro);
         alert('Erro ao ler do banco: ' + erro.message);
         renderizarProdutos(PRODUTOS_PADRAO);
+        return PRODUTOS_PADRAO;
     }
 }
 async function salvarProdutoBanco(dados, idEditar = null) {
@@ -339,6 +488,7 @@ async function salvarProdutoBanco(dados, idEditar = null) {
             await colecaoProdutos.doc(idEditar).update(dados);
         } else {
             dados.dataCadastro = firebase.firestore.FieldValue.serverTimestamp();
+            dados.status = dados.status || 'pendente';
             await colecaoProdutos.add(dados);
         }
         await carregarProdutosBanco();
@@ -360,12 +510,25 @@ async function excluirProdutoBanco(id) {
         }
     }
 }
+async function atualizarProdutoNoBanco(id, dados) {
+    try {
+        await colecaoProdutos.doc(id).update(dados);
+        return true;
+    } catch (e) {
+        alert('Erro ao atualizar: ' + e.message);
+        return false;
+    }
+}
 
 // ==================== RENDERIZAR PRODUTOS ====================
 function renderizarProdutos(listaProdutos) {
     const lista = document.getElementById('lista-produtos');
     if (!lista) return;
     lista.innerHTML = '';
+
+    if(!usuarioLogado) {
+        listaProdutos = listaProdutos.filter(p => p.status === 'ativo' || !p.status);
+    }
 
     let filtrados = [...listaProdutos];
     if(categoriaAtiva !== 'todos') filtrados = filtrados.filter(p => p.categoria === categoriaAtiva);
@@ -384,271 +547,277 @@ function renderizarProdutos(listaProdutos) {
     if(ordemAtiva === 'menor') filtrados.sort((a, b) => (a.precoNum || 0) - (b.precoNum || 0));
     else if(ordemAtiva === 'maior') filtrados.sort((a, b) => (b.precoNum || 0) - (a.precoNum || 0));
 
-    if(filtrados.length === 0) {
-        lista.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: var(--texto-claro); padding: 3rem;">Nenhum produto encontrado 😕</p>`;
-        return;
-    }
-
-    filtrados.forEach(prod => {
-        lista.innerHTML += `
-        <div class="card-produto">
-            <button class="btn-editar-card ${usuarioLogado ? 'visivel' : ''}" onclick="abrirEdicao('${prod.id}')" title="Editar produto">✏️</button>
-            <button class="btn-excluir-card ${usuarioLogado ? 'visivel' : ''}" onclick="excluirProdutoBanco('${prod.id}')" title="Excluir produto">🗑️</button>
-            <img src="${prod.imagem}" alt="${prod.nome}" class="img-produto" loading="lazy">
-            <div class="etiqueta-loja">${prod.loja}</div>
-            <div class="info-produto">
-                <h3 class="nome-produto">${prod.nome}</h3>
-                <p class="preco-produto">${prod.preco}</p>
-                <a href="${prod.link}" target="_blank" rel="noopener noreferrer" class="btn-oferta">Ver Oferta →</a>
-            </div>
-        </div>`;
-    });
+   if(filtrados.length === 0) {
+    lista.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: var(--texto-claro); padding: 3rem;">
+        Nenhum produto encontrado com esses filtros 😕<br>
+        Tente mudar a categoria, loja ou termo de busca.
+    </p>`;
+    return;
 }
 
-// ==================== FUNÇÕES DE MODAL ====================
-function abrirFormulario() {
-    limparFormulario();
-    document.getElementById('tituloModal').textContent = 'Adicionar Novo Produto';
-    document.getElementById('modalProduto').classList.add('aberto');
-    document.body.style.overflow = 'hidden';
+filtrados.forEach(produto => {
+    const precoFormatado = formatarPreco(produto.precoNum || produto.preco);
+    const card = document.createElement('div');
+    card.className = 'card-produto';
+    card.innerHTML = `
+        <button class="btn-editar-card" data-id="${produto.id}" title="Editar">✏️</button>
+        <button class="btn-excluir-card" data-id="${produto.id}" title="Excluir">🗑️</button>
+        <img src="${produto.imagem}" alt="${produto.nome}" class="img-produto" loading="lazy" onerror="this.src='https://via.placeholder.com/300x200?text=Imagem+Indisponivel'">
+        <div class="etiqueta-loja">${produto.loja}</div>
+        <div class="info-produto">
+            <h3 class="nome-produto">${produto.nome}</h3>
+            <p class="preco-produto">${precoFormatado}</p>
+            <a href="${produto.link}" target="_blank" rel="noopener noreferrer" class="btn-oferta">🔗 Pegar Oferta</a>
+        </div>
+    `;
+    lista.appendChild(card);
+});
+
+// Mostra botões de edição/exclusão só se estiver logado
+document.querySelectorAll('.btn-editar-card, .btn-excluir-card').forEach(btn => {
+    btn.classList.toggle('visivel', usuarioLogado);
+});
 }
 
-async function abrirEdicao(id) {
-    idEdicao = id;
-    document.getElementById('tituloModal').textContent = 'Editar Produto';
-    const modal = document.getElementById('modalProduto');
-    if(modal) {
-        modal.classList.add('aberto');
-        document.body.style.overflow = 'hidden';
-    }
+// ==================== CARREGAR LISTA NO PAINEL ADM ====================
+async function carregarListaProdutosAdm() {
+    const tabela = document.getElementById('listaProdutosAdm');
+    tabela.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:2rem;">Carregando produtos...</td></tr>';
 
     try {
-        const doc = await colecaoProdutos.doc(id).get();
-        if(doc.exists) {
-            const prod = doc.data();
-            const elNome = document.getElementById('formNome');
-            const elPreco = document.getElementById('formPreco');
-            const elLoja = document.getElementById('formLoja');
-            const elCat = document.getElementById('formCategoria');
-            const elImg = document.getElementById('formImagem');
-            const elLink = document.getElementById('formLink');
+        const snapshot = await colecaoProdutos.orderBy('dataCadastro', 'desc').get();
+        let todos = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        
+        if(todos.length === 0) todos = PRODUTOS_PADRAO;
 
-            if(elNome) elNome.value = prod.nome || '';
-            if(elPreco) elPreco.value = prod.precoNum || '';
-            if(elLoja) elLoja.value = prod.loja || 'Amazon Brasil';
-            if(elCat) elCat.value = prod.categoria || 'eletrodomesticos';
-            if(elImg) elImg.value = prod.imagem || '';
-            if(elLink) elLink.value = prod.link || '';
-        } else {
-            alert('Produto não encontrado!');
-            fecharModal('modalProduto');
-        }
-    } catch (erro) {
-        console.error('Erro ao carregar produto:', erro);
-        alert('Erro ao carregar dados: ' + erro.message);
-        fecharModal('modalProduto');
-    }
-}
-
-function limparFormulario() {
-    const campos = ['formNome','formPreco','formImagem','formLink'];
-    campos.forEach(id => {
-        const el = document.getElementById(id);
-        if(el) el.value = '';
-    });
-    const selects = ['formLoja','formCategoria'];
-    selects.forEach(id => {
-        const el = document.getElementById(id);
-        if(el) el.selectedIndex = 0;
-    });
-    idEdicao = null;
-}
-
-function fecharModal(modalId) {
-    const modal = document.getElementById(modalId);
-    if(modal) modal.classList.remove('aberto');
-    document.body.style.overflow = 'auto';
-    if(modalId === 'modalProduto') limparFormulario();
-}
-
-async function salvarProduto() {
-    const elPreco = document.getElementById('formPreco');
-    const precoBruto = elPreco ? elPreco.value.trim() : '';
-    const precoFormatado = formatarPreco(precoBruto);
-    const precoNumerico = extrairPrecoNumerico(precoBruto);
-    
-    const elNome = document.getElementById('formNome');
-    const elLoja = document.getElementById('formLoja');
-    const elCat = document.getElementById('formCategoria');
-    const elImg = document.getElementById('formImagem');
-    const elLink = document.getElementById('formLink');
-
-    const dados = {
-        nome: elNome ? elNome.value.trim() : '',
-        preco: precoFormatado,
-        precoNum: precoNumerico,
-        loja: elLoja ? elLoja.value : 'Amazon Brasil',
-        categoria: elCat ? elCat.value : 'eletrodomesticos',
-        imagem: elImg ? elImg.value.trim() : '',
-        link: elLink ? elLink.value.trim() : ''
-    };
-
-    if(!dados.nome || !dados.precoNum || !dados.imagem || !dados.link) {
-        alert('Preencha todos os campos obrigatórios!');
-        return;
-    }
-
-    const salvo = await salvarProdutoBanco(dados, idEdicao);
-    if(salvo) {
-        fecharModal('modalProduto');
-        alert('Produto salvo com sucesso!');
-    }
-}
-
-// ==================== INICIALIZAÇÃO GERAL ====================
-document.addEventListener('DOMContentLoaded', async function() {
-    await carregarProdutosBanco();
-
-    // Tema
-    const corpo = document.body;
-    const botaoTema = document.getElementById('alternarTema');
-    const temaSalvo = localStorage.getItem('allpromo_tema') || 'claro';
-    if(temaSalvo === 'neon') corpo.dataset.tema = 'neon';
-    botaoTema.addEventListener('click', () => {
-        const novoTema = corpo.dataset.tema === 'neon' ? 'claro' : 'neon';
-        if(novoTema === 'neon') corpo.dataset.tema = 'neon';
-        else delete corpo.dataset.tema;
-        localStorage.setItem('allpromo_tema', novoTema);
-        botaoTema.textContent = novoTema === 'neon' ? '☀️ Tema Claro' : '🌙 Tema Neon';
-    });
-
-    // Botão Flutuante
-    const btnFlutuante = document.getElementById('btnFlutuante');
-    const menuFlutuante = document.getElementById('menuFlutuante');
-    btnFlutuante.addEventListener('click', (e) => {
-        e.stopPropagation();
-        btnFlutuante.classList.toggle('aberto');
-        menuFlutuante.classList.toggle('visivel');
-    });
-    document.addEventListener('click', (e) => {
-        if (!e.target.closest('.botao-flutuante')) {
-            btnFlutuante.classList.remove('aberto');
-            menuFlutuante.classList.remove('visivel');
-        }
-    });
-
-    // Login Admin
-    document.getElementById('btnAbrirAdmin').addEventListener('click', () => {
-        if (usuarioLogado) {
-            menuFlutuante.innerHTML = `
-                <button class="item-menu destaque" id="btnAdicionar">➕ Adicionar Produto</button>
-                <button class="item-menu" id="btnSair">🚪 Sair do Admin</button>
-                <a href="https://docs.google.com/forms/d/e/1FAIpQLSdWjTw2YpKu6UNG-AND1qkb4FkKGMON5dmlUCPP1H-HDfm7UQ/viewform?usp=sharing" target="_blank" rel="noopener noreferrer" class="item-menu">💡 Enviar Sugestão</a>
-            `;
-            document.getElementById('btnAdicionar').addEventListener('click', abrirFormulario);
-            document.getElementById('btnSair').addEventListener('click', () => {
-                usuarioLogado = false;
-                carregarProdutosBanco();
-                alert('Você saiu do modo administrativo.');
+        // Aplica ordenação se houver
+        if(ordenacao.coluna) {
+            todos.sort((a, b) => {
+                let valA = a[ordenacao.coluna] || '';
+                let valB = b[ordenacao.coluna] || '';
+                if(ordenacao.coluna === 'preco') {
+                    valA = extrairPrecoNumerico(valA);
+                    valB = extrairPrecoNumerico(valB);
+                    return ordenacao.ciclo === 1 ? valA - valB : valB - valA;
+                }
+                if(ordenacao.ciclo === 1) return String(valA).localeCompare(String(valB));
+                return String(valB).localeCompare(String(valA));
             });
-            menuFlutuante.classList.add('visivel');
-            btnFlutuante.classList.add('aberto');
-        } else {
-            menuFlutuante.classList.remove('visivel');
-            btnFlutuante.classList.remove('aberto');
-            document.getElementById('modalLogin').classList.add('aberto');
-            document.getElementById('senhaAdmin').value = '';
-            document.getElementById('avisoErro').style.display = 'none';
-            document.body.style.overflow = 'hidden';
         }
-    });
-    document.getElementById('btnEntrar').addEventListener('click', () => {
-        if (document.getElementById('senhaAdmin').value.trim() === SENHA_ADMIN) {
-            usuarioLogado = true;
-            fecharModal('modalLogin');
-            carregarProdutosBanco();
-            alert('✅ Acesso liberado!');
-        } else {
-            document.getElementById('avisoErro').style.display = 'block';
-        }
-    });
-    document.getElementById('btnVoltarSite').addEventListener('click', () => fecharModal('modalLogin'));
 
-
-    // Menu Mobile
-    const abrirMenu = document.getElementById('abrirMenu');
-    const fecharMenu = document.getElementById('fecharMenu');
-    const fundoMenu = document.getElementById('fundoMenu');
-    const menuLateral = document.getElementById('menuLateral');
-    
-    function alternarMenuMobile(aberto) {
-        if(fundoMenu) fundoMenu.classList.toggle('aberto', aberto);
-        if(menuLateral) menuLateral.classList.toggle('aberto', aberto);
-        document.body.style.overflow = aberto ? 'hidden' : 'auto';
+        tabela.innerHTML = '';
+        todos.forEach(prod => {
+            const statusCor = prod.status === 'ativo' ? '#16A34A' : '#F59E0B';
+            const statusTexto = prod.status === 'ativo' ? '✅ Ativo' : '🟡 Pendente';
+            const linha = document.createElement('tr');
+            linha.style.borderBottom = '1px solid var(--borda)';
+            linha.innerHTML = `
+                <td style="padding:1rem;"><input type="checkbox" class="check-produto" data-id="${prod.id}"></td>
+                <td style="padding:1rem;">${prod.nome}</td>
+                <td style="padding:1rem;">${prod.loja}</td>
+                <td style="padding:1rem;">${formatarPreco(prod.precoNum || prod.preco)}</td>
+                <td style="padding:1rem; color:${statusCor}; font-weight:600;">${statusTexto}</td>
+                <td style="padding:1rem; display:flex; gap:0.5rem;">
+                    <button class="btn sucesso editar-linha" data-id="${prod.id}">Editar</button>
+                    <button class="btn perigo excluir-linha" data-id="${prod.id}">Excluir</button>
+                </td>
+            `;
+            tabela.appendChild(linha);
+        });
+    } catch (erro) {
+        tabela.innerHTML = `<tr><td colspan="6" style="color:var(--erro); text-align:center; padding:2rem;">Erro ao carregar: ${erro.message}</td></tr>`;
     }
+}
 
-    if(abrirMenu) abrirMenu.addEventListener('click', () => alternarMenuMobile(true));
-    if(fecharMenu) fecharMenu.addEventListener('click', () => alternarMenuMobile(false));
-    if(fundoMenu) fundoMenu.addEventListener('click', () => alternarMenuMobile(false));
+// ==================== EVENTOS ====================
+document.addEventListener('DOMContentLoaded', () => {
+    // Inicializa produtos
+    carregarProdutosBanco();
 
-    // Filtros e Categorias
-    document.querySelectorAll('.btn-categoria').forEach(botao => {
-        botao.addEventListener('click', () => {
+    // Alternar tema
+    document.getElementById('alternarTema').addEventListener('click', () => {
+        const html = document.documentElement;
+        const botao = document.getElementById('alternarTema');
+        if(html.dataset.tema === 'neon') {
+            html.dataset.tema = 'claro';
+            botao.textContent = '🌙 Tema Neon';
+        } else {
+            html.dataset.tema = 'neon';
+            botao.textContent = '☀️ Tema Claro';
+        }
+    });
+
+    // Menu lateral
+    document.getElementById('abrirMenu').addEventListener('click', () => {
+        document.getElementById('menuLateral').classList.add('aberto');
+        document.getElementById('fundoMenu').classList.add('aberto');
+    });
+    document.getElementById('fecharMenu').addEventListener('click', () => {
+        document.getElementById('menuLateral').classList.remove('aberto');
+        document.getElementById('fundoMenu').classList.remove('aberto');
+    });
+    document.getElementById('fundoMenu').addEventListener('click', () => {
+        document.getElementById('menuLateral').classList.remove('aberto');
+        document.getElementById('fundoMenu').classList.remove('aberto');
+    });
+
+    // Categorias (desktop + mobile)
+    document.querySelectorAll('.btn-categoria').forEach(btn => {
+        btn.addEventListener('click', () => {
             document.querySelectorAll('.btn-categoria').forEach(b => b.classList.remove('ativo'));
-            botao.classList.add('ativo');
-            categoriaAtiva = botao.dataset.categoria;
-            alternarMenuMobile(false);
+            document.querySelectorAll(`[data-categoria="${btn.dataset.categoria}"]`).forEach(b => b.classList.add('ativo'));
+            categoriaAtiva = btn.dataset.categoria;
+            carregarProdutosBanco();
+            document.getElementById('menuLateral').classList.remove('aberto');
+            document.getElementById('fundoMenu').classList.remove('aberto');
+        });
+    });
+
+    // Filtros de loja e ordem
+    ['filtroLoja', 'filtroLojaMobile'].forEach(id => {
+        document.getElementById(id)?.addEventListener('change', e => {
+            lojaAtiva = e.target.value;
+            ['filtroLoja', 'filtroLojaMobile'].forEach(i => { if(i !== e.target.id) document.getElementById(i).value = lojaAtiva; });
+            carregarProdutosBanco();
+        });
+    });
+    ['filtroOrdem', 'filtroOrdemMobile'].forEach(id => {
+        document.getElementById(id)?.addEventListener('change', e => {
+            ordemAtiva = e.target.value;
+            ['filtroOrdem', 'filtroOrdemMobile'].forEach(i => { if(i !== e.target.id) document.getElementById(i).value = ordemAtiva; });
             carregarProdutosBanco();
         });
     });
 
-    const filtroLoja = document.getElementById('filtroLoja');
-    const filtroLojaMobile = document.getElementById('filtroLojaMobile');
-    const filtroOrdem = document.getElementById('filtroOrdem');
-    const filtroOrdemMobile = document.getElementById('filtroOrdemMobile');
-
-    if(filtroLoja) filtroLoja.addEventListener('change', (e) => {
-        lojaAtiva = e.target.value;
-        carregarProdutosBanco();
-    });
-
-    if(filtroLojaMobile) filtroLojaMobile.addEventListener('change', (e) => {
-        lojaAtiva = e.target.value;
-        if(filtroLoja) filtroLoja.value = lojaAtiva;
-        carregarProdutosBanco();
-        alternarMenuMobile(false);
-    });
-
-    if(filtroOrdem) filtroOrdem.addEventListener('change', (e) => {
-        ordemAtiva = e.target.value;
-        carregarProdutosBanco();
-    });
-
-    if(filtroOrdemMobile) filtroOrdemMobile.addEventListener('change', (e) => {
-        ordemAtiva = e.target.value;
-        if(filtroOrdem) filtroOrdem.value = ordemAtiva;
-        carregarProdutosBanco();
-        alternarMenuMobile(false);
-    });
-
     // Busca
-    const executarBusca = debounce(carregarProdutosBanco, 350);
-    const buscaDesktop = document.getElementById('buscaDesktop');
-    const buscaMobile = document.getElementById('buscaMobile');
-    
-    if(buscaDesktop) buscaDesktop.addEventListener('input', executarBusca);
-    if(buscaMobile) buscaMobile.addEventListener('input', executarBusca);
+    const executarBusca = debounce(() => carregarProdutosBanco(), 350);
+    document.getElementById('buscaDesktop')?.addEventListener('input', executarBusca);
+    document.getElementById('buscaMobile')?.addEventListener('input', executarBusca);
 
-    // Ações dos modais
-    const btnCancelar = document.getElementById('btnCancelar');
-    const btnSalvar = document.getElementById('btnSalvar');
-    
-    if(btnCancelar) btnCancelar.addEventListener('click', () => fecharModal('modalProduto'));
-    if(btnSalvar) btnSalvar.addEventListener('click', salvarProduto);
+    // Botão flutuante
+    document.getElementById('btnFlutuante').addEventListener('click', () => {
+        document.getElementById('menuFlutuante').classList.toggle('visivel');
+        document.getElementById('btnFlutuante').classList.toggle('aberto');
+        document.getElementById('btnFlutuante').textContent = 
+            document.getElementById('btnFlutuante').classList.contains('aberto') ? '✕' : '+';
+    });
 
-    document.querySelectorAll('.modal-centralizado').forEach(modal => {
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) fecharModal(modal.id);
+    // Acesso admin
+    document.getElementById('btnAbrirAdmin').addEventListener('click', () => {
+        document.getElementById('modalLogin').classList.add('aberto');
+        document.getElementById('senhaAdmin').value = '';
+        document.getElementById('avisoErro').style.display = 'none';
+    });
+    document.getElementById('btnVoltarSite').addEventListener('click', () => {
+        document.getElementById('modalLogin').classList.remove('aberto');
+    });
+    document.getElementById('btnEntrar').addEventListener('click', () => {
+        if(document.getElementById('senhaAdmin').value === SENHA_ADMIN) {
+            usuarioLogado = true;
+            document.getElementById('modalLogin').classList.remove('aberto');
+            abrirPainelAdm();
+            carregarProdutosBanco();
+        } else {
+            document.getElementById('avisoErro').style.display = 'block';
+        }
+    });
+
+    // Abas do painel adm
+    document.querySelectorAll('.aba-painel').forEach(aba => {
+        aba.addEventListener('click', () => {
+            document.querySelectorAll('.aba-painel').forEach(a => a.classList.remove('ativa'));
+            document.querySelectorAll('.conteudo-aba').forEach(c => c.style.display = 'none');
+            aba.classList.add('ativa');
+            document.getElementById(`aba${aba.dataset.aba.charAt(0).toUpperCase() + aba.dataset.aba.slice(1)}`).style.display = 'block';
+            if(aba.dataset.aba === 'revisar') carregarListaProdutosAdm();
+        });
+    });
+
+    // Salvar produto adm
+    document.getElementById('btnSalvarProduto').addEventListener('click', async () => {
+        const dados = {
+            nome: document.getElementById('admNome').value.trim(),
+            loja: document.getElementById('admLoja').value,
+            preco: document.getElementById('admPreco').value,
+            precoNum: extrairPrecoNumerico(document.getElementById('admPreco').value),
+            imagem: document.getElementById('admImagem').value.trim(),
+            link: document.getElementById('admLink').value.trim(),
+            categoria: 'utilidades',
+            status: 'pendente'
+        };
+
+        const erros = validarDadosProduto(dados);
+        if(erros.length > 0) {
+            alert('Corrija esses erros:\n- ' + erros.join('\n- '));
+            return;
+        }
+
+        // Se passar em todas validações → ativa automaticamente
+        dados.status = 'ativo';
+
+        const ok = await salvarProdutoBanco(dados, idEdicao);
+        if(ok) {
+            alert('Produto salvo e já está visível no site! ✅');
+            document.getElementById('admNome').value = '';
+            document.getElementById('admLoja').value = '';
+            document.getElementById('admPreco').value = '';
+            document.getElementById('admImagem').value = '';
+            document.getElementById('admLink').value = '';
+            idEdicao = null;
+        }
+    });
+
+    // Sair do painel
+    document.getElementById('btnSairAdm').addEventListener('click', () => {
+        usuarioLogado = false;
+        fecharPainelAdm();
+        carregarProdutosBanco();
+    });
+
+    // Delegar eventos dos botões dos cards
+    document.getElementById('lista-produtos').addEventListener('click', async e => {
+        if(e.target.classList.contains('btn-excluir-card')) {
+            await excluirProdutoBanco(e.target.dataset.id);
+        }
+        if(e.target.classList.contains('btn-editar-card')) {
+            const id = e.target.dataset.id;
+            idEdicao = id;
+            const prod = (await colecaoProdutos.doc(id).get()).data();
+            document.getElementById('admNome').value = prod.nome;
+            document.getElementById('admLoja').value = prod.loja;
+            document.getElementById('admPreco').value = prod.preco;
+            document.getElementById('admImagem').value = prod.imagem;
+            document.getElementById('admLink').value = prod.link;
+            abrirPainelAdm();
+        }
+    });
+
+    // Selecionar todos na tabela adm
+    document.getElementById('selecionarTodos').addEventListener('change', e => {
+        document.querySelectorAll('.check-produto').forEach(c => c.checked = e.target.checked);
+    });
+
+    // Ativar/desativar selecionados
+    document.getElementById('btnAtivarSelecionados').addEventListener('click', async () => {
+        document.querySelectorAll('.check-produto:checked').forEach(async check => {
+            await atualizarProdutoNoBanco(check.dataset.id, { status: 'ativo' });
+        });
+        setTimeout(carregarListaProdutosAdm, 500);
+    });
+    document.getElementById('btnDesativarSelecionados').addEventListener('click', async () => {
+        document.querySelectorAll('.check-produto:checked').forEach(async check => {
+            await atualizarProdutoNoBanco(check.dataset.id, { status: 'pendente' });
+        });
+        setTimeout(carregarListaProdutosAdm, 500);
+    });
+
+    // Ordenar colunas da tabela adm
+    document.querySelectorAll('.ordenar-coluna').forEach(col => {
+        col.addEventListener('click', () => {
+            if(ordenacao.coluna === col.dataset.coluna) ordenacao.ciclo++;
+            else { ordenacao.coluna = col.dataset.coluna; ordenacao.ciclo = 1; }
+            if(ordenacao.ciclo > 2) ordenacao.ciclo = 0;
+            carregarListaProdutosAdm();
         });
     });
 });
