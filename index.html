@@ -116,7 +116,6 @@
             .botoes-modal { justify-content: stretch; }
             .botoes-modal button { flex: 1; }
         }
-        /* Estilos do Painel ADM */
         .aba-painel { text-align:left; padding:0.7rem 1rem; border-radius:8px; border:none; background:transparent; color:var(--texto); cursor:pointer; transition: var(--transicao); }
         .aba-painel.ativa { background:var(--destaque); color:white; }
         .btn.sucesso { background: var(--sucesso); color: white; border: none; padding: 0.5rem 0.8rem; border-radius: 6px; cursor: pointer; margin-right: 0.3rem; }
@@ -247,58 +246,7 @@
         </div>
     </div>
 </div>
-<div class="modal-centralizado" id="modalProduto">
-    <div class="conteudo-modal">
-        <h2 id="tituloModal">Adicionar Novo Produto</h2>
-        <div class="grupo-input">
-            <label>Nome do Produto</label>
-            <input type="text" id="formNome" placeholder="Ex: Smart TV 50 polegadas" required>
-        </div>
-        <div class="grupo-input">
-            <label>Preço (digite 1234,56 → formato automático R$ 1.234,56)</label>
-            <input type="text" id="formPreco" placeholder="1234,56" required>
-        </div>
-        <div class="grupo-input">
-            <label>Loja</label>
-            <select id="formLoja" required>
-                <option value="">Selecione...</option>
-                <option value="Amazon Brasil">Amazon Brasil</option>
-                <option value="Mercado Livre">Mercado Livre</option>
-                <option value="Shopee">Shopee</option>
-            </select>
-        </div>
-        <div class="grupo-input">
-            <label>Categoria</label>
-            <select id="formCategoria" required>
-                <option value="eletrodomesticos">Eletrodomésticos</option>
-                <option value="banho-cama">Banho e Cama</option>
-                <option value="decoracao">Decoração</option>
-                <option value="kids">Kids / Infantil</option>
-                <option value="gamer">Gamer & Hardware</option>
-                <option value="moveis">Móveis</option>
-                <option value="automotivos">Acessórios Automotivos</option>
-                <option value="pets">Pets</option>
-                <option value="celulares">Celulares e Acessórios</option>
-                <option value="esporte">Esporte e Bem-estar</option>
-                <option value="utilidades">Utilidades e Presentes</option>
-            </select>
-        </div>
-        <div class="grupo-input">
-            <label>Link da Imagem (URL)</label>
-            <input type="text" id="formImagem" placeholder="https://..." required>
-        </div>
-        <div class="grupo-input">
-            <label>Link da Oferta / Afiliado</label>
-            <input type="text" id="formLink" placeholder="https://..." required>
-        </div>
-        <div class="botoes-modal">
-            <button class="btn-cancelar" id="btnCancelar">Cancelar</button>
-            <button class="btn-salvar" id="btnSalvar">Salvar</button>
-        </div>
-    </div>
-</div>
 
-<!-- Painel Administrativo -->
 <div id="painelAdm" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:var(--fundo); z-index:99999;">
     <div style="display:flex; height:100%;">
         <nav style="width:260px; background:var(--fundo-secundario); border-right:1px solid var(--borda); padding:1.5rem; display:flex; flex-direction:column; gap:0.5rem;">
@@ -313,7 +261,7 @@
         <main style="flex:1; padding:2rem; overflow-y:auto;">
             <div style="display:flex; gap:0.8rem; align-items:center; padding:1rem; background:var(--card); border-radius:10px; border:1px solid var(--borda); margin-bottom:1.5rem;">
                 <span>🔗</span>
-                <input type="text" id="linkRapidoAdm" placeholder="Cole o link do produto aqui para cadastrar rápido..." style="flex:1; padding:0.6rem; border:1px solid var(--borda); border-radius:8px; background:var(--fundo-secundario); color:var(--texto);">
+                <input type="text" id="linkRapidoAdm" placeholder="Cole o link do produto aqui..." style="flex:1; padding:0.6rem; border:1px solid var(--borda); border-radius:8px; background:var(--fundo-secundario); color:var(--texto);">
                 <button id="btnImportarLink" style="padding:0.6rem 1.2rem; background:var(--destaque); color:white; border:none; border-radius:8px; cursor:pointer;">Importar</button>
             </div>
             <div id="abaAdicionar" class="conteudo-aba" style="display:block;">
@@ -382,7 +330,6 @@
 </div>
 
 <script>
-// ==================== CONFIGURAÇÕES ====================
 const SENHA_ADMIN = "Amar3laofdp";
 let usuarioLogado = false;
 let idEdicao = null;
@@ -390,38 +337,26 @@ let categoriaAtiva = 'todos';
 let lojaAtiva = 'todas';
 let ordemAtiva = 'padrao';
 let ordenacao = { coluna: null, ciclo: 0 };
-let produtosBanco = [];
 
-// ==================== FUNÇÕES AUXILIARES CORRIGIDAS DEFINITIVAMENTE ====================
+// ==================== FUNÇÕES AUXILIARES CORRIGIDAS ====================
 function debounce(func, delay) {
     let timeoutId;
-    return (...args) => {
-        clearTimeout(timeoutId);
-        timeoutId = setTimeout(() => func.apply(this, args), delay);
-    };
+    return (...args) => { clearTimeout(timeoutId); timeoutId = setTimeout(() => func.apply(this, args), delay); };
 }
 
 function formatarPreco(valor) {
     if (!valor && valor !== 0) return 'R$ 0,00';
     let texto = String(valor);
-    // Remove apenas símbolo R$ e espaços
     texto = texto.replace(/[R$\s]/g, '');
-    // Se tem vírgula → ela é o decimal, apaga pontos de milhar
     if (texto.includes(',')) {
         texto = texto.replace(/\./g, '');
         texto = texto.replace(',', '.');
-    }
-    // Se não tem vírgula → últimos 2 dígitos são centavos
-    else if (texto.length > 2) {
+    } else if (texto.length > 2) {
         texto = texto.slice(0, -2) + '.' + texto.slice(-2);
     }
     const numero = parseFloat(texto);
     if (isNaN(numero)) return 'R$ 0,00';
-    return numero.toLocaleString('pt-BR', {
-        style: 'currency',
-        currency: 'BRL',
-        minimumFractionDigits: 2
-    });
+    return numero.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 2 });
 }
 
 function extrairPrecoNumerico(valor) {
@@ -431,25 +366,15 @@ function extrairPrecoNumerico(valor) {
     if (texto.includes(',')) {
         texto = texto.replace(/\./g, '');
         texto = texto.replace(',', '.');
-    }
-    else if (texto.length > 2) {
+    } else if (texto.length > 2) {
         texto = texto.slice(0, -2) + '.' + texto.slice(-2);
     }
     const numero = parseFloat(texto);
     return isNaN(numero) ? 0 : numero;
 }
     
-function abrirPainelAdm() {
-    if(usuarioLogado) {
-        document.getElementById('painelAdm').style.display = 'block';
-        carregarListaProdutosAdm();
-    }
-}
-
-function fecharPainelAdm() {
-    document.getElementById('painelAdm').style.display = 'none';
-}
-
+function abrirPainelAdm() { if(usuarioLogado) { document.getElementById('painelAdm').style.display = 'block'; carregarListaProdutosAdm(); } }
+function fecharPainelAdm() { document.getElementById('painelAdm').style.display = 'none'; }
 function validarDadosProduto(dados) {
     const erros = [];
     if(!dados.nome || dados.nome.length < 5) erros.push('Nome muito curto ou vazio');
@@ -459,7 +384,7 @@ function validarDadosProduto(dados) {
     if(!dados.linkOferta || !dados.linkOferta.startsWith('http')) erros.push('Link de afiliado inválido');
     return erros;
 }
-    
+
 // ==================== PRODUTOS PADRÃO ====================
 const PRODUTOS_PADRAO = [
     { id: 'padrao1', nome: "teste - Smart GoogleTV 50\" 4K HDR10", preco: "R$ 1.879,06", precoNum: 1879.06, loja: "Amazon Brasil", categoria: "eletrodomesticos", imagem: "https://m.media-amazon.com/images/I/61oybFahwGL._AC_SL1000_.jpg", link: "https://www.amazon.com.br/Smart-Semp-Polegadas-Bluetooth-Google/dp/B0FPRFS3L1" },
@@ -477,58 +402,34 @@ async function carregarProdutosBanco() {
         return produtos.length > 0 ? produtos : PRODUTOS_PADRAO;
     } catch (erro) {
         console.error('Erro ao carregar produtos:', erro);
-        alert('Erro ao ler do banco: ' + erro.message);
         renderizarProdutos(PRODUTOS_PADRAO);
         return PRODUTOS_PADRAO;
     }
 }
 async function salvarProdutoBanco(dados, idEditar = null) {
     try {
-        if (idEditar) {
-            await colecaoProdutos.doc(idEditar).update(dados);
-        } else {
-            dados.dataCadastro = firebase.firestore.FieldValue.serverTimestamp();
-            dados.status = dados.status || 'pendente';
-            await colecaoProdutos.add(dados);
-        }
+        if (idEditar) await colecaoProdutos.doc(idEditar).update(dados);
+        else { dados.dataCadastro = firebase.firestore.FieldValue.serverTimestamp(); dados.status = 'ativo'; await colecaoProdutos.add(dados); }
         await carregarProdutosBanco();
         return true;
-    } catch (erro) {
-        console.error('Erro ao salvar produto:', erro);
-        alert('Erro ao salvar: ' + erro.message);
-        return false;
-    }
+    } catch (erro) { alert('Erro ao salvar: ' + erro.message); return false; }
 }
 async function excluirProdutoBanco(id) {
-    if(confirm('Tem certeza que deseja excluir esse produto?')) {
-        try {
-            await colecaoProdutos.doc(id).delete();
-            await carregarProdutosBanco();
-        } catch (erro) {
-            console.error('Erro ao excluir:', erro);
-            alert('Erro ao excluir: ' + erro.message);
-        }
+    if(confirm('Tem certeza que deseja excluir?')) {
+        try { await colecaoProdutos.doc(id).delete(); await carregarProdutosBanco(); }
+        catch (erro) { alert('Erro ao excluir: ' + erro.message); }
     }
 }
 async function atualizarProdutoNoBanco(id, dados) {
-    try {
-        await colecaoProdutos.doc(id).update(dados);
-        return true;
-    } catch (e) {
-        alert('Erro ao atualizar: ' + e.message);
-        return false;
-    }
+    try { await colecaoProdutos.doc(id).update(dados); return true; }
+    catch (e) { alert('Erro ao atualizar: ' + e.message); return false; }
 }
 
 // ==================== RENDERIZAR PRODUTOS ====================
 function renderizarProdutos(listaProdutos) {
     const lista = document.getElementById('lista-produtos');
-    if (!lista) return;
     lista.innerHTML = '';
-
-    if(!usuarioLogado) {
-        listaProdutos = listaProdutos.filter(p => p.status === 'ativo' || !p.status);
-    }
+    if(!usuarioLogado) listaProdutos = listaProdutos.filter(p => p.status === 'ativo' || !p.status);
 
     let filtrados = [...listaProdutos];
     if(categoriaAtiva !== 'todos') filtrados = filtrados.filter(p => p.categoria === categoriaAtiva);
@@ -536,88 +437,68 @@ function renderizarProdutos(listaProdutos) {
 
     const campoBusca = window.innerWidth >= 768 ? document.getElementById('buscaDesktop') : document.getElementById('buscaMobile');
     const termoBusca = campoBusca ? campoBusca.value.toLowerCase().trim() : '';
-    if(termoBusca) {
-        filtrados = filtrados.filter(p => 
-            (p.nome || '').toLowerCase().includes(termoBusca) || 
-            (p.loja || '').toLowerCase().includes(termoBusca) || 
-            (p.categoria || '').toLowerCase().includes(termoBusca)
-        );
-    }
+    if(termoBusca) filtrados = filtrados.filter(p => (p.nome||'').toLowerCase().includes(termoBusca) || (p.loja||'').toLowerCase().includes(termoBusca));
 
     if(ordemAtiva === 'menor') filtrados.sort((a, b) => (a.precoNum || 0) - (b.precoNum || 0));
     else if(ordemAtiva === 'maior') filtrados.sort((a, b) => (b.precoNum || 0) - (a.precoNum || 0));
 
-   if(filtrados.length === 0) {
-    lista.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: var(--texto-claro); padding: 3rem;">
-        Nenhum produto encontrado com esses filtros 😕<br>
-        Tente mudar a categoria, loja ou termo de busca.
-    </p>`;
-    return;
+    if(filtrados.length === 0) {
+        lista.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: var(--texto-claro); padding: 3rem;">Nenhum produto encontrado 😕</p>`;
+        return;
+    }
+
+    filtrados.forEach(produto => {
+        const precoFormatado = formatarPreco(produto.precoNum || produto.preco);
+        const card = document.createElement('div');
+        card.className = 'card-produto';
+        card.innerHTML = `
+            <button class="btn-editar-card" data-id="${produto.id}" title="Editar">✏️</button>
+            <button class="btn-excluir-card" data-id="${produto.id}" title="Excluir">🗑️</button>
+            <img src="${produto.imagem}" alt="${produto.nome}" class="img-produto" loading="lazy" onerror="this.src='https://via.placeholder.com/300x200?text=Imagem+Indisponivel'">
+            <div class="etiqueta-loja">${produto.loja}</div>
+            <div class="info-produto">
+                <h3 class="nome-produto">${produto.nome}</h3>
+                <p class="preco-produto">${precoFormatado}</p>
+                <a href="${produto.link}" target="_blank" rel="noopener noreferrer" class="btn-oferta">🔗 Pegar Oferta</a>
+            </div>
+        `;
+        lista.appendChild(card);
+    });
+    document.querySelectorAll('.btn-editar-card, .btn-excluir-card').forEach(btn => btn.classList.toggle('visivel', usuarioLogado));
 }
 
-filtrados.forEach(produto => {
-    const precoFormatado = formatarPreco(produto.precoNum || produto.preco);
-    const card = document.createElement('div');
-    card.className = 'card-produto';
-    card.innerHTML = `
-        <button class="btn-editar-card" data-id="${produto.id}" title="Editar">✏️</button>
-        <button class="btn-excluir-card" data-id="${produto.id}" title="Excluir">🗑️</button>
-        <img src="${produto.imagem}" alt="${produto.nome}" class="img-produto" loading="lazy" onerror="this.src='https://via.placeholder.com/300x200?text=Imagem+Indisponivel'">
-        <div class="etiqueta-loja">${produto.loja}</div>
-        <div class="info-produto">
-            <h3 class="nome-produto">${produto.nome}</h3>
-            <p class="preco-produto">${precoFormatado}</p>
-            <a href="${produto.link}" target="_blank" rel="noopener noreferrer" class="btn-oferta">🔗 Pegar Oferta</a>
-        </div>
-    `;
-    lista.appendChild(card);
-});
-
-// Mostra botões de edição/exclusão só se estiver logado
-document.querySelectorAll('.btn-editar-card, .btn-excluir-card').forEach(btn => {
-    btn.classList.toggle('visivel', usuarioLogado);
-});
-}
-
-// ==================== CARREGAR LISTA NO PAINEL ADM ====================
+// ==================== CARREGAR LISTA ADM ====================
 async function carregarListaProdutosAdm() {
     const tabela = document.getElementById('listaProdutosAdm');
-    tabela.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:2rem;">Carregando produtos...</td></tr>';
-
+    tabela.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:2rem;">Carregando...</td></tr>';
     try {
         const snapshot = await colecaoProdutos.orderBy('dataCadastro', 'desc').get();
         let todos = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        
         if(todos.length === 0) todos = PRODUTOS_PADRAO;
 
-        // Aplica ordenação se houver
         if(ordenacao.coluna) {
             todos.sort((a, b) => {
                 let valA = a[ordenacao.coluna] || '';
                 let valB = b[ordenacao.coluna] || '';
-                if(ordenacao.coluna === 'preco') {
-                    valA = extrairPrecoNumerico(valA);
-                    valB = extrairPrecoNumerico(valB);
-                    return ordenacao.ciclo === 1 ? valA - valB : valB - valA;
-                }
+                if(ordenacao.coluna === 'preco') { valA = extrairPrecoNumerico(valA); valB = extrairPrecoNumerico(valB); return ordenacao.ciclo === 1 ? valA - valB : valB - valA; }
                 if(ordenacao.ciclo === 1) return String(valA).localeCompare(String(valB));
                 return String(valB).localeCompare(String(valA));
             });
         }
-
+        // ==================== CONTINUAÇÃO: CARREGAR LISTA ADM + EVENTOS ====================
         tabela.innerHTML = '';
         todos.forEach(prod => {
-            const statusCor = prod.status === 'ativo' ? '#16A34A' : '#F59E0B';
-            const statusTexto = prod.status === 'ativo' ? '✅ Ativo' : '🟡 Pendente';
             const linha = document.createElement('tr');
-            linha.style.borderBottom = '1px solid var(--borda)';
+            const precoFmt = formatarPreco(prod.precoNum || prod.preco);
             linha.innerHTML = `
-                <td style="padding:1rem;"><input type="checkbox" class="check-produto" data-id="${prod.id}"></td>
-                <td style="padding:1rem;">${prod.nome}</td>
-                <td style="padding:1rem;">${prod.loja}</td>
-                <td style="padding:1rem;">${formatarPreco(prod.precoNum || prod.preco)}</td>
-                <td style="padding:1rem; color:${statusCor}; font-weight:600;">${statusTexto}</td>
-                <td style="padding:1rem; display:flex; gap:0.5rem;">
+                <td style="padding:0.8rem; border-bottom:1px solid var(--borda);"><input type="checkbox" class="chk-produto" data-id="${prod.id}"></td>
+                <td style="padding:0.8rem; border-bottom:1px solid var(--borda);">${prod.nome}</td>
+                <td style="padding:0.8rem; border-bottom:1px solid var(--borda);">${prod.loja}</td>
+                <td style="padding:0.8rem; border-bottom:1px solid var(--borda);">${precoFmt}</td>
+                <td style="padding:0.8rem; border-bottom:1px solid var(--borda);">
+                    <span style="color:${prod.status==='ativo'?'var(--sucesso)':'var(--erro)'}">${prod.status||'pendente'}</span>
+                </td>
+                <td style="padding:0.8rem; border-bottom:1px solid var(--borda);">
                     <button class="btn sucesso editar-linha" data-id="${prod.id}">Editar</button>
                     <button class="btn perigo excluir-linha" data-id="${prod.id}">Excluir</button>
                 </td>
@@ -625,26 +506,19 @@ async function carregarListaProdutosAdm() {
             tabela.appendChild(linha);
         });
     } catch (erro) {
-        tabela.innerHTML = `<tr><td colspan="6" style="color:var(--erro); text-align:center; padding:2rem;">Erro ao carregar: ${erro.message}</td></tr>`;
+        console.error('Erro na lista ADM:', erro);
+        tabela.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--erro); padding:2rem;">Erro ao carregar</td></tr>`;
     }
 }
 
-// ==================== EVENTOS ====================
+// ==================== EVENTOS GERAIS ====================
 document.addEventListener('DOMContentLoaded', () => {
-    // Inicializa produtos
-    carregarProdutosBanco();
-
     // Alternar tema
     document.getElementById('alternarTema').addEventListener('click', () => {
         const html = document.documentElement;
-        const botao = document.getElementById('alternarTema');
-        if(html.dataset.tema === 'neon') {
-            html.dataset.tema = 'claro';
-            botao.textContent = '🌙 Tema Neon';
-        } else {
-            html.dataset.tema = 'neon';
-            botao.textContent = '☀️ Tema Claro';
-        }
+        const btn = document.getElementById('alternarTema');
+        if(html.hasAttribute('data-tema')) { html.removeAttribute('data-tema'); btn.textContent = '🌙 Tema Neon'; }
+        else { html.setAttribute('data-tema','neon'); btn.textContent = '☀️ Tema Claro'; }
     });
 
     // Menu lateral
@@ -661,58 +535,45 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('fundoMenu').classList.remove('aberto');
     });
 
-    // Categorias (desktop + mobile)
+    // Filtros e busca
     document.querySelectorAll('.btn-categoria').forEach(btn => {
         btn.addEventListener('click', () => {
             document.querySelectorAll('.btn-categoria').forEach(b => b.classList.remove('ativo'));
-            document.querySelectorAll(`[data-categoria="${btn.dataset.categoria}"]`).forEach(b => b.classList.add('ativo'));
+            btn.classList.add('ativo');
             categoriaAtiva = btn.dataset.categoria;
-            carregarProdutosBanco();
             document.getElementById('menuLateral').classList.remove('aberto');
             document.getElementById('fundoMenu').classList.remove('aberto');
-        });
-    });
-
-    // Filtros de loja e ordem
-    ['filtroLoja', 'filtroLojaMobile'].forEach(id => {
-        document.getElementById(id)?.addEventListener('change', e => {
-            lojaAtiva = e.target.value;
-            ['filtroLoja', 'filtroLojaMobile'].forEach(i => { if(i !== e.target.id) document.getElementById(i).value = lojaAtiva; });
             carregarProdutosBanco();
         });
     });
-    ['filtroOrdem', 'filtroOrdemMobile'].forEach(id => {
-        document.getElementById(id)?.addEventListener('change', e => {
-            ordemAtiva = e.target.value;
-            ['filtroOrdem', 'filtroOrdemMobile'].forEach(i => { if(i !== e.target.id) document.getElementById(i).value = ordemAtiva; });
-            carregarProdutosBanco();
-        });
-    });
-
-    // Busca
-    const executarBusca = debounce(() => carregarProdutosBanco(), 350);
-    document.getElementById('buscaDesktop')?.addEventListener('input', executarBusca);
-    document.getElementById('buscaMobile')?.addEventListener('input', executarBusca);
+    document.getElementById('filtroLoja').addEventListener('change', e => { lojaAtiva = e.target.value; carregarProdutosBanco(); });
+    document.getElementById('filtroLojaMobile').addEventListener('change', e => { lojaAtiva = e.target.value; carregarProdutosBanco(); });
+    document.getElementById('filtroOrdem').addEventListener('change', e => { ordemAtiva = e.target.value; carregarProdutosBanco(); });
+    document.getElementById('filtroOrdemMobile').addEventListener('change', e => { ordemAtiva = e.target.value; carregarProdutosBanco(); });
+    const executarBusca = debounce(() => carregarProdutosBanco(), 400);
+    document.getElementById('buscaDesktop').addEventListener('input', executarBusca);
+    document.getElementById('buscaMobile').addEventListener('input', executarBusca);
 
     // Botão flutuante
     document.getElementById('btnFlutuante').addEventListener('click', () => {
-        document.getElementById('menuFlutuante').classList.toggle('visivel');
         document.getElementById('btnFlutuante').classList.toggle('aberto');
-        document.getElementById('btnFlutuante').textContent = 
-            document.getElementById('btnFlutuante').classList.contains('aberto') ? '✕' : '+';
+        document.getElementById('menuFlutuante').classList.toggle('visivel');
     });
-
-    // Acesso admin
     document.getElementById('btnAbrirAdmin').addEventListener('click', () => {
         document.getElementById('modalLogin').classList.add('aberto');
-        document.getElementById('senhaAdmin').value = '';
-        document.getElementById('avisoErro').style.display = 'none';
+        document.getElementById('btnFlutuante').classList.remove('aberto');
+        document.getElementById('menuFlutuante').classList.remove('visivel');
     });
     document.getElementById('btnVoltarSite').addEventListener('click', () => {
         document.getElementById('modalLogin').classList.remove('aberto');
+        document.getElementById('senhaAdmin').value = '';
+        document.getElementById('avisoErro').style.display = 'none';
     });
+
+    // Login ADM
     document.getElementById('btnEntrar').addEventListener('click', () => {
-        if(document.getElementById('senhaAdmin').value === SENHA_ADMIN) {
+        const senha = document.getElementById('senhaAdmin').value;
+        if(senha === SENHA_ADMIN) {
             usuarioLogado = true;
             document.getElementById('modalLogin').classList.remove('aberto');
             abrirPainelAdm();
@@ -722,105 +583,120 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Abas do painel adm
+    // Abas painel ADM
     document.querySelectorAll('.aba-painel').forEach(aba => {
         aba.addEventListener('click', () => {
             document.querySelectorAll('.aba-painel').forEach(a => a.classList.remove('ativa'));
-            document.querySelectorAll('.conteudo-aba').forEach(c => c.style.display = 'none');
             aba.classList.add('ativa');
-            document.getElementById(`aba${aba.dataset.aba.charAt(0).toUpperCase() + aba.dataset.aba.slice(1)}`).style.display = 'block';
-            if(aba.dataset.aba === 'revisar') carregarListaProdutosAdm();
+            document.querySelectorAll('.conteudo-aba').forEach(c => c.style.display = 'none');
+            document.getElementById(`aba${aba.dataset.aba.charAt(0).toUpperCase()+aba.dataset.aba.slice(1)}`).style.display = 'block';
         });
     });
 
-    // Salvar produto adm
+    // Importar link
+    document.getElementById('btnImportarLink').addEventListener('click', () => {
+        const link = document.getElementById('linkRapidoAdm').value.trim();
+        if(!link || !link.startsWith('http')) { alert('Cole um link válido!'); return; }
+        document.getElementById('admLink').value = link;
+        alert('Link copiado! Preencha os demais dados.');
+    });
+
+    // Salvar produto
     document.getElementById('btnSalvarProduto').addEventListener('click', async () => {
+        const precoBruto = document.getElementById('admPreco').value;
         const dados = {
             nome: document.getElementById('admNome').value.trim(),
             loja: document.getElementById('admLoja').value,
-            preco: document.getElementById('admPreco').value,
-            precoNum: extrairPrecoNumerico(document.getElementById('admPreco').value),
+            preco: precoBruto,
+            precoNum: extrairPrecoNumerico(precoBruto),
             imagem: document.getElementById('admImagem').value.trim(),
             link: document.getElementById('admLink').value.trim(),
             categoria: 'utilidades',
-            status: 'pendente'
+            status: 'ativo'
         };
-
         const erros = validarDadosProduto(dados);
-        if(erros.length > 0) {
-            alert('Corrija esses erros:\n- ' + erros.join('\n- '));
-            return;
-        }
-
-        // Se passar em todas validações → ativa automaticamente
-        dados.status = 'ativo';
+        if(erros.length > 0) { alert('Corrija:\n- ' + erros.join('\n- ')); return; }
 
         const ok = await salvarProdutoBanco(dados, idEdicao);
         if(ok) {
-            alert('Produto salvo e já está visível no site! ✅');
+            alert('Salvo com sucesso!');
             document.getElementById('admNome').value = '';
             document.getElementById('admLoja').value = '';
             document.getElementById('admPreco').value = '';
             document.getElementById('admImagem').value = '';
             document.getElementById('admLink').value = '';
             idEdicao = null;
+            carregarListaProdutosAdm();
         }
     });
 
-    // Sair do painel
+    // Cancelar
+    document.getElementById('btnCancelarProduto').addEventListener('click', () => {
+        document.getElementById('admNome').value = '';
+        document.getElementById('admLoja').value = '';
+        document.getElementById('admPreco').value = '';
+        document.getElementById('admImagem').value = '';
+        document.getElementById('admLink').value = '';
+        idEdicao = null;
+    });
+
+    // Sair ADM
     document.getElementById('btnSairAdm').addEventListener('click', () => {
         usuarioLogado = false;
+        idEdicao = null;
         fecharPainelAdm();
         carregarProdutosBanco();
     });
 
-    // Delegar eventos dos botões dos cards
+    // Delegação: Editar / Excluir nos cards
     document.getElementById('lista-produtos').addEventListener('click', async e => {
         if(e.target.classList.contains('btn-excluir-card')) {
-            await excluirProdutoBanco(e.target.dataset.id);
+            if(confirm('Excluir esse produto?')) await excluirProdutoBanco(e.target.dataset.id);
         }
         if(e.target.classList.contains('btn-editar-card')) {
             const id = e.target.dataset.id;
             idEdicao = id;
-            const prod = (await colecaoProdutos.doc(id).get()).data();
-            document.getElementById('admNome').value = prod.nome;
-            document.getElementById('admLoja').value = prod.loja;
-            document.getElementById('admPreco').value = prod.preco;
-            document.getElementById('admImagem').value = prod.imagem;
-            document.getElementById('admLink').value = prod.link;
-            abrirPainelAdm();
+            const doc = await colecaoProdutos.doc(id).get();
+            if(doc.exists) {
+                const prod = doc.data();
+                document.getElementById('admNome').value = prod.nome || '';
+                document.getElementById('admLoja').value = prod.loja || '';
+                document.getElementById('admPreco').value = formatarPreco(prod.precoNum || prod.preco).replace('R$ ','');
+                document.getElementById('admImagem').value = prod.imagem || '';
+                document.getElementById('admLink').value = prod.link || '';
+                abrirPainelAdm();
+            }
         }
     });
 
-    // Selecionar todos na tabela adm
-    document.getElementById('selecionarTodos').addEventListener('change', e => {
-        document.querySelectorAll('.check-produto').forEach(c => c.checked = e.target.checked);
-    });
-
-    // Ativar/desativar selecionados
-    document.getElementById('btnAtivarSelecionados').addEventListener('click', async () => {
-        document.querySelectorAll('.check-produto:checked').forEach(async check => {
-            await atualizarProdutoNoBanco(check.dataset.id, { status: 'ativo' });
-        });
-        setTimeout(carregarListaProdutosAdm, 500);
-    });
-    document.getElementById('btnDesativarSelecionados').addEventListener('click', async () => {
-        document.querySelectorAll('.check-produto:checked').forEach(async check => {
-            await atualizarProdutoNoBanco(check.dataset.id, { status: 'pendente' });
-        });
-        setTimeout(carregarListaProdutosAdm, 500);
-    });
-
-    // Ordenar colunas da tabela adm
-    document.querySelectorAll('.ordenar-coluna').forEach(col => {
-        col.addEventListener('click', () => {
-            if(ordenacao.coluna === col.dataset.coluna) ordenacao.ciclo++;
-            else { ordenacao.coluna = col.dataset.coluna; ordenacao.ciclo = 1; }
-            if(ordenacao.ciclo > 2) ordenacao.ciclo = 0;
+    // Delegação: Editar / Excluir na tabela ADM
+    document.getElementById('listaProdutosAdm').addEventListener('click', async e => {
+        const id = e.target.dataset.id;
+        if(!id) return;
+        if(e.target.classList.contains('excluir-linha')) {
+            if(confirm('Excluir?')) await excluirProdutoBanco(id);
             carregarListaProdutosAdm();
-        });
+        }
+        if(e.target.classList.contains('editar-linha')) {
+            idEdicao = id;
+            const doc = await colecaoProdutos.doc(id).get();
+            if(doc.exists) {
+                const prod = doc.data();
+                document.getElementById('admNome').value = prod.nome || '';
+                document.getElementById('admLoja').value = prod.loja || '';
+                document.getElementById('admPreco').value = formatarPreco(prod.precoNum || prod.preco).replace('R$ ','');
+                document.getElementById('admImagem').value = prod.imagem || '';
+                document.getElementById('admLink').value = prod.link || '';
+                document.querySelector('[data-aba="adicionar"]').click();
+            }
+        }
     });
+
+    // Inicializar
+    carregarProdutosBanco();
 });
 </script>
 </body>
 </html>
+
+       
