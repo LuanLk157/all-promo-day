@@ -335,8 +335,12 @@ async function carregarProdutosBanco() {
 }
 async function salvarProdutoBanco(dados, idEditar = null) {
     try {
-        if (idEditar) await colecaoProdutos.doc(idEditar).update(dados);
-        else { dados.dataCadastro = firebase.firestore.FieldValue.serverTimestamp(); await colecaoProdutos.add(dados); }
+        if (idEditar) {
+            await colecaoProdutos.doc(idEditar).update(dados);
+        } else {
+            dados.dataCadastro = firebase.firestore.FieldValue.serverTimestamp();
+            await colecaoProdutos.add(dados);
+        }
         await carregarProdutosBanco();
         return true;
     } catch (erro) {
@@ -347,8 +351,13 @@ async function salvarProdutoBanco(dados, idEditar = null) {
 }
 async function excluirProdutoBanco(id) {
     if(confirm('Tem certeza que deseja excluir esse produto?')) {
-        try { await colecaoProdutos.doc(id).delete(); await carregarProdutosBanco(); }
-        catch (erro) { console.error('Erro ao excluir:', erro); alert('Erro ao excluir: ' + erro.message); }
+        try {
+            await colecaoProdutos.doc(id).delete();
+            await carregarProdutosBanco();
+        } catch (erro) {
+            console.error('Erro ao excluir:', erro);
+            alert('Erro ao excluir: ' + erro.message);
+        }
     }
 }
 
@@ -365,11 +374,15 @@ function renderizarProdutos(listaProdutos) {
     const campoBusca = window.innerWidth >= 768 ? document.getElementById('buscaDesktop') : document.getElementById('buscaMobile');
     const termoBusca = campoBusca ? campoBusca.value.toLowerCase().trim() : '';
     if(termoBusca) {
-        filtrados = filtrados.filter(p => p.nome.toLowerCase().includes(termoBusca) || p.loja.toLowerCase().includes(termoBusca) || p.categoria.toLowerCase().includes(termoBusca));
+        filtrados = filtrados.filter(p => 
+            (p.nome || '').toLowerCase().includes(termoBusca) || 
+            (p.loja || '').toLowerCase().includes(termoBusca) || 
+            (p.categoria || '').toLowerCase().includes(termoBusca)
+        );
     }
 
-    if(ordemAtiva === 'menor') filtrados.sort((a, b) => a.precoNum - b.precoNum);
-    else if(ordemAtiva === 'maior') filtrados.sort((a, b) => b.precoNum - a.precoNum);
+    if(ordemAtiva === 'menor') filtrados.sort((a, b) => (a.precoNum || 0) - (b.precoNum || 0));
+    else if(ordemAtiva === 'maior') filtrados.sort((a, b) => (b.precoNum || 0) - (a.precoNum || 0));
 
     if(filtrados.length === 0) {
         lista.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: var(--texto-claro); padding: 3rem;">Nenhum produto encontrado 😕</p>`;
@@ -393,45 +406,103 @@ function renderizarProdutos(listaProdutos) {
 }
 
 // ==================== FUNÇÕES DE MODAL ====================
-function abrirFormulario() { limparFormulario(); document.getElementById('tituloModal').textContent = 'Adicionar Novo Produto'; document.getElementById('modalProduto').classList.add('aberto'); document.body.style.overflow = 'hidden'; }
+function abrirFormulario() {
+    limparFormulario();
+    document.getElementById('tituloModal').textContent = 'Adicionar Novo Produto';
+    document.getElementById('modalProduto').classList.add('aberto');
+    document.body.style.overflow = 'hidden';
+}
+
 async function abrirEdicao(id) {
-    idEdicao = id; document.getElementById('tituloModal').textContent = 'Editar Produto';
+    idEdicao = id;
+    document.getElementById('tituloModal').textContent = 'Editar Produto';
+    const modal = document.getElementById('modalProduto');
+    if(modal) {
+        modal.classList.add('aberto');
+        document.body.style.overflow = 'hidden';
+    }
+
     try {
         const doc = await colecaoProdutos.doc(id).get();
         if(doc.exists) {
             const prod = doc.data();
-            document.getElementById('formNome').value = prod.nome;
-            document.getElementById('formPreco').value = prod.precoNum;
-            document.getElementById('formLoja').value = prod.loja;
-            document.getElementById('formCategoria').value = prod.categoria;
-            document.getElementById('formImagem').value = prod.imagem;
-            document.getElementById('formLink').value = prod.link;
+            const elNome = document.getElementById('formNome');
+            const elPreco = document.getElementById('formPreco');
+            const elLoja = document.getElementById('formLoja');
+            const elCat = document.getElementById('formCategoria');
+            const elImg = document.getElementById('formImagem');
+            const elLink = document.getElementById('formLink');
+
+            if(elNome) elNome.value = prod.nome || '';
+            if(elPreco) elPreco.value = prod.precoNum || '';
+            if(elLoja) elLoja.value = prod.loja || 'Amazon Brasil';
+            if(elCat) elCat.value = prod.categoria || 'eletrodomesticos';
+            if(elImg) elImg.value = prod.imagem || '';
+            if(elLink) elLink.value = prod.link || '';
+        } else {
+            alert('Produto não encontrado!');
+            fecharModal('modalProduto');
         }
-    } catch (erro) { console.error('Erro ao carregar produto:', erro); }
-    document.getElementById('modalProduto').classList.add('aberto'); document.body.style.overflow = 'hidden';
+    } catch (erro) {
+        console.error('Erro ao carregar produto:', erro);
+        alert('Erro ao carregar dados: ' + erro.message);
+        fecharModal('modalProduto');
+    }
 }
+
 function limparFormulario() {
-    document.getElementById('formNome').value = ''; document.getElementById('formPreco').value = '';
-    document.getElementById('formLoja').selectedIndex = 0; document.getElementById('formCategoria').selectedIndex = 0;
-    document.getElementById('formImagem').value = ''; document.getElementById('formLink').value = ''; idEdicao = null;
+    const campos = ['formNome','formPreco','formImagem','formLink'];
+    campos.forEach(id => {
+        const el = document.getElementById(id);
+        if(el) el.value = '';
+    });
+    const selects = ['formLoja','formCategoria'];
+    selects.forEach(id => {
+        const el = document.getElementById(id);
+        if(el) el.selectedIndex = 0;
+    });
+    idEdicao = null;
 }
+
 function fecharModal(modalId) {
-    document.getElementById(modalId).classList.remove('aberto');
+    const modal = document.getElementById(modalId);
+    if(modal) modal.classList.remove('aberto');
     document.body.style.overflow = 'auto';
     if(modalId === 'modalProduto') limparFormulario();
 }
+
 async function salvarProduto() {
-    const precoBruto = document.getElementById('formPreco').value.trim();
+    const elPreco = document.getElementById('formPreco');
+    const precoBruto = elPreco ? elPreco.value.trim() : '';
     const precoFormatado = formatarPreco(precoBruto);
     const precoNumerico = extrairPrecoNumerico(precoBruto);
+    
+    const elNome = document.getElementById('formNome');
+    const elLoja = document.getElementById('formLoja');
+    const elCat = document.getElementById('formCategoria');
+    const elImg = document.getElementById('formImagem');
+    const elLink = document.getElementById('formLink');
+
     const dados = {
-        nome: document.getElementById('formNome').value.trim(), preco: precoFormatado, precoNum: precoNumerico,
-        loja: document.getElementById('formLoja').value, categoria: document.getElementById('formCategoria').value,
-        imagem: document.getElementById('formImagem').value.trim(), link: document.getElementById('formLink').value.trim()
+        nome: elNome ? elNome.value.trim() : '',
+        preco: precoFormatado,
+        precoNum: precoNumerico,
+        loja: elLoja ? elLoja.value : 'Amazon Brasil',
+        categoria: elCat ? elCat.value : 'eletrodomesticos',
+        imagem: elImg ? elImg.value.trim() : '',
+        link: elLink ? elLink.value.trim() : ''
     };
-    if(!dados.nome || !dados.precoNum || !dados.imagem || !dados.link) { alert('Preencha todos os campos obrigatórios!'); return; }
+
+    if(!dados.nome || !dados.precoNum || !dados.imagem || !dados.link) {
+        alert('Preencha todos os campos obrigatórios!');
+        return;
+    }
+
     const salvo = await salvarProdutoBanco(dados, idEdicao);
-    if(salvo) { fecharModal('modalProduto'); alert('Produto salvo com sucesso!'); }
+    if(salvo) {
+        fecharModal('modalProduto');
+        alert('Produto salvo com sucesso!');
+    }
 }
 
 // ==================== INICIALIZAÇÃO GERAL ====================
@@ -454,8 +525,17 @@ document.addEventListener('DOMContentLoaded', async function() {
     // Botão Flutuante
     const btnFlutuante = document.getElementById('btnFlutuante');
     const menuFlutuante = document.getElementById('menuFlutuante');
-    btnFlutuante.addEventListener('click', (e) => { e.stopPropagation(); btnFlutuante.classList.toggle('aberto'); menuFlutuante.classList.toggle('visivel'); });
-    document.addEventListener('click', (e) => { if (!e.target.closest('.botao-flutuante')) { btnFlutuante.classList.remove('aberto'); menuFlutuante.classList.remove('visivel'); } });
+    btnFlutuante.addEventListener('click', (e) => {
+        e.stopPropagation();
+        btnFlutuante.classList.toggle('aberto');
+        menuFlutuante.classList.toggle('visivel');
+    });
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.botao-flutuante')) {
+            btnFlutuante.classList.remove('aberto');
+            menuFlutuante.classList.remove('visivel');
+        }
+    });
 
     // Login Admin
     document.getElementById('btnAbrirAdmin').addEventListener('click', () => {
@@ -466,50 +546,111 @@ document.addEventListener('DOMContentLoaded', async function() {
                 <a href="https://docs.google.com/forms/d/e/1FAIpQLSdWjTw2YpKu6UNG-AND1qkb4FkKGMON5dmlUCPP1H-HDfm7UQ/viewform?usp=sharing" target="_blank" rel="noopener noreferrer" class="item-menu">💡 Enviar Sugestão</a>
             `;
             document.getElementById('btnAdicionar').addEventListener('click', abrirFormulario);
-            document.getElementById('btnSair').addEventListener('click', () => { usuarioLogado = false; carregarProdutosBanco(); alert('Você saiu do modo administrativo.'); });
-            menuFlutuante.classList.add('visivel'); btnFlutuante.classList.add('aberto');
+            document.getElementById('btnSair').addEventListener('click', () => {
+                usuarioLogado = false;
+                carregarProdutosBanco();
+                alert('Você saiu do modo administrativo.');
+            });
+            menuFlutuante.classList.add('visivel');
+            btnFlutuante.classList.add('aberto');
         } else {
-            menuFlutuante.classList.remove('visivel'); btnFlutuante.classList.remove('aberto');
-            document.getElementById('modalLogin').classList.add('aberto'); document.getElementById('senhaAdmin').value = ''; document.getElementById('avisoErro').style.display = 'none'; document.body.style.overflow = 'hidden';
+            menuFlutuante.classList.remove('visivel');
+            btnFlutuante.classList.remove('aberto');
+            document.getElementById('modalLogin').classList.add('aberto');
+            document.getElementById('senhaAdmin').value = '';
+            document.getElementById('avisoErro').style.display = 'none';
+            document.body.style.overflow = 'hidden';
         }
     });
     document.getElementById('btnEntrar').addEventListener('click', () => {
-        if (document.getElementById('senhaAdmin').value.trim() === SENHA_ADMIN) { usuarioLogado = true; fecharModal('modalLogin'); carregarProdutosBanco(); alert('✅ Acesso liberado!'); }
-        else document.getElementById('avisoErro').style.display = 'block';
+        if (document.getElementById('senhaAdmin').value.trim() === SENHA_ADMIN) {
+            usuarioLogado = true;
+            fecharModal('modalLogin');
+            carregarProdutosBanco();
+            alert('✅ Acesso liberado!');
+        } else {
+            document.getElementById('avisoErro').style.display = 'block';
+        }
     });
     document.getElementById('btnVoltarSite').addEventListener('click', () => fecharModal('modalLogin'));
+
 
     // Menu Mobile
     const abrirMenu = document.getElementById('abrirMenu');
     const fecharMenu = document.getElementById('fecharMenu');
     const fundoMenu = document.getElementById('fundoMenu');
     const menuLateral = document.getElementById('menuLateral');
-    function alternarMenuMobile(aberto) { fundoMenu.classList.toggle('aberto', aberto); menuLateral.classList.toggle('aberto', aberto); document.body.style.overflow = aberto ? 'hidden' : 'auto'; }
-    abrirMenu.addEventListener('click', () => alternarMenuMobile(true));
-    fecharMenu.addEventListener('click', () => alternarMenuMobile(false));
-    fundoMenu.addEventListener('click', () => alternarMenuMobile(false));
+    
+    function alternarMenuMobile(aberto) {
+        if(fundoMenu) fundoMenu.classList.toggle('aberto', aberto);
+        if(menuLateral) menuLateral.classList.toggle('aberto', aberto);
+        document.body.style.overflow = aberto ? 'hidden' : 'auto';
+    }
+
+    if(abrirMenu) abrirMenu.addEventListener('click', () => alternarMenuMobile(true));
+    if(fecharMenu) fecharMenu.addEventListener('click', () => alternarMenuMobile(false));
+    if(fundoMenu) fundoMenu.addEventListener('click', () => alternarMenuMobile(false));
 
     // Filtros e Categorias
     document.querySelectorAll('.btn-categoria').forEach(botao => {
         botao.addEventListener('click', () => {
             document.querySelectorAll('.btn-categoria').forEach(b => b.classList.remove('ativo'));
-            botao.classList.add('ativo'); categoriaAtiva = botao.dataset.categoria; alternarMenuMobile(false); carregarProdutosBanco();
+            botao.classList.add('ativo');
+            categoriaAtiva = botao.dataset.categoria;
+            alternarMenuMobile(false);
+            carregarProdutosBanco();
         });
     });
-    document.getElementById('filtroLoja').addEventListener('change', (e) => { lojaAtiva = e.target.value; carregarProdutosBanco(); });
-    document.getElementById('filtroLojaMobile').addEventListener('change', (e) => { lojaAtiva = e.target.value; document.getElementById('filtroLoja').value = lojaAtiva; carregarProdutosBanco(); alternarMenuMobile(false); });
-    document.getElementById('filtroOrdem').addEventListener('change', (e) => { ordemAtiva = e.target.value; carregarProdutosBanco(); });
-    document.getElementById('filtroOrdemMobile').addEventListener('change', (e) => { ordemAtiva = e.target.value; document.getElementById('filtroOrdem').value = ordemAtiva; carregarProdutosBanco(); alternarMenuMobile(false); });
+
+    const filtroLoja = document.getElementById('filtroLoja');
+    const filtroLojaMobile = document.getElementById('filtroLojaMobile');
+    const filtroOrdem = document.getElementById('filtroOrdem');
+    const filtroOrdemMobile = document.getElementById('filtroOrdemMobile');
+
+    if(filtroLoja) filtroLoja.addEventListener('change', (e) => {
+        lojaAtiva = e.target.value;
+        carregarProdutosBanco();
+    });
+
+    if(filtroLojaMobile) filtroLojaMobile.addEventListener('change', (e) => {
+        lojaAtiva = e.target.value;
+        if(filtroLoja) filtroLoja.value = lojaAtiva;
+        carregarProdutosBanco();
+        alternarMenuMobile(false);
+    });
+
+    if(filtroOrdem) filtroOrdem.addEventListener('change', (e) => {
+        ordemAtiva = e.target.value;
+        carregarProdutosBanco();
+    });
+
+    if(filtroOrdemMobile) filtroOrdemMobile.addEventListener('change', (e) => {
+        ordemAtiva = e.target.value;
+        if(filtroOrdem) filtroOrdem.value = ordemAtiva;
+        carregarProdutosBanco();
+        alternarMenuMobile(false);
+    });
 
     // Busca
     const executarBusca = debounce(carregarProdutosBanco, 350);
-    document.getElementById('buscaDesktop').addEventListener('input', executarBusca);
-    document.getElementById('buscaMobile').addEventListener('input', executarBusca);
+    const buscaDesktop = document.getElementById('buscaDesktop');
+    const buscaMobile = document.getElementById('buscaMobile');
+    
+    if(buscaDesktop) buscaDesktop.addEventListener('input', executarBusca);
+    if(buscaMobile) buscaMobile.addEventListener('input', executarBusca);
 
     // Ações dos modais
-    document.getElementById('btnCancelar').addEventListener('click', () => fecharModal('modalProduto'));
-    document.getElementById('btnSalvar').addEventListener('click', salvarProduto);
-    document.querySelectorAll('.modal-centralizado').forEach(modal => { modal.addEventListener('click', (e) => { if (e.target === modal) fecharModal(modal.id); }); });
+    const btnCancelar = document.getElementById('btnCancelar');
+    const btnSalvar = document.getElementById('btnSalvar');
+    
+    if(btnCancelar) btnCancelar.addEventListener('click', () => fecharModal('modalProduto'));
+    if(btnSalvar) btnSalvar.addEventListener('click', salvarProduto);
+
+    document.querySelectorAll('.modal-centralizado').forEach(modal => {
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) fecharModal(modal.id);
+        });
+    });
 });
 </script>
 </body>
