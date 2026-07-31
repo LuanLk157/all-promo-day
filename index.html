@@ -268,11 +268,11 @@
                 <h2 style="margin-bottom:1.5rem;">🆕 Adicionar Novo Produto</h2>
                 <div class="grupo-input">
                     <label>Nome do Produto</label>
-                    <input type="text" id="admNome" required>
+                    <input type="text" id="admNome" >
                 </div>
                 <div class="grupo-input">
                     <label>Loja</label>
-                    <select id="admLoja" required>
+                    <select id="admLoja" >
                         <option value="">Selecione...</option>
                         <option value="Amazon Brasil">Amazon Brasil</option>
                         <option value="Mercado Livre">Mercado Livre</option>
@@ -281,7 +281,7 @@
                 </div>
                 <div class="grupo-input">
     <label>Categoria</label>
-    <select id="admCategoria" required>
+    <select id="admCategoria" >
         <option value="">Selecione...</option>
         <option value="eletrodomesticos">Eletrodomésticos</option>
         <option value="banho-cama">Banho e Cama</option>
@@ -298,15 +298,15 @@
 </div>
                 <div class="grupo-input">
                     <label>Preço (R$)</label>
-                    <input type="text" id="admPreco" placeholder="Ex: 189,90" required>
+                    <input type="text" id="admPreco" placeholder="Ex: 199,99" >
                 </div>
                 <div class="grupo-input">
                     <label>Link da Imagem (URL)</label>
-                    <input type="text" id="admImagem" required>
+                    <input type="text" id="admImagem" >
                 </div>
                 <div class="grupo-input">
                     <label>Link da Oferta / Afiliado</label>
-                    <input type="text" id="admLink" required>
+                    <input type="text" id="admLink" >
                 </div>
                 <div class="grupo-input" style="background:rgba(245,158,11,0.08); padding:0.8rem; border-radius:8px; border:1px solid rgba(245,158,11,0.3);">
                     <label style="font-weight:600;">Status Atual:</label>
@@ -393,8 +393,8 @@ function extrairPrecoNumerico(valor) {
 function abrirPainelAdm() { if(usuarioLogado) { document.getElementById('painelAdm').style.display = 'block'; carregarListaProdutosAdm(); } }
 function fecharPainelAdm() { document.getElementById('painelAdm').style.display = 'none'; }
 function validarDadosProduto(dados) {
-    const avisos = [];
-    if(!dados.nome || dados.nome.length < 5) avisos.push('Nome muito curto');
+const avisos = [];
+    if(!dados.nome || dados.nome.length < 5) avisos.push('Nome precisa ter pelo menos 5 caracteres');
     if(!dados.preco || isNaN(parseFloat(dados.preco.replace(',','.')))) avisos.push('Preço inválido');
     return avisos;
 }
@@ -438,11 +438,21 @@ async function carregarProdutosBanco() {
 }
 async function salvarProdutoBanco(dados, idEditar = null) {
     try {
-        if (idEditar) await colecaoProdutos.doc(idEditar).update(dados);
-        else { dados.dataCadastro = firebase.firestore.FieldValue.serverTimestamp(); dados.status = 'ativo'; await colecaoProdutos.add(dados); }
+        if (idEditar) {
+            // EDIÇÃO: usa o status escolhido (se passou na validação)
+            await colecaoProdutos.doc(idEditar).update(dados);
+        } else {
+            // NOVO PRODUTO: SEMPRE força pendente, não importa o que digitem
+            dados.dataCadastro = firebase.firestore.FieldValue.serverTimestamp();
+            dados.status = 'pendente';
+            await colecaoProdutos.add(dados);
+        }
         await carregarProdutosBanco();
         return true;
-    } catch (erro) { alert('Erro ao salvar: ' + erro.message); return false; }
+    } catch (erro) {
+        mostrarAviso('Erro ao salvar: ' + erro.message, 'erro');
+        return false;
+    }
 }
 async function excluirProdutoBanco(id) {
     if(confirm('Tem certeza que deseja excluir?')) {
@@ -642,17 +652,26 @@ document.getElementById('btnSalvarProduto').addEventListener('click', async () =
         imagem: document.getElementById('admImagem').value.trim() || '',
         link: document.getElementById('admLink').value.trim() || '',
         categoria: document.getElementById('admCategoria').value || 'utilidades',
-        status: 'pendente'
+        status: document.getElementById('admStatus')?.value || 'pendente'
     };
 
     const avisos = validarDadosProduto(dados);
-    if(avisos.length > 0) {
-        mostrarAviso('Aviso: ' + avisos.join(' • '), 'aviso');
+
+    // REGRAS EXATAS COMO VOCÊ PEDIU:
+    if (avisos.length > 0) {
+        if (dados.status === 'ativo') {
+            // TENTOU ATIVAR COM ERRO → BLOQUEIA TOTALMENTE
+            mostrarAviso('❌ Não pode ativar: ' + avisos.join(' • '), 'erro');
+            return;
+        } else {
+            // SALVA COMO PENDENTE MESMO COM ERRO
+            mostrarAviso('⚠️ Salvo como Pendente: ' + avisos.join(' • '), 'aviso');
+        }
     }
 
     const ok = await salvarProdutoBanco(dados, idEdicao);
     if(ok) {
-        mostrarAviso('Produto salvo como Pendente! ✅', 'sucesso');
+        mostrarAviso('Produto salvo com sucesso! ✅', 'sucesso');
         document.getElementById('admNome').value = '';
         document.getElementById('admLoja').value = '';
         document.getElementById('admPreco').value = '';
@@ -660,6 +679,8 @@ document.getElementById('btnSalvarProduto').addEventListener('click', async () =
         document.getElementById('admLink').value = '';
         document.getElementById('admCategoria').value = '';
         idEdicao = null;
+        // Remove o campo de status se aparecer
+        document.getElementById('campoStatusEdicao')?.remove();
         carregarListaProdutosAdm();
     }
 });
@@ -671,6 +692,7 @@ document.getElementById('btnSalvarProduto').addEventListener('click', async () =
         document.getElementById('admPreco').value = '';
         document.getElementById('admImagem').value = '';
         document.getElementById('admLink').value = '';
+        document.getElementById('admCategoria').value = '';
         idEdicao = null;
     });
 
@@ -723,6 +745,20 @@ document.getElementById('btnSalvarProduto').addEventListener('click', async () =
                 document.getElementById('admImagem').value = prod.imagem || '';
                 document.getElementById('admLink').value = prod.link || '';
                 document.getElementById('admCategoria').value = prod.categoria || 'utilidades';
+                // ==== BLOCO DO CAMPO DE STATUS NA EDIÇÃO ====
+document.getElementById('campoStatusEdicao')?.remove();
+const campoStatus = document.createElement('div');
+campoStatus.className = 'grupo-input';
+campoStatus.id = 'campoStatusEdicao';
+campoStatus.innerHTML = `
+    <label>Status do Produto</label>
+    <select id="admStatus">
+        <option value="pendente" ${prod.status === 'pendente' ? 'selected' : ''}>🟡 Pendente</option>
+        <option value="ativo" ${prod.status === 'ativo' ? 'selected' : ''}>✅ Ativo</option>
+    </select>
+    <p style="font-size:0.8rem; margin-top:0.3rem; color:var(--texto-claro);">⚠️ Só pode deixar Ativo se todos os dados estiverem corretos!</p>
+`;
+document.querySelector('#abaAdicionar .botoes-modal').before(campoStatus);
                 document.querySelector('[data-aba="adicionar"]').click();
             }
         }
@@ -734,5 +770,3 @@ document.getElementById('btnSalvarProduto').addEventListener('click', async () =
 </script>
 </body>
 </html>
-
-       
