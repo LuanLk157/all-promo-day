@@ -280,6 +280,23 @@
                     </select>
                 </div>
                 <div class="grupo-input">
+    <label>Categoria</label>
+    <select id="admCategoria" required>
+        <option value="">Selecione...</option>
+        <option value="eletrodomesticos">Eletrodomésticos</option>
+        <option value="banho-cama">Banho e Cama</option>
+        <option value="decoracao">Decoração</option>
+        <option value="kids">Kids / Infantil</option>
+        <option value="gamer">Gamer & Hardware</option>
+        <option value="moveis">Móveis</option>
+        <option value="automotivos">Acessórios Automotivos</option>
+        <option value="pets">Pets</option>
+        <option value="celulares">Celulares e Acessórios</option>
+        <option value="esporte">Esporte e Bem-estar</option>
+        <option value="utilidades">Utilidades e Presentes</option>
+    </select>
+</div>
+                <div class="grupo-input">
                     <label>Preço (R$)</label>
                     <input type="text" id="admPreco" placeholder="Ex: 189,90" required>
                 </div>
@@ -376,13 +393,26 @@ function extrairPrecoNumerico(valor) {
 function abrirPainelAdm() { if(usuarioLogado) { document.getElementById('painelAdm').style.display = 'block'; carregarListaProdutosAdm(); } }
 function fecharPainelAdm() { document.getElementById('painelAdm').style.display = 'none'; }
 function validarDadosProduto(dados) {
-    const erros = [];
-    if(!dados.nome || dados.nome.length < 5) erros.push('Nome muito curto ou vazio');
-    if(/[_#$*]/.test(dados.nome)) erros.push('Nome contém caracteres inválidos');
-    if(!dados.preco || isNaN(parseFloat(dados.preco.replace(',','.')))) erros.push('Preço inválido');
-    if(!dados.linkImagem || !dados.linkImagem.startsWith('http')) erros.push('Link da imagem inválido');
-    if(!dados.linkOferta || !dados.linkOferta.startsWith('http')) erros.push('Link de afiliado inválido');
-    return erros;
+    const avisos = [];
+    if(!dados.nome || dados.nome.length < 5) avisos.push('Nome muito curto');
+    if(!dados.preco || isNaN(parseFloat(dados.preco.replace(',','.')))) avisos.push('Preço inválido');
+    return avisos;
+}
+    function mostrarAviso(mensagem, tipo = 'aviso') {
+    const aviso = document.createElement('div');
+    aviso.style.cssText = `
+        position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+        padding: 0.9rem 1.5rem; border-radius: 10px; color: white; font-weight: 600;
+        z-index: 99999; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        transition: opacity 0.3s ease;
+        background: ${tipo === 'erro' ? '#EF4444' : tipo === 'sucesso' ? '#16A34A' : '#F59E0B'};
+    `;
+    aviso.textContent = mensagem;
+    document.body.appendChild(aviso);
+    setTimeout(() => {
+        aviso.style.opacity = '0';
+        setTimeout(() => aviso.remove(), 300);
+    }, 3000);
 }
 
 // ==================== PRODUTOS PADRÃO ====================
@@ -602,33 +632,37 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Salvar produto
-    document.getElementById('btnSalvarProduto').addEventListener('click', async () => {
-        const precoBruto = document.getElementById('admPreco').value;
-        const dados = {
-            nome: document.getElementById('admNome').value.trim(),
-            loja: document.getElementById('admLoja').value,
-            preco: precoBruto,
-            precoNum: extrairPrecoNumerico(precoBruto),
-            imagem: document.getElementById('admImagem').value.trim(),
-            link: document.getElementById('admLink').value.trim(),
-            categoria: 'utilidades',
-            status: 'ativo'
-        };
-        const erros = validarDadosProduto(dados);
-        if(erros.length > 0) { alert('Corrija:\n- ' + erros.join('\n- ')); return; }
+document.getElementById('btnSalvarProduto').addEventListener('click', async () => {
+    const precoBruto = document.getElementById('admPreco').value;
+    const dados = {
+        nome: document.getElementById('admNome').value.trim(),
+        loja: document.getElementById('admLoja').value,
+        preco: precoBruto,
+        precoNum: extrairPrecoNumerico(precoBruto),
+        imagem: document.getElementById('admImagem').value.trim() || '',
+        link: document.getElementById('admLink').value.trim() || '',
+        categoria: document.getElementById('admCategoria').value || 'utilidades',
+        status: 'pendente'
+    };
 
-        const ok = await salvarProdutoBanco(dados, idEdicao);
-        if(ok) {
-            alert('Salvo com sucesso!');
-            document.getElementById('admNome').value = '';
-            document.getElementById('admLoja').value = '';
-            document.getElementById('admPreco').value = '';
-            document.getElementById('admImagem').value = '';
-            document.getElementById('admLink').value = '';
-            idEdicao = null;
-            carregarListaProdutosAdm();
-        }
-    });
+    const avisos = validarDadosProduto(dados);
+    if(avisos.length > 0) {
+        mostrarAviso('Aviso: ' + avisos.join(' • '), 'aviso');
+    }
+
+    const ok = await salvarProdutoBanco(dados, idEdicao);
+    if(ok) {
+        mostrarAviso('Produto salvo como Pendente! ✅', 'sucesso');
+        document.getElementById('admNome').value = '';
+        document.getElementById('admLoja').value = '';
+        document.getElementById('admPreco').value = '';
+        document.getElementById('admImagem').value = '';
+        document.getElementById('admLink').value = '';
+        document.getElementById('admCategoria').value = '';
+        idEdicao = null;
+        carregarListaProdutosAdm();
+    }
+});
 
     // Cancelar
     document.getElementById('btnCancelarProduto').addEventListener('click', () => {
@@ -664,6 +698,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.getElementById('admPreco').value = formatarPreco(prod.precoNum || prod.preco).replace('R$ ','');
                 document.getElementById('admImagem').value = prod.imagem || '';
                 document.getElementById('admLink').value = prod.link || '';
+                document.getElementById('admCategoria').value = prod.categoria || 'utilidades';
                 abrirPainelAdm();
             }
         }
@@ -687,6 +722,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.getElementById('admPreco').value = formatarPreco(prod.precoNum || prod.preco).replace('R$ ','');
                 document.getElementById('admImagem').value = prod.imagem || '';
                 document.getElementById('admLink').value = prod.link || '';
+                document.getElementById('admCategoria').value = prod.categoria || 'utilidades';
                 document.querySelector('[data-aba="adicionar"]').click();
             }
         }
