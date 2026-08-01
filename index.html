@@ -415,11 +415,14 @@ function debounce(func, delay) {
 function formatarPreco(valor) {
     if (!valor && valor !== 0) return 'R$ 0,00';
     let texto = String(valor).replace(/[R$\s]/g, '');
+    
+    // ✅ Se tem vírgula = formato brasileiro → converte direto
     if (texto.includes(',')) {
         texto = texto.replace(/\./g, '').replace(',', '.');
-    } else if (texto.length > 2) {
-        texto = texto.slice(0, -2) + '.' + texto.slice(-2);
     }
+    // ✅ Se NÃO tem vírgula → NÃO MEXE! Assume que é o valor correto
+    // Ex: "160" = 160 e NÃO 1,60 | "16000" = 16000 e NÃO 160,00
+
     const numero = parseFloat(texto);
     if (isNaN(numero)) return 'R$ 0,00';
     return numero.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 2 });
