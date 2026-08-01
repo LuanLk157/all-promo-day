@@ -416,12 +416,9 @@ function formatarPreco(valor) {
     if (!valor && valor !== 0) return 'R$ 0,00';
     let texto = String(valor).replace(/[R$\s]/g, '');
     
-    // ✅ Se tem vírgula = formato brasileiro → converte direto
     if (texto.includes(',')) {
         texto = texto.replace(/\./g, '').replace(',', '.');
     }
-    // ✅ Se NÃO tem vírgula → NÃO MEXE! Assume que é o valor correto
-    // Ex: "160" = 160 e NÃO 1,60 | "16000" = 16000 e NÃO 160,00
 
     const numero = parseFloat(texto);
     if (isNaN(numero)) return 'R$ 0,00';
@@ -431,20 +428,21 @@ function formatarPreco(valor) {
 function extrairPrecoNumerico(valor) {
     if (!valor && valor !== 0) return 0;
     let texto = String(valor || '');
-    
-    // Remove símbolos e espaços, deixa só números, vírgula e ponto
     texto = texto.replace(/[^0-9,.]/g, '');
 
-    // ✅ Se tem VÍRGULA = separador decimal BR
     if (texto.includes(',')) {
-        // Remove pontos de milhar → troca vírgula por ponto
         texto = texto.replace(/\./g, '').replace(',', '.');
     }
-    // ✅ Se NÃO tem vírgula → NÃO adivinha centavos! Assume valor inteiro
-    // Ex: "16000" = 16000 e não 160,00 nem 1,60
 
     const numero = parseFloat(texto);
     return isNaN(numero) ? 0 : numero;
+}
+
+function calcularDesconto(precoAntigo, precoAtual) {
+    const antigo = extrairPrecoNumerico(precoAntigo);
+    const atual = extrairPrecoNumerico(precoAtual);
+    if (!antigo || antigo <= atual) return null;
+    return Math.round(((antigo - atual) / antigo) * 100);
 }
 
 function mostrarAviso(mensagem, tipo = 'aviso') {
@@ -476,10 +474,10 @@ function fecharPainelAdm() { document.getElementById('painelAdm').style.display 
 
 // ==================== PRODUTOS PADRÃO ====================
 const PRODUTOS_PADRAO = [
-    { id: 'padrao1', nome: "Smart GoogleTV 50\" 4K HDR10", preco: "R$ 1.879,06", precoNum: 1879.06, loja: "Amazon Brasil", categoria: "eletrodomesticos", imagem: "https://m.media-amazon.com/images/I/61oybFahwGL._AC_SL1000_.jpg", link: "https://www.amazon.com.br/Smart-Semp-Polegadas-Bluetooth-Google/dp/B0FPRFS3L1", status: 'ativo' },
-    { id: 'padrao2', nome: "Teclado Mecânico Gamer RGB", preco: "R$ 115,61", precoNum: 115.61, loja: "Mercado Livre", categoria: "gamer", imagem: "https://http2.mlstatic.com/D_NQ_NP_2X_626318-MLB96986865026_112025-F.webp", link: "https://meli.la/2jWJxe4", status: 'ativo' },
-    { id: 'padrao3', nome: "Kit Upgrade Ryzen 7 5700x + B550m Aorus Elite", preco: "R$ 2.148,55", precoNum: 2148.55, loja: "Mercado Livre", categoria: "gamer", imagem: "https://http2.mlstatic.com/D_NQ_NP_2X_894040-MLB92282331326_092025-F.webp", link: "https://meli.la/1d4rQpt", status: 'ativo' },
-    { id: 'padrao4', nome: "Jogo Lençol Queen Size 4 Peças 400 Fios", preco: "R$ 104,41", precoNum: 104.41, loja: "Shopee", categoria: "banho-cama", imagem: "https://down-br.img.susercontent.com/file/br-11134207-820lu-mnye65kliio139.webp", link: "https://s.shopee.com.br/9Uzysz7yrV", status: 'ativo' }
+    { id: 'padrao1', nome: "Smart GoogleTV 50\" 4K HDR10", precoAntigo: "R$ 2.599,90", preco: "R$ 1.879,06", precoNum: 1879.06, loja: "Amazon Brasil", categoria: "eletrodomesticos", imagem: "https://m.media-amazon.com/images/I/61oybFahwGL._AC_SL1000_.jpg", link: "https://www.amazon.com.br/Smart-Semp-Polegadas-Bluetooth-Google/dp/B0FPRFS3L1", status: 'ativo' },
+    { id: 'padrao2', nome: "Teclado Mecânico Gamer RGB", precoAntigo: "R$ 199,90", preco: "R$ 115,61", precoNum: 115.61, loja: "Mercado Livre", categoria: "gamer", imagem: "https://http2.mlstatic.com/D_NQ_NP_2X_626318-MLB96986865026_112025-F.webp", link: "https://meli.la/2jWJxe4", status: 'ativo' },
+    { id: 'padrao3', nome: "Kit Upgrade Ryzen 7 5700x + B550m Aorus Elite", precoAntigo: "R$ 2.899,00", preco: "R$ 2.148,55", precoNum: 2148.55, loja: "Mercado Livre", categoria: "gamer", imagem: "https://http2.mlstatic.com/D_NQ_NP_2X_894040-MLB92282331326_092025-F.webp", link: "https://meli.la/1d4rQpt", status: 'ativo' },
+    { id: 'padrao4', nome: "Jogo Lençol Queen Size 4 Peças 400 Fios", precoAntigo: "R$ 189,90", preco: "R$ 104,41", precoNum: 104.41, loja: "Shopee", categoria: "banho-cama", imagem: "https://down-br.img.susercontent.com/file/br-11134207-820lu-mnye65kliio139.webp", link: "https://s.shopee.com.br/9Uzysz7yrV", status: 'ativo' }
 ];
 
 // ==================== BANCO DE DADOS ====================
@@ -577,7 +575,7 @@ async function alterarStatusEmMassa(listaIds, novoStatus) {
     }
 }
 
-// ==================== RENDERIZAÇÃO ====================
+// ==================== RENDERIZAÇÃO NO FORMATO QUE VOCÊ QUER ====================
 function renderizarProdutos(lista) {
     const container = document.getElementById('lista-produtos');
     let filtrados = lista.filter(p => {
@@ -598,7 +596,9 @@ function renderizarProdutos(lista) {
     if (ordemAtiva === 'menor') filtrados.sort((a, b) => (a.precoNum || 0) - (b.precoNum || 0));
     if (ordemAtiva === 'maior') filtrados.sort((a, b) => (b.precoNum || 0) - (a.precoNum || 0));
 
-    container.innerHTML = filtrados.map(prod => `
+    container.innerHTML = filtrados.map(prod => {
+        const desconto = calcularDesconto(prod.precoAntigo, prod.preco);
+        return `
         <div class="card-produto">
             ${usuarioLogado ? `
                 <button class="btn-editar-card visivel" onclick="prepararEdicao('${prod.id}')" title="Editar">✏️</button>
@@ -608,21 +608,43 @@ function renderizarProdutos(lista) {
             <div class="etiqueta-loja">🛒 ${prod.loja}</div>
             <div class="info-produto">
                 <h3 class="nome-produto">${prod.nome}</h3>
+                
+                ${desconto ? `
+                <div style="font-size:1rem; color:#888; text-decoration:line-through; margin-bottom:0.3rem;">
+                    ${formatarPreco(prod.precoAntigo)}
+                </div>
+                <div style="display:flex; align-items:center; gap:0.6rem; flex-wrap:wrap; margin-bottom:0.5rem;">
+                    <div class="preco-produto" style="margin:0; font-size:1.5rem;">
+                        ${formatarPreco(prod.precoNum || prod.preco)}
+                    </div>
+                    <span style="background:#FF4757; color:white; font-weight:700; padding:0.25rem 0.6rem; border-radius:6px; font-size:0.9rem;">
+                        ${desconto}% OFF
+                    </span>
+                </div>
+                ` : `
                 <div class="preco-produto">${formatarPreco(prod.precoNum || prod.preco)}</div>
+                `}
+                
                 <a href="${prod.link}" target="_blank" rel="noopener" class="btn-oferta">🔗 Pegar Oferta</a>
             </div>
         </div>
-    `).join('');
+    `}).join('');
 }
 
 function renderizarListaAdm(lista) {
     const tbody = document.getElementById('listaProdutosAdm');
-    tbody.innerHTML = lista.map(prod => `
+    tbody.innerHTML = lista.map(prod => {
+        const desconto = calcularDesconto(prod.precoAntigo, prod.preco);
+        return `
         <tr style="border-bottom:1px solid var(--borda);">
             <td style="padding:1rem;"><input type="checkbox" class="chk-produto" value="${prod.id}"></td>
             <td style="padding:1rem;">${prod.nome}</td>
             <td style="padding:1rem;">${prod.loja}</td>
-            <td style="padding:1rem;">${formatarPreco(prod.precoNum || prod.preco)}</td>
+            <td style="padding:1rem;">
+                ${prod.precoAntigo ? `<span style="text-decoration:line-through; color:#888; font-size:0.9rem;">${formatarPreco(prod.precoAntigo)}</span> ` : ''}
+                ${formatarPreco(prod.precoNum || prod.preco)}
+                ${desconto ? `<span style="background:#FF4757; color:white; padding:0.15rem 0.4rem; border-radius:4px; font-size:0.85rem; margin-left:0.4rem;">${desconto}% OFF</span>` : ''}
+            </td>
             <td style="padding:1rem; font-weight:600; color:${prod.status === 'ativo' ? 'var(--sucesso)' : 'var(--erro)'};">
                 ${prod.status === 'ativo' ? '✅ Ativo' : '🟡 Pendente'}
             </td>
@@ -631,7 +653,7 @@ function renderizarListaAdm(lista) {
                 <button class="btn perigo" onclick="excluirProduto('${prod.id}')">Excluir</button>
             </td>
         </tr>
-    `).join('');
+    `}).join('');
 }
 
 // ==================== FORMULÁRIOS ====================
@@ -640,6 +662,7 @@ function limparFormularioAdicionar() {
     document.getElementById('admLoja').value = '';
     document.getElementById('admCategoria').value = '';
     document.getElementById('admPreco').value = '';
+    document.getElementById('admPrecoAntigo').value = '';
     document.getElementById('admImagem').value = '';
     document.getElementById('admLink').value = '';
 }
@@ -649,6 +672,7 @@ function limparFormularioEditar() {
     document.getElementById('edtLoja').value = '';
     document.getElementById('edtCategoria').value = '';
     document.getElementById('edtPreco').value = '';
+    document.getElementById('edtPrecoAntigo').value = '';
     document.getElementById('edtImagem').value = '';
     document.getElementById('edtLink').value = '';
     document.getElementById('edtStatus').value = 'pendente';
@@ -665,6 +689,7 @@ async function prepararEdicao(id) {
         document.getElementById('edtLoja').value = dados.loja || '';
         document.getElementById('edtCategoria').value = dados.categoria || '';
         document.getElementById('edtPreco').value = dados.preco || '';
+        document.getElementById('edtPrecoAntigo').value = dados.precoAntigo || '';
         document.getElementById('edtImagem').value = dados.imagem || '';
         document.getElementById('edtLink').value = dados.link || '';
         document.getElementById('edtStatus').value = dados.status || 'pendente';
@@ -790,6 +815,7 @@ document.addEventListener('DOMContentLoaded', () => {
             loja: document.getElementById('admLoja').value,
             categoria: document.getElementById('admCategoria').value,
             preco: document.getElementById('admPreco').value.trim(),
+            precoAntigo: document.getElementById('admPrecoAntigo').value.trim(),
             imagem: document.getElementById('admImagem').value.trim(),
             link: document.getElementById('admLink').value.trim()
         };
@@ -807,6 +833,7 @@ document.addEventListener('DOMContentLoaded', () => {
             loja: document.getElementById('edtLoja').value,
             categoria: document.getElementById('edtCategoria').value,
             preco: document.getElementById('edtPreco').value.trim(),
+            precoAntigo: document.getElementById('edtPrecoAntigo').value.trim(),
             imagem: document.getElementById('edtImagem').value.trim(),
             link: document.getElementById('edtLink').value.trim(),
             status: document.getElementById('edtStatus').value
