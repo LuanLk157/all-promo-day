@@ -260,7 +260,7 @@
             </div>
         </nav>
         <main style="flex:1; padding:2rem; overflow-y:auto;">
-            <!-- ABA ADICIONAR (SEM CAMPO STATUS) -->
+            <!-- ABA ADICIONAR → COM CAMPO PREÇO ANTIGO ADICIONADO -->
             <div id="abaAdicionar" class="conteudo-aba" style="display:block;">
                 <h2 style="margin-bottom:1.5rem;">🆕 Adicionar Novo Produto</h2>
                 <div class="grupo-input">
@@ -297,6 +297,11 @@
                     <label>Preço (R$)</label>
                     <input type="text" id="admPreco" placeholder="Ex: 199,99" >
                 </div>
+                <!-- ✅ CAMPO PREÇO ANTIGO ADICIONADO AQUI -->
+                <div class="grupo-input">
+                    <label>Preço Antigo / De (R$)</label>
+                    <input type="text" id="admPrecoAntigo" placeholder="Ex: 309,90 — opcional">
+                </div>
                 <div class="grupo-input">
                     <label>Link da Imagem (URL)</label>
                     <input type="text" id="admImagem" >
@@ -311,7 +316,7 @@
                 </div>
             </div>
 
-            <!-- ABA EXCLUSIVA PARA EDIÇÃO -->
+            <!-- ABA EDITAR → COM CAMPO PREÇO ANTIGO ADICIONADO -->
             <div id="abaEditar" class="conteudo-aba" style="display:none;">
                 <h2 style="margin-bottom:1.5rem;">✏️ Editar Produto</h2>
                 <div class="grupo-input">
@@ -347,6 +352,11 @@
                 <div class="grupo-input">
                     <label>Preço (R$)</label>
                     <input type="text" id="edtPreco" placeholder="Ex: 199,99" >
+                </div>
+                <!-- ✅ CAMPO PREÇO ANTIGO ADICIONADO AQUI -->
+                <div class="grupo-input">
+                    <label>Preço Antigo / De (R$)</label>
+                    <input type="text" id="edtPrecoAntigo" placeholder="Ex: 309,90 — opcional">
                 </div>
                 <div class="grupo-input">
                     <label>Link da Imagem (URL)</label>
@@ -415,11 +425,9 @@ function debounce(func, delay) {
 function formatarPreco(valor) {
     if (!valor && valor !== 0) return 'R$ 0,00';
     let texto = String(valor).replace(/[R$\s]/g, '');
-    
     if (texto.includes(',')) {
         texto = texto.replace(/\./g, '').replace(',', '.');
     }
-
     const numero = parseFloat(texto);
     if (isNaN(numero)) return 'R$ 0,00';
     return numero.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 2 });
@@ -429,19 +437,18 @@ function extrairPrecoNumerico(valor) {
     if (!valor && valor !== 0) return 0;
     let texto = String(valor || '');
     texto = texto.replace(/[^0-9,.]/g, '');
-
     if (texto.includes(',')) {
         texto = texto.replace(/\./g, '').replace(',', '.');
     }
-
     const numero = parseFloat(texto);
     return isNaN(numero) ? 0 : numero;
 }
 
 function calcularDesconto(precoAntigo, precoAtual) {
+    if (!precoAntigo || precoAntigo === '') return null;
     const antigo = extrairPrecoNumerico(precoAntigo);
     const atual = extrairPrecoNumerico(precoAtual);
-    if (!antigo || antigo <= atual) return null;
+    if (!antigo || antigo <= atual || !atual) return null;
     return Math.round(((antigo - atual) / antigo) * 100);
 }
 
@@ -474,10 +481,10 @@ function fecharPainelAdm() { document.getElementById('painelAdm').style.display 
 
 // ==================== PRODUTOS PADRÃO ====================
 const PRODUTOS_PADRAO = [
-    { id: 'padrao1', nome: "Smart GoogleTV 50\" 4K HDR10", precoAntigo: "R$ 2.599,90", preco: "R$ 1.879,06", precoNum: 1879.06, loja: "Amazon Brasil", categoria: "eletrodomesticos", imagem: "https://m.media-amazon.com/images/I/61oybFahwGL._AC_SL1000_.jpg", link: "https://www.amazon.com.br/Smart-Semp-Polegadas-Bluetooth-Google/dp/B0FPRFS3L1", status: 'ativo' },
-    { id: 'padrao2', nome: "Teclado Mecânico Gamer RGB", precoAntigo: "R$ 199,90", preco: "R$ 115,61", precoNum: 115.61, loja: "Mercado Livre", categoria: "gamer", imagem: "https://http2.mlstatic.com/D_NQ_NP_2X_626318-MLB96986865026_112025-F.webp", link: "https://meli.la/2jWJxe4", status: 'ativo' },
-    { id: 'padrao3', nome: "Kit Upgrade Ryzen 7 5700x + B550m Aorus Elite", precoAntigo: "R$ 2.899,00", preco: "R$ 2.148,55", precoNum: 2148.55, loja: "Mercado Livre", categoria: "gamer", imagem: "https://http2.mlstatic.com/D_NQ_NP_2X_894040-MLB92282331326_092025-F.webp", link: "https://meli.la/1d4rQpt", status: 'ativo' },
-    { id: 'padrao4', nome: "Jogo Lençol Queen Size 4 Peças 400 Fios", precoAntigo: "R$ 189,90", preco: "R$ 104,41", precoNum: 104.41, loja: "Shopee", categoria: "banho-cama", imagem: "https://down-br.img.susercontent.com/file/br-11134207-820lu-mnye65kliio139.webp", link: "https://s.shopee.com.br/9Uzysz7yrV", status: 'ativo' }
+    { id: 'padrao1', nome: "Smart GoogleTV 50\" 4K HDR10", precoAntigo: "", preco: "R$ 1.879,06", precoNum: 1879.06, loja: "Amazon Brasil", categoria: "eletrodomesticos", imagem: "https://m.media-amazon.com/images/I/61oybFahwGL._AC_SL1000_.jpg", link: "https://www.amazon.com.br/Smart-Semp-Polegadas-Bluetooth-Google/dp/B0FPRFS3L1", status: 'ativo' },
+    { id: 'padrao2', nome: "Teclado Mecânico Gamer RGB", precoAntigo: "", preco: "R$ 115,61", precoNum: 115.61, loja: "Mercado Livre", categoria: "gamer", imagem: "https://http2.mlstatic.com/D_NQ_NP_2X_626318-MLB96986865026_112025-F.webp", link: "https://meli.la/2jWJxe4", status: 'ativo' },
+    { id: 'padrao3', nome: "Kit Upgrade Ryzen 7 5700x + B550m Aorus Elite", precoAntigo: "", preco: "R$ 2.148,55", precoNum: 2148.55, loja: "Mercado Livre", categoria: "gamer", imagem: "https://http2.mlstatic.com/D_NQ_NP_2X_894040-MLB92282331326_092025-F.webp", link: "https://meli.la/1d4rQpt", status: 'ativo' },
+    { id: 'padrao4', nome: "Jogo Lençol Queen Size 4 Peças 400 Fios", precoAntigo: "", preco: "R$ 104,41", precoNum: 104.41, loja: "Shopee", categoria: "banho-cama", imagem: "https://down-br.img.susercontent.com/file/br-11134207-820lu-mnye65kliio139.webp", link: "https://s.shopee.com.br/9Uzysz7yrV", status: 'ativo' }
 ];
 
 // ==================== BANCO DE DADOS ====================
@@ -575,7 +582,7 @@ async function alterarStatusEmMassa(listaIds, novoStatus) {
     }
 }
 
-// ==================== RENDERIZAÇÃO NO FORMATO QUE VOCÊ QUER ====================
+// ==================== RENDERIZAÇÃO ====================
 function renderizarProdutos(lista) {
     const container = document.getElementById('lista-produtos');
     let filtrados = lista.filter(p => {
