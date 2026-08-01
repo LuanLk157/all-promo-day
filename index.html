@@ -427,12 +427,19 @@ function formatarPreco(valor) {
 
 function extrairPrecoNumerico(valor) {
     if (!valor && valor !== 0) return 0;
-    let texto = String(valor).replace(/[R$\s]/g, '');
+    let texto = String(valor || '');
+    
+    // Remove símbolos e espaços, deixa só números, vírgula e ponto
+    texto = texto.replace(/[^0-9,.]/g, '');
+
+    // ✅ Se tem VÍRGULA = separador decimal BR
     if (texto.includes(',')) {
+        // Remove pontos de milhar → troca vírgula por ponto
         texto = texto.replace(/\./g, '').replace(',', '.');
-    } else if (texto.length > 2) {
-        texto = texto.slice(0, -2) + '.' + texto.slice(-2);
     }
+    // ✅ Se NÃO tem vírgula → NÃO adivinha centavos! Assume valor inteiro
+    // Ex: "16000" = 16000 e não 160,00 nem 1,60
+
     const numero = parseFloat(texto);
     return isNaN(numero) ? 0 : numero;
 }
