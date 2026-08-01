@@ -639,8 +639,33 @@ function renderizarProdutos(lista) {
 }
 
 function renderizarListaAdm(lista) {
+    // PEGA OS VALORES DOS FILTROS DA TELA
+    const filtroTexto = (document.getElementById('filtroAdmTexto')?.value || '').toLowerCase().trim();
+    const filtroLoja = document.getElementById('filtroAdmLoja')?.value || 'todas';
+    const filtroStatus = document.getElementById('filtroAdmStatus')?.value || 'todos';
+    const filtroOrdem = document.getElementById('filtroAdmOrdem')?.value || 'padrao';
+
+    // APLICA TODOS OS FILTROS
+    let filtrados = lista.filter(prod => {
+        const nome = (prod.nome || '').toLowerCase();
+        const loja = (prod.loja || '').toLowerCase();
+        const status = prod.status || '';
+
+        const bateTexto = !filtroTexto || nome.includes(filtroTexto) || loja.includes(filtroTexto);
+        const bateLoja = filtroLoja === 'todas' || prod.loja === filtroLoja;
+        const bateStatus = filtroStatus === 'todos' || status === filtroStatus;
+
+        return bateTexto && bateLoja && bateStatus;
+    });
+
+    // APLICA A ORDENAÇÃO
+    if (filtroOrdem === 'menor') filtrados.sort((a, b) => (a.precoNum || 0) - (b.precoNum || 0));
+    if (filtroOrdem === 'maior') filtrados.sort((a, b) => (b.precoNum || 0) - (a.precoNum || 0));
+    if (filtroOrdem === 'nome') filtrados.sort((a, b) => (a.nome || '').localeCompare(b.nome || ''));
+
+    // DESENHA A TABELA NA TELA
     const tbody = document.getElementById('listaProdutosAdm');
-    tbody.innerHTML = lista.map(prod => {
+    tbody.innerHTML = filtrados.map(prod => {
         const desconto = calcularDesconto(prod.precoAntigo, prod.preco);
         return `
         <tr style="border-bottom:1px solid var(--borda);">
