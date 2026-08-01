@@ -386,18 +386,46 @@
                     <button id="btnAtivarSelecionados" class="btn sucesso">✅ Ativar Selecionados</button>
                     <button id="btnDesativarSelecionados" class="btn perigo">❌ Desativar Selecionados</button>
                 </div>
-                <table style="width:100%; border-collapse:separate; border-spacing:0; border-radius:10px; overflow:hidden; background:var(--card); border:1px solid var(--borda);">
+<table style="width:100%; border-collapse:separate; border-spacing:0; border-radius:10px; overflow:hidden; background:var(--card); border:1px solid var(--borda);">
                     <thead>
                         <tr style="background:var(--fundo-secundario);">
                             <th style="padding:1rem; text-align:left;"><input type="checkbox" id="selecionarTodos"></th>
-                            <th class="ordenar-coluna" data-coluna="nome" style="padding:1rem; text-align:left;">Nome do Produto ↕</th>
-                            <th class="ordenar-coluna" data-coluna="loja" style="padding:1rem; text-align:left;">Loja ↕</th>
-                            <th class="ordenar-coluna" data-coluna="preco" style="padding:1rem; text-align:left;">Preço ↕</th>
-                            <th class="ordenar-coluna" data-coluna="status" style="padding:1rem; text-align:left;">Status ↕</th>
+                            <th class="ordenar-coluna" data-coluna="nome" style="padding:1rem; text-align:left;">
+                                Nome do Produto ↕
+                                <input type="text" id="filtroAdmTexto" placeholder="Filtrar nome..." style="width:100%; padding:5px; margin-top:6px; border:1px solid var(--borda); border-radius:4px; font-size:0.85rem; background:var(--fundo); color:var(--texto); box-sizing:border-box;">
+                            </th>
+                            <th class="ordenar-coluna" data-coluna="loja" style="padding:1rem; text-align:left;">
+                                Loja ↕
+                                <select id="filtroAdmLoja" style="width:100%; padding:5px; margin-top:6px; border:1px solid var(--borda); border-radius:4px; font-size:0.85rem; background:var(--fundo); color:var(--texto); box-sizing:border-box;">
+                                    <option value="todas">Todas</option>
+                                    <option value="Amazon Brasil">Amazon Brasil</option>
+                                    <option value="Mercado Livre">Mercado Livre</option>
+                                    <option value="Shopee">Shopee</option>
+                                </select>
+                            </th>
+                            <th class="ordenar-coluna" data-coluna="preco" style="padding:1rem; text-align:left;">
+                                Preço ↕
+                                <select id="filtroAdmOrdem" style="width:100%; padding:5px; margin-top:6px; border:1px solid var(--borda); border-radius:4px; font-size:0.85rem; background:var(--fundo); color:var(--texto); box-sizing:border-box;">
+                                    <option value="padrao">Padrão</option>
+                                    <option value="menor">Menor → Maior</option>
+                                    <option value="maior">Maior → Menor</option>
+                                    <option value="nome">Nome A-Z</option>
+                                </select>
+                            </th>
+                            <th class="ordenar-coluna" data-coluna="status" style="padding:1rem; text-align:left;">
+                                Status ↕
+                                <select id="filtroAdmStatus" style="width:100%; padding:5px; margin-top:6px; border:1px solid var(--borda); border-radius:4px; font-size:0.85rem; background:var(--fundo); color:var(--texto); box-sizing:border-box;">
+                                    <option value="todos">Todos</option>
+                                    <option value="ativo">✅ Ativo</option>
+                                    <option value="pendente">🟡 Pendente</option>
+                                </select>
+                            </th>
                             <th style="padding:1rem; text-align:left;">Ações</th>
                         </tr>
                     </thead>
-                    <tbody id="listaProdutosAdm"></tbody>
+                    <tbody id="listaProdutosAdm">
+                    <!-- Os produtos aparecem aqui automaticamente -->
+                    </tbody>
                 </table>
             </div>
             <div id="abaConfig" class="conteudo-aba" style="display:none;">
