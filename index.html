@@ -896,6 +896,13 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!ids.length) return mostrarAviso("Selecione pelo menos um produto!", "aviso");
         alterarStatusEmMassa(ids, 'pendente');
     });
+    // ========== FILTROS DO PAINEL ADMINISTRATIVO ==========
+    const executarFiltroAdm = debounce(() => carregarListaProdutosAdm(), 300);
+
+    document.getElementById('filtroAdmTexto')?.addEventListener('input', executarFiltroAdm);
+    document.getElementById('filtroAdmLoja')?.addEventListener('change', executarFiltroAdm);
+    document.getElementById('filtroAdmStatus')?.addEventListener('change', executarFiltroAdm);
+    document.getElementById('filtroAdmOrdem')?.addEventListener('change', executarFiltroAdm);
 });
 </script>
 </body>
