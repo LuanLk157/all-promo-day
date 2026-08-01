@@ -481,9 +481,9 @@ function fecharPainelAdm() { document.getElementById('painelAdm').style.display 
 
 // ==================== PRODUTOS PADRÃO ====================
 const PRODUTOS_PADRAO = [
-    { id: 'padrao1', nome: "Smart GoogleTV 50\" 4K HDR10", precoAntigo: "", preco: "R$ 1.879,06", precoNum: 1879.06, loja: "Amazon Brasil", categoria: "eletrodomesticos", imagem: "https://m.media-amazon.com/images/I/61oybFahwGL._AC_SL1000_.jpg", link: "https://www.amazon.com.br/Smart-Semp-Polegadas-Bluetooth-Google/dp/B0FPRFS3L1", status: 'ativo' },
-    { id: 'padrao2', nome: "Teclado Mecânico Gamer RGB", precoAntigo: "", preco: "R$ 115,61", precoNum: 115.61, loja: "Mercado Livre", categoria: "gamer", imagem: "https://http2.mlstatic.com/D_NQ_NP_2X_626318-MLB96986865026_112025-F.webp", link: "https://meli.la/2jWJxe4", status: 'ativo' },
-    { id: 'padrao3', nome: "Kit Upgrade Ryzen 7 5700x + B550m Aorus Elite", precoAntigo: "", preco: "R$ 2.148,55", precoNum: 2148.55, loja: "Mercado Livre", categoria: "gamer", imagem: "https://http2.mlstatic.com/D_NQ_NP_2X_894040-MLB92282331326_092025-F.webp", link: "https://meli.la/1d4rQpt", status: 'ativo' },
+    { id: 'padrao1', nome: "Smart GoogleTV 50\" 4K HDR10", precoAntigo: "R$ 2.599,90", preco: "R$ 1.879,06", precoNum: 1879.06, loja: "Amazon Brasil", categoria: "eletrodomesticos", imagem: "https://m.media-amazon.com/images/I/61oybFahwGL._AC_SL1000_.jpg", link: "https://www.amazon.com.br/Smart-Semp-Polegadas-Bluetooth-Google/dp/B0FPRFS3L1", status: 'ativo' },
+    { id: 'padrao2', nome: "Teclado Mecânico Gamer RGB", precoAntigo: "R$ 199,90", preco: "R$ 115,61", precoNum: 115.61, loja: "Mercado Livre", categoria: "gamer", imagem: "https://http2.mlstatic.com/D_NQ_NP_2X_626318-MLB96986865026_112025-F.webp", link: "https://meli.la/2jWJxe4", status: 'ativo' },
+    { id: 'padrao3', nome: "Kit Upgrade Ryzen 7 5700x + B550m Aorus Elite", precoAntigo: "R$ 2.899,00", preco: "R$ 2.148,55", precoNum: 2148.55, loja: "Mercado Livre", categoria: "gamer", imagem: "https://http2.mlstatic.com/D_NQ_NP_2X_894040-MLB92282331326_092025-F.webp", link: "https://meli.la/1d4rQpt", status: 'ativo' },
     { id: 'padrao4', nome: "Jogo Lençol Queen Size 4 Peças 400 Fios", precoAntigo: "", preco: "R$ 104,41", precoNum: 104.41, loja: "Shopee", categoria: "banho-cama", imagem: "https://down-br.img.susercontent.com/file/br-11134207-820lu-mnye65kliio139.webp", link: "https://s.shopee.com.br/9Uzysz7yrV", status: 'ativo' }
 ];
 
@@ -620,7 +620,7 @@ function renderizarProdutos(lista) {
                 <div style="font-size:1rem; color:#888; text-decoration:line-through; margin-bottom:0.3rem;">
                     ${formatarPreco(prod.precoAntigo)}
                 </div>
-                <div style="display:flex; align-items:center; gap:0.6rem; flex-wrap:wrap; margin-bottom:0.5rem;">
+                <div style="display:flex; align-items:center; gap:0.6rem; flex-wrap:wrap; margin-bottom:1rem; margin-top:auto;">
                     <div class="preco-produto" style="margin:0; font-size:1.5rem;">
                         ${formatarPreco(prod.precoNum || prod.preco)}
                     </div>
@@ -629,7 +629,7 @@ function renderizarProdutos(lista) {
                     </span>
                 </div>
                 ` : `
-                <div class="preco-produto">${formatarPreco(prod.precoNum || prod.preco)}</div>
+                <div class="preco-produto" style="margin-top:auto;">${formatarPreco(prod.precoNum || prod.preco)}</div>
                 `}
                 
                 <a href="${prod.link}" target="_blank" rel="noopener" class="btn-oferta">🔗 Pegar Oferta</a>
