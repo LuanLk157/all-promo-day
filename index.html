@@ -252,6 +252,7 @@
         <nav style="width:260px; background:var(--fundo-secundario); border-right:1px solid var(--borda); padding:1.5rem; display:flex; flex-direction:column; gap:0.5rem;">
             <div style="font-size:1.3rem; font-weight:700; color:var(--destaque); margin-bottom:1.5rem;">⚙️ Painel ADM</div>
             <button class="aba-painel ativa" data-aba="adicionar">🆕 Adicionar Produto</button>
+            <button class="aba-painel" data-aba="editar">✏️ Editar Produto</button>
             <button class="aba-painel" data-aba="revisar">📋 Revisar Produtos</button>
             <button class="aba-painel" data-aba="config">⚙️ Configurações</button>
             <div style="margin-top:auto;">
@@ -259,11 +260,7 @@
             </div>
         </nav>
         <main style="flex:1; padding:2rem; overflow-y:auto;">
-            <div style="display:flex; gap:0.8rem; align-items:center; padding:1rem; background:var(--card); border-radius:10px; border:1px solid var(--borda); margin-bottom:1.5rem;">
-                <span>🔗</span>
-                <input type="text" id="linkRapidoAdm" placeholder="Cole o link do produto aqui..." style="flex:1; padding:0.6rem; border:1px solid var(--borda); border-radius:8px; background:var(--fundo-secundario); color:var(--texto);">
-                <button id="btnImportarLink" style="padding:0.6rem 1.2rem; background:var(--destaque); color:white; border:none; border-radius:8px; cursor:pointer;">Importar</button>
-            </div>
+            <!-- ABA ADICIONAR (SEM CAMPO STATUS) -->
             <div id="abaAdicionar" class="conteudo-aba" style="display:block;">
                 <h2 style="margin-bottom:1.5rem;">🆕 Adicionar Novo Produto</h2>
                 <div class="grupo-input">
@@ -308,16 +305,71 @@
                     <label>Link da Oferta / Afiliado</label>
                     <input type="text" id="admLink" >
                 </div>
-                <div class="grupo-input" style="background:rgba(245,158,11,0.08); padding:0.8rem; border-radius:8px; border:1px solid rgba(245,158,11,0.3);">
-                    <label style="font-weight:600;">Status Atual:</label>
-                    <span style="color:#F59E0B; font-weight:500;">🟡 Pendente</span>
-                    <p style="font-size:0.8rem; margin-top:0.3rem; color:var(--texto-claro);">Será alterado automaticamente para Ativo quando todos os dados estiverem corretos.</p>
-                </div>
                 <div class="botoes-modal" style="margin-top:1.5rem;">
                     <button type="button" class="btn-cancelar" id="btnCancelarProduto">Cancelar</button>
                     <button type="button" class="btn-salvar" id="btnSalvarProduto">Salvar</button>
                 </div>
             </div>
+
+            <!-- ABA EXCLUSIVA PARA EDIÇÃO -->
+            <div id="abaEditar" class="conteudo-aba" style="display:none;">
+                <h2 style="margin-bottom:1.5rem;">✏️ Editar Produto</h2>
+                <div class="grupo-input">
+                    <label>Nome do Produto</label>
+                    <input type="text" id="edtNome" >
+                </div>
+                <div class="grupo-input">
+                    <label>Loja</label>
+                    <select id="edtLoja" >
+                        <option value="">Selecione...</option>
+                        <option value="Amazon Brasil">Amazon Brasil</option>
+                        <option value="Mercado Livre">Mercado Livre</option>
+                        <option value="Shopee">Shopee</option>
+                    </select>
+                </div>
+                <div class="grupo-input">
+                    <label>Categoria</label>
+                    <select id="edtCategoria" >
+                        <option value="">Selecione...</option>
+                        <option value="eletrodomesticos">Eletrodomésticos</option>
+                        <option value="banho-cama">Banho e Cama</option>
+                        <option value="decoracao">Decoração</option>
+                        <option value="kids">Kids / Infantil</option>
+                        <option value="gamer">Gamer & Hardware</option>
+                        <option value="moveis">Móveis</option>
+                        <option value="automotivos">Acessórios Automotivos</option>
+                        <option value="pets">Pets</option>
+                        <option value="celulares">Celulares e Acessórios</option>
+                        <option value="esporte">Esporte e Bem-estar</option>
+                        <option value="utilidades">Utilidades e Presentes</option>
+                    </select>
+                </div>
+                <div class="grupo-input">
+                    <label>Preço (R$)</label>
+                    <input type="text" id="edtPreco" placeholder="Ex: 199,99" >
+                </div>
+                <div class="grupo-input">
+                    <label>Link da Imagem (URL)</label>
+                    <input type="text" id="edtImagem" >
+                </div>
+                <div class="grupo-input">
+                    <label>Link da Oferta / Afiliado</label>
+                    <input type="text" id="edtLink" >
+                </div>
+                <div class="grupo-input">
+                    <label>Status do Produto</label>
+                    <select id="edtStatus">
+                        <option value="pendente">🟡 Pendente</option>
+                        <option value="ativo">✅ Ativo</option>
+                    </select>
+                    <p style="font-size:0.8rem; margin-top:0.3rem; color:var(--texto-claro);">⚠️ Só deixe Ativo se todos os dados estiverem corretos!</p>
+                </div>
+                <div class="botoes-modal" style="margin-top:1.5rem;">
+                    <button type="button" class="btn-cancelar" id="btnCancelarEdicao">Cancelar</button>
+                    <button type="button" class="btn-salvar" id="btnSalvarEdicao">Salvar Alterações</button>
+                </div>
+            </div>
+
             <div id="abaRevisar" class="conteudo-aba" style="display:none;">
                 <h2 style="margin-bottom:1.5rem;">📋 Revisar Todos os Produtos</h2>
                 <div style="margin-bottom:1rem; display:flex; gap:0.5rem;">
@@ -433,140 +485,220 @@ async function carregarProdutosBanco() {
         const snapshot = await colecaoProdutos.where('status', '==', 'ativo').orderBy('dataCadastro', 'desc').get();
         const produtos = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         renderizarProdutos(produtos.length > 0 ? produtos : PRODUTOS_PADRAO);
-        return produtos.length > 0 ? produtos : PRODUTOS_PADRAO;
     } catch (erro) {
-        console.error('Erro ao carregar produtos:', erro);
+        console.error("Erro ao carregar produtos:", erro);
         renderizarProdutos(PRODUTOS_PADRAO);
-        return PRODUTOS_PADRAO;
     }
 }
 
-async function salvarProdutoBanco(dados, idEditar = null) {
-    try {
-        if (idEditar) {
-            await colecaoProdutos.doc(idEditar).update(dados);
-        } else {
-            dados.dataCadastro = firebase.firestore.FieldValue.serverTimestamp();
-            dados.status = 'pendente';
-            await colecaoProdutos.add(dados);
-        }
-        await carregarProdutosBanco();
-        await carregarListaProdutosAdm();
-        return true;
-    } catch (erro) {
-        mostrarAviso('Erro ao salvar: ' + erro.message, 'erro');
-        return false;
-    }
-}
-
-async function excluirProdutoBanco(id) {
-    if(confirm('Tem certeza que deseja excluir?')) {
-        try { await colecaoProdutos.doc(id).delete(); await carregarProdutosBanco(); await carregarListaProdutosAdm(); }
-        catch (erro) { mostrarAviso('Erro ao excluir: ' + erro.message, 'erro'); }
-    }
-}
-
-// ==================== RENDERIZAR PRODUTOS ====================
-function renderizarProdutos(listaProdutos) {
-    const lista = document.getElementById('lista-produtos');
-    lista.innerHTML = '';
-
-    let filtrados = [...listaProdutos];
-    if(categoriaAtiva !== 'todos') filtrados = filtrados.filter(p => p.categoria === categoriaAtiva);
-    if(lojaAtiva !== 'todas') filtrados = filtrados.filter(p => p.loja === lojaAtiva);
-
-    const campoBusca = window.innerWidth >= 768 ? document.getElementById('buscaDesktop') : document.getElementById('buscaMobile');
-    const termoBusca = campoBusca ? campoBusca.value.toLowerCase().trim() : '';
-    if(termoBusca) filtrados = filtrados.filter(p => (p.nome||'').toLowerCase().includes(termoBusca) || (p.loja||'').toLowerCase().includes(termoBusca));
-
-    if(ordemAtiva === 'menor') filtrados.sort((a, b) => (a.precoNum || 0) - (b.precoNum || 0));
-    else if(ordemAtiva === 'maior') filtrados.sort((a, b) => (b.precoNum || 0) - (a.precoNum || 0));
-
-    if(filtrados.length === 0) {
-        lista.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: var(--texto-claro); padding: 3rem;">Nenhum produto encontrado 😕</p>`;
-        return;
-    }
-
-    filtrados.forEach(produto => {
-        const precoFormatado = formatarPreco(produto.precoNum || produto.preco);
-        const card = document.createElement('div');
-        card.className = 'card-produto';
-        card.innerHTML = `
-                    <button class="btn-editar-card" data-id="${produto.id}" title="Editar">✏️</button>
-            <button class="btn-excluir-card" data-id="${produto.id}" title="Excluir">🗑️</button>
-            <img src="${produto.imagem}" alt="${produto.nome}" class="img-produto" loading="lazy" onerror="this.src='https://via.placeholder.com/300x200?text=Imagem+Indisponivel'">
-            <div class="etiqueta-loja">${produto.loja}</div>
-            <div class="info-produto">
-                <h3 class="nome-produto">${produto.nome}</h3>
-                <p class="preco-produto">${precoFormatado}</p>
-                <a href="${produto.link}" target="_blank" rel="noopener noreferrer" class="btn-oferta">🔗 Pegar Oferta</a>
-            </div>
-        `;
-        lista.appendChild(card);
-    });
-    document.querySelectorAll('.btn-editar-card, .btn-excluir-card').forEach(btn => btn.classList.toggle('visivel', usuarioLogado));
-}
-
-// ==================== CARREGAR LISTA ADM ====================
 async function carregarListaProdutosAdm() {
-    const tabela = document.getElementById('listaProdutosAdm');
-    tabela.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:2rem;">Carregando...</td></tr>';
     try {
         const snapshot = await colecaoProdutos.orderBy('dataCadastro', 'desc').get();
-        let todos = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        if(todos.length === 0) todos = PRODUTOS_PADRAO;
-
-        if(ordenacao.coluna) {
-            todos.sort((a, b) => {
-                let valA = a[ordenacao.coluna] || '';
-                let valB = b[ordenacao.coluna] || '';
-                if(ordenacao.coluna === 'preco') { 
-                    valA = extrairPrecoNumerico(valA); 
-                    valB = extrairPrecoNumerico(valB); 
-                    return ordenacao.ciclo === 1 ? valA - valB : valB - valA; 
-                }
-                if(ordenacao.ciclo === 1) return String(valA).localeCompare(String(valB));
-                return String(valB).localeCompare(String(valA));
-            });
-        }
-
-        tabela.innerHTML = '';
-        todos.forEach(prod => {
-            const linha = document.createElement('tr');
-            const precoFmt = formatarPreco(prod.precoNum || prod.preco);
-            linha.innerHTML = `
-                <td style="padding:0.8rem; border-bottom:1px solid var(--borda);"><input type="checkbox" class="chk-produto" data-id="${prod.id}"></td>
-                <td style="padding:0.8rem; border-bottom:1px solid var(--borda);">${prod.nome}</td>
-                <td style="padding:0.8rem; border-bottom:1px solid var(--borda);">${prod.loja}</td>
-                <td style="padding:0.8rem; border-bottom:1px solid var(--borda);">${precoFmt}</td>
-                <td style="padding:0.8rem; border-bottom:1px solid var(--borda);">
-                    <span style="color:${prod.status==='ativo'?'var(--sucesso)':'var(--erro)'}">${prod.status||'pendente'}</span>
-                </td>
-                <td style="padding:0.8rem; border-bottom:1px solid var(--borda);">
-                    <button class="btn sucesso editar-linha" data-id="${prod.id}">Editar</button>
-                    <button class="btn perigo excluir-linha" data-id="${prod.id}">Excluir</button>
-                </td>
-            `;
-            tabela.appendChild(linha);
-        });
+        const produtos = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        renderizarListaAdm(produtos);
     } catch (erro) {
-        console.error('Erro na lista ADM:', erro);
-        tabela.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--erro); padding:2rem;">Erro ao carregar</td></tr>`;
+        console.error("Erro ao carregar lista administrativa:", erro);
+        mostrarAviso("Erro ao carregar produtos no painel.", "erro");
     }
 }
 
-// ==================== EVENTOS GERAIS ====================
+async function salvarProduto(dados) {
+    try {
+        await colecaoProdutos.add({
+            ...dados,
+            precoNum: extrairPrecoNumerico(dados.preco),
+            dataCadastro: firebase.firestore.FieldValue.serverTimestamp(),
+            status: 'pendente'
+        });
+        mostrarAviso("✅ Produto cadastrado com sucesso!", "sucesso");
+        limparFormularioAdicionar();
+        carregarProdutosBanco();
+        carregarListaProdutosAdm();
+    } catch (erro) {
+        console.error("Erro ao salvar produto:", erro);
+        mostrarAviso("❌ Erro ao cadastrar produto.", "erro");
+    }
+}
+
+async function atualizarProduto(id, dados) {
+    try {
+        await colecaoProdutos.doc(id).update({
+            ...dados,
+            precoNum: extrairPrecoNumerico(dados.preco),
+            dataEdicao: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        mostrarAviso("✅ Alterações salvas com sucesso!", "sucesso");
+        idEdicao = null;
+        limparFormularioEditar();
+        trocarAbaPainel('revisar');
+        carregarProdutosBanco();
+        carregarListaProdutosAdm();
+    } catch (erro) {
+        console.error("Erro ao atualizar produto:", erro);
+        mostrarAviso("❌ Erro ao editar produto.", "erro");
+    }
+}
+
+async function excluirProduto(id) {
+    if (!confirm("Tem certeza que deseja excluir este produto? Essa ação não pode ser desfeita!")) return;
+    try {
+        await colecaoProdutos.doc(id).delete();
+        mostrarAviso("🗑️ Produto excluído!", "sucesso");
+        carregarProdutosBanco();
+        carregarListaProdutosAdm();
+    } catch (erro) {
+        console.error("Erro ao excluir produto:", erro);
+        mostrarAviso("❌ Erro ao excluir produto.", "erro");
+    }
+}
+
+async function alterarStatusEmMassa(listaIds, novoStatus) {
+    try {
+        const promessas = listaIds.map(id => 
+            colecaoProdutos.doc(id).update({ status: novoStatus })
+        );
+        await Promise.all(promessas);
+        mostrarAviso(`✅ ${listaIds.length} produtos atualizados!`, "sucesso");
+        carregarProdutosBanco();
+        carregarListaProdutosAdm();
+    } catch (erro) {
+        console.error("Erro ao alterar status:", erro);
+        mostrarAviso("❌ Erro ao atualizar status.", "erro");
+    }
+}
+
+// ==================== RENDERIZAÇÃO ====================
+function renderizarProdutos(lista) {
+    const container = document.getElementById('lista-produtos');
+    let filtrados = lista.filter(p => {
+        const bateCategoria = categoriaAtiva === 'todos' || p.categoria === categoriaAtiva;
+        const bateLoja = lojaAtiva === 'todas' || p.loja === lojaAtiva;
+        return bateCategoria && bateLoja;
+    });
+
+    const termoBusca = (document.getElementById('buscaDesktop')?.value || document.getElementById('buscaMobile')?.value || '').toLowerCase();
+    if (termoBusca) {
+        filtrados = filtrados.filter(p => 
+            p.nome.toLowerCase().includes(termoBusca) ||
+            p.loja.toLowerCase().includes(termoBusca) ||
+            p.categoria.toLowerCase().includes(termoBusca)
+        );
+    }
+
+    if (ordemAtiva === 'menor') filtrados.sort((a, b) => (a.precoNum || 0) - (b.precoNum || 0));
+    if (ordemAtiva === 'maior') filtrados.sort((a, b) => (b.precoNum || 0) - (a.precoNum || 0));
+
+    container.innerHTML = filtrados.map(prod => `
+        <div class="card-produto">
+            ${usuarioLogado ? `
+                <button class="btn-editar-card visivel" onclick="prepararEdicao('${prod.id}')" title="Editar">✏️</button>
+                <button class="btn-excluir-card visivel" onclick="excluirProduto('${prod.id}')" title="Excluir">🗑️</button>
+            ` : ''}
+            <img src="${prod.imagem}" alt="${prod.nome}" class="img-produto" loading="lazy">
+            <div class="etiqueta-loja">🛒 ${prod.loja}</div>
+            <div class="info-produto">
+                <h3 class="nome-produto">${prod.nome}</h3>
+                <div class="preco-produto">${formatarPreco(prod.precoNum || prod.preco)}</div>
+                <a href="${prod.link}" target="_blank" rel="noopener" class="btn-oferta">🔗 Pegar Oferta</a>
+            </div>
+        </div>
+    `).join('');
+}
+
+function renderizarListaAdm(lista) {
+    const tbody = document.getElementById('listaProdutosAdm');
+    tbody.innerHTML = lista.map(prod => `
+        <tr style="border-bottom:1px solid var(--borda);">
+            <td style="padding:1rem;"><input type="checkbox" class="chk-produto" value="${prod.id}"></td>
+            <td style="padding:1rem;">${prod.nome}</td>
+            <td style="padding:1rem;">${prod.loja}</td>
+            <td style="padding:1rem;">${formatarPreco(prod.precoNum || prod.preco)}</td>
+            <td style="padding:1rem; font-weight:600; color:${prod.status === 'ativo' ? 'var(--sucesso)' : 'var(--erro)'};">
+                ${prod.status === 'ativo' ? '✅ Ativo' : '🟡 Pendente'}
+            </td>
+            <td style="padding:1rem;">
+                <button class="btn sucesso" onclick="prepararEdicao('${prod.id}')">Editar</button>
+                <button class="btn perigo" onclick="excluirProduto('${prod.id}')">Excluir</button>
+            </td>
+        </tr>
+    `).join('');
+}
+
+// ==================== FORMULÁRIOS ====================
+function limparFormularioAdicionar() {
+    document.getElementById('admNome').value = '';
+    document.getElementById('admLoja').value = '';
+    document.getElementById('admCategoria').value = '';
+    document.getElementById('admPreco').value = '';
+    document.getElementById('admImagem').value = '';
+    document.getElementById('admLink').value = '';
+}
+
+function limparFormularioEditar() {
+    document.getElementById('edtNome').value = '';
+    document.getElementById('edtLoja').value = '';
+    document.getElementById('edtCategoria').value = '';
+    document.getElementById('edtPreco').value = '';
+    document.getElementById('edtImagem').value = '';
+    document.getElementById('edtLink').value = '';
+    document.getElementById('edtStatus').value = 'pendente';
+}
+
+async function prepararEdicao(id) {
+    idEdicao = id;
+    trocarAbaPainel('editar');
+    try {
+        const doc = await colecaoProdutos.doc(id).get();
+        if (!doc.exists) throw new Error("Produto não encontrado");
+        const dados = doc.data();
+        document.getElementById('edtNome').value = dados.nome || '';
+        document.getElementById('edtLoja').value = dados.loja || '';
+        document.getElementById('edtCategoria').value = dados.categoria || '';
+        document.getElementById('edtPreco').value = dados.preco || '';
+        document.getElementById('edtImagem').value = dados.imagem || '';
+        document.getElementById('edtLink').value = dados.link || '';
+        document.getElementById('edtStatus').value = dados.status || 'pendente';
+    } catch (erro) {
+        console.error("Erro ao carregar produto para edição:", erro);
+        mostrarAviso("❌ Produto não encontrado.", "erro");
+        trocarAbaPainel('revisar');
+    }
+}
+
+function trocarAbaPainel(nomeAba) {
+    document.querySelectorAll('.aba-painel').forEach(btn => btn.classList.remove('ativa'));
+    document.querySelector(`[data-aba="${nomeAba}"]`).classList.add('ativa');
+    document.querySelectorAll('.conteudo-aba').forEach(div => div.style.display = 'none');
+    document.getElementById(`aba${nomeAba.charAt(0).toUpperCase() + nomeAba.slice(1)}`).style.display = 'block';
+}
+
+// ==================== EVENTOS ====================
 document.addEventListener('DOMContentLoaded', () => {
-    // Alternar tema
+    carregarProdutosBanco();
+
+    // Tema
     document.getElementById('alternarTema').addEventListener('click', () => {
-        const html = document.documentElement;
-        const btn = document.getElementById('alternarTema');
-        if(html.hasAttribute('data-tema')) { 
-            html.removeAttribute('data-tema'); 
-            btn.textContent = '🌙 Tema Neon'; 
-        } else { 
-            html.setAttribute('data-tema','neon'); 
-            btn.textContent = '☀️ Tema Claro'; 
+        const body = document.body;
+        if (body.dataset.tema === 'neon') {
+            delete body.dataset.tema;
+            this.textContent = '🌙 Tema Neon';
+        } else {
+            body.dataset.tema = 'neon';
+            this.textContent = '☀️ Tema Claro';
+        }
+    });
+
+    // Menu flutuante
+    const btnFlutuante = document.getElementById('btnFlutuante');
+    const menuFlutuante = document.getElementById('menuFlutuante');
+    btnFlutuante.addEventListener('click', () => {
+        btnFlutuante.classList.toggle('aberto');
+        menuFlutuante.classList.toggle('visivel');
+    });
+    document.addEventListener('click', (e) => {
+        if (!btnFlutuante.contains(e.target) && !menuFlutuante.contains(e.target)) {
+            btnFlutuante.classList.remove('aberto');
+            menuFlutuante.classList.remove('visivel');
         }
     });
 
@@ -584,249 +716,119 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('fundoMenu').classList.remove('aberto');
     });
 
-    // Filtros e busca
+    // Filtros
     document.querySelectorAll('.btn-categoria').forEach(btn => {
         btn.addEventListener('click', () => {
             document.querySelectorAll('.btn-categoria').forEach(b => b.classList.remove('ativo'));
             btn.classList.add('ativo');
             categoriaAtiva = btn.dataset.categoria;
+            carregarProdutosBanco();
             document.getElementById('menuLateral').classList.remove('aberto');
             document.getElementById('fundoMenu').classList.remove('aberto');
-            carregarProdutosBanco();
         });
     });
     document.getElementById('filtroLoja').addEventListener('change', e => { lojaAtiva = e.target.value; carregarProdutosBanco(); });
     document.getElementById('filtroLojaMobile').addEventListener('change', e => { lojaAtiva = e.target.value; carregarProdutosBanco(); });
     document.getElementById('filtroOrdem').addEventListener('change', e => { ordemAtiva = e.target.value; carregarProdutosBanco(); });
     document.getElementById('filtroOrdemMobile').addEventListener('change', e => { ordemAtiva = e.target.value; carregarProdutosBanco(); });
+
+    // Busca
     const executarBusca = debounce(() => carregarProdutosBanco(), 400);
     document.getElementById('buscaDesktop').addEventListener('input', executarBusca);
     document.getElementById('buscaMobile').addEventListener('input', executarBusca);
 
-    // Botão flutuante
-    document.getElementById('btnFlutuante').addEventListener('click', () => {
-        document.getElementById('btnFlutuante').classList.toggle('aberto');
-        document.getElementById('menuFlutuante').classList.toggle('visivel');
-    });
+    // Login ADM
     document.getElementById('btnAbrirAdmin').addEventListener('click', () => {
+        menuFlutuante.classList.remove('visivel');
+        btnFlutuante.classList.remove('aberto');
         document.getElementById('modalLogin').classList.add('aberto');
-        document.getElementById('btnFlutuante').classList.remove('aberto');
-        document.getElementById('menuFlutuante').classList.remove('visivel');
+        document.getElementById('senhaAdmin').focus();
+    });
+    document.getElementById('btnEntrar').addEventListener('click', () => {
+        const senha = document.getElementById('senhaAdmin').value.trim();
+        if (senha === SENHA_ADMIN) {
+            usuarioLogado = true;
+            document.getElementById('modalLogin').classList.remove('aberto');
+            document.getElementById('senhaAdmin').value = '';
+            abrirPainelAdm();
+            mostrarAviso("🔓 Acesso liberado!", "sucesso");
+            carregarProdutosBanco();
+        } else {
+            document.getElementById('avisoErro').style.display = 'block';
+            setTimeout(() => document.getElementById('avisoErro').style.display = 'none', 2500);
+        }
+    });
+    document.getElementById('senhaAdmin').addEventListener('keydown', e => {
+        if (e.key === 'Enter') document.getElementById('btnEntrar').click();
     });
     document.getElementById('btnVoltarSite').addEventListener('click', () => {
         document.getElementById('modalLogin').classList.remove('aberto');
         document.getElementById('senhaAdmin').value = '';
-        document.getElementById('avisoErro').style.display = 'none';
+    });
+    document.getElementById('btnSairAdm').addEventListener('click', () => {
+        usuarioLogado = false;
+        fecharPainelAdm();
+        carregarProdutosBanco();
+        mostrarAviso("🔐 Sessão encerrada.", "aviso");
     });
 
-    // Login ADM
-    document.getElementById('btnEntrar').addEventListener('click', () => {
-        const senha = document.getElementById('senhaAdmin').value;
-        if(senha === SENHA_ADMIN) {
-            usuarioLogado = true;
-            document.getElementById('modalLogin').classList.remove('aberto');
-            abrirPainelAdm();
-            carregarProdutosBanco();
-        } else {
-            document.getElementById('avisoErro').style.display = 'block';
-        }
-    });
-
-    // Abas painel ADM
+    // Abas do Painel
     document.querySelectorAll('.aba-painel').forEach(aba => {
-        aba.addEventListener('click', () => {
-            document.querySelectorAll('.aba-painel').forEach(a => a.classList.remove('ativa'));
-            aba.classList.add('ativa');
-            document.querySelectorAll('.conteudo-aba').forEach(c => c.style.display = 'none');
-            document.getElementById(`aba${aba.dataset.aba.charAt(0).toUpperCase()+aba.dataset.aba.slice(1)}`).style.display = 'block';
-        });
+        aba.addEventListener('click', () => trocarAbaPainel(aba.dataset.aba));
     });
 
-    // Importar link
-    document.getElementById('btnImportarLink').addEventListener('click', () => {
-        const link = document.getElementById('linkRapidoAdm').value.trim();
-        if(!link || !link.startsWith('http')) { alert('Cole um link válido!'); return; }
-        document.getElementById('admLink').value = link;
-        alert('Link copiado! Preencha os demais dados.');
-    });
-
-    // Salvar produto
-    document.getElementById('btnSalvarProduto').addEventListener('click', async () => {
-        const precoBruto = document.getElementById('admPreco').value;
+    // Salvar novo produto
+    document.getElementById('btnSalvarProduto').addEventListener('click', () => {
         const dados = {
             nome: document.getElementById('admNome').value.trim(),
             loja: document.getElementById('admLoja').value,
-            preco: precoBruto,
-            precoNum: extrairPrecoNumerico(precoBruto),
-            imagem: document.getElementById('admImagem').value.trim() || '',
-            link: document.getElementById('admLink').value.trim() || '',
-            categoria: document.getElementById('admCategoria').value || 'utilidades',
-            status: 'pendente'
+            categoria: document.getElementById('admCategoria').value,
+            preco: document.getElementById('admPreco').value.trim(),
+            imagem: document.getElementById('admImagem').value.trim(),
+            link: document.getElementById('admLink').value.trim()
         };
-
-        const avisos = validarDadosProduto(dados);
-
-        if (avisos.length > 0) {
-            mostrarAviso('⚠️ Salvo como Pendente: ' + avisos.join(' • '), 'aviso');
-        }
-
-        const ok = await salvarProdutoBanco(dados, idEdicao);
-        if(ok) {
-            mostrarAviso('Produto salvo com sucesso! ✅', 'sucesso');
-            document.getElementById('admNome').value = '';
-            document.getElementById('admLoja').value = '';
-            document.getElementById('admPreco').value = '';
-            document.getElementById('admImagem').value = '';
-            document.getElementById('admLink').value = '';
-            document.getElementById('admCategoria').value = '';
-            idEdicao = null;
-            document.getElementById('campoStatusEdicao')?.remove();
-        }
+        const erros = validarDadosProduto(dados);
+        if (erros.length) return mostrarAviso("⚠️ " + erros.join(" | "), "erro");
+        salvarProduto(dados);
     });
+    document.getElementById('btnCancelarProduto').addEventListener('click', limparFormularioAdicionar);
 
-    // Cancelar
-    document.getElementById('btnCancelarProduto').addEventListener('click', () => {
-        document.getElementById('admNome').value = '';
-        document.getElementById('admLoja').value = '';
-        document.getElementById('admPreco').value = '';
-        document.getElementById('admImagem').value = '';
-        document.getElementById('admLink').value = '';
-        document.getElementById('admCategoria').value = '';
+    // Salvar edição
+    document.getElementById('btnSalvarEdicao').addEventListener('click', () => {
+        if (!idEdicao) return mostrarAviso("❌ Nenhum produto selecionado para edição!", "erro");
+        const dados = {
+            nome: document.getElementById('edtNome').value.trim(),
+            loja: document.getElementById('edtLoja').value,
+            categoria: document.getElementById('edtCategoria').value,
+            preco: document.getElementById('edtPreco').value.trim(),
+            imagem: document.getElementById('edtImagem').value.trim(),
+            link: document.getElementById('edtLink').value.trim(),
+            status: document.getElementById('edtStatus').value
+        };
+        const erros = validarDadosProduto(dados);
+        if (erros.length) return mostrarAviso("⚠️ " + erros.join(" | "), "erro");
+        atualizarProduto(idEdicao, dados);
+    });
+    document.getElementById('btnCancelarEdicao').addEventListener('click', () => {
         idEdicao = null;
-        document.getElementById('campoStatusEdicao')?.remove();
-    });
-
-    // Sair ADM
-    document.getElementById('btnSairAdm').addEventListener('click', () => {
-        usuarioLogado = false;
-        idEdicao = null;
-        fecharPainelAdm();
-        carregarProdutosBanco();
-    });
-
-    // Delegação: Editar / Excluir nos cards
-    document.getElementById('lista-produtos').addEventListener('click', async e => {
-        if(e.target.classList.contains('btn-excluir-card')) {
-            if(confirm('Excluir esse produto?')) await excluirProdutoBanco(e.target.dataset.id);
-        }
-        if(e.target.classList.contains('btn-editar-card')) {
-            const id = e.target.dataset.id;
-            idEdicao = id;
-            const doc = await colecaoProdutos.doc(id).get();
-            if(doc.exists) {
-                const prod = doc.data();
-                document.getElementById('admNome').value = prod.nome || '';
-                document.getElementById('admLoja').value = prod.loja || '';
-                document.getElementById('admPreco').value = formatarPreco(prod.precoNum || prod.preco).replace('R$ ','');
-                document.getElementById('admImagem').value = prod.imagem || '';
-                document.getElementById('admLink').value = prod.link || '';
-                document.getElementById('admCategoria').value = prod.categoria || 'utilidades';
-                
-                document.getElementById('campoStatusEdicao')?.remove();
-                const campoStatus = document.createElement('div');
-                campoStatus.className = 'grupo-input';
-                campoStatus.id = 'campoStatusEdicao';
-                campoStatus.innerHTML = `
-                    <label>Status do Produto</label>
-                    <select id="admStatus">
-                        <option value="pendente" ${prod.status === 'pendente' ? 'selected' : ''}>🟡 Pendente</option>
-                        <option value="ativo" ${prod.status === 'ativo' ? 'selected' : ''}>✅ Ativo</option>
-                    </select>
-                    <p style="font-size:0.8rem; margin-top:0.3rem; color:var(--texto-claro);">⚠️ Só pode deixar Ativo se todos os dados estiverem corretos!</p>
-                `;
-                document.querySelector('#abaAdicionar .botoes-modal').before(campoStatus);
-                document.querySelector('[data-aba="adicionar"]').click();
-                abrirPainelAdm();
-            }
-        }
-    });
-
-    // Delegação: Editar / Excluir na tabela ADM
-    document.getElementById('listaProdutosAdm').addEventListener('click', async e => {
-        const id = e.target.dataset.id;
-        if(!id) return;
-        if(e.target.classList.contains('excluir-linha')) {
-            if(confirm('Excluir?')) await excluirProdutoBanco(id);
-        }
-        if(e.target.classList.contains('editar-linha')) {
-            idEdicao = id;
-            const doc = await colecaoProdutos.doc(id).get();
-            if(doc.exists) {
-                const prod = doc.data();
-                document.getElementById('admNome').value = prod.nome || '';
-                document.getElementById('admLoja').value = prod.loja || '';
-                document.getElementById('admPreco').value = formatarPreco(prod.precoNum || prod.preco).replace('R$ ','');
-                document.getElementById('admImagem').value = prod.imagem || '';
-                document.getElementById('admLink').value = prod.link || '';
-                document.getElementById('admCategoria').value = prod.categoria || 'utilidades';
-                
-                document.getElementById('campoStatusEdicao')?.remove();
-                const campoStatus = document.createElement('div');
-                campoStatus.className = 'grupo-input';
-                campoStatus.id = 'campoStatusEdicao';
-                campoStatus.innerHTML = `
-                    <label>Status do Produto</label>
-                    <select id="admStatus">
-                        <option value="pendente" ${prod.status === 'pendente' ? 'selected' : ''}>🟡 Pendente</option>
-                        <option value="ativo" ${prod.status === 'ativo' ? 'selected' : ''}>✅ Ativo</option>
-                    </select>
-                    <p style="font-size:0.8rem; margin-top:0.3rem; color:var(--texto-claro);">⚠️ Só pode deixar Ativo se todos os dados estiverem corretos!</p>
-                `;
-                document.querySelector('#abaAdicionar .botoes-modal').before(campoStatus);
-                document.querySelector('[data-aba="adicionar"]').click();
-                abrirPainelAdm();
-            }
-        }
-    });
-
-    // Ativar/Desativar selecionados
-    document.getElementById('btnAtivarSelecionados').addEventListener('click', async () => {
-        const checkboxes = document.querySelectorAll('.chk-produto:checked');
-        if(checkboxes.length === 0) { alert('Selecione pelo menos um produto!'); return; }
-        if(confirm(`Deseja ativar ${checkboxes.length} produto(s)?`)) {
-            for(const chk of checkboxes) {
-                await colecaoProdutos.doc(chk.dataset.id).update({ status: 'ativo' });
-            }
-            await carregarProdutosBanco();
-            await carregarListaProdutosAdm();
-            mostrarAviso('Produtos ativados! ✅', 'sucesso');
-        }
-    });
-
-    document.getElementById('btnDesativarSelecionados').addEventListener('click', async () => {
-        const checkboxes = document.querySelectorAll('.chk-produto:checked');
-        if(checkboxes.length === 0) { alert('Selecione pelo menos um produto!'); return; }
-        if(confirm(`Deseja desativar ${checkboxes.length} produto(s)?`)) {
-            for(const chk of checkboxes) {
-                await colecaoProdutos.doc(chk.dataset.id).update({ status: 'pendente' });
-            }
-            await carregarProdutosBanco();
-            await carregarListaProdutosAdm();
-            mostrarAviso('Produtos desativados! ⚠️', 'aviso');
-        }
+        limparFormularioEditar();
+        trocarAbaPainel('revisar');
     });
 
     // Selecionar todos
     document.getElementById('selecionarTodos').addEventListener('change', e => {
         document.querySelectorAll('.chk-produto').forEach(chk => chk.checked = e.target.checked);
     });
-
-    // Ordenar colunas
-    document.querySelectorAll('.ordenar-coluna').forEach(col => {
-        col.addEventListener('click', () => {
-            if(ordenacao.coluna === col.dataset.coluna) {
-                ordenacao.ciclo = (ordenacao.ciclo + 1) % 3;
-                if(ordenacao.ciclo === 0) ordenacao.coluna = null;
-            } else {
-                ordenacao.coluna = col.dataset.coluna;
-                ordenacao.ciclo = 1;
-            }
-            carregarListaProdutosAdm();
-        });
+    document.getElementById('btnAtivarSelecionados').addEventListener('click', () => {
+        const ids = Array.from(document.querySelectorAll('.chk-produto:checked')).map(c => c.value);
+        if (!ids.length) return mostrarAviso("Selecione pelo menos um produto!", "aviso");
+        alterarStatusEmMassa(ids, 'ativo');
     });
-
-    // Inicializar
-    carregarProdutosBanco();
+    document.getElementById('btnDesativarSelecionados').addEventListener('click', () => {
+        const ids = Array.from(document.querySelectorAll('.chk-produto:checked')).map(c => c.value);
+        if (!ids.length) return mostrarAviso("Selecione pelo menos um produto!", "aviso");
+        alterarStatusEmMassa(ids, 'pendente');
+    });
 });
 </script>
 </body>
