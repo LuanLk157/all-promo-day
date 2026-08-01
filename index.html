@@ -405,7 +405,6 @@ let idEdicao = null;
 let categoriaAtiva = 'todos';
 let lojaAtiva = 'todas';
 let ordemAtiva = 'padrao';
-let ordenacao = { coluna: null, ciclo: 0 };
 
 // ==================== FUNÇÕES AUXILIARES ====================
 function debounce(func, delay) {
@@ -415,11 +414,9 @@ function debounce(func, delay) {
 
 function formatarPreco(valor) {
     if (!valor && valor !== 0) return 'R$ 0,00';
-    let texto = String(valor);
-    texto = texto.replace(/[R$\s]/g, '');
+    let texto = String(valor).replace(/[R$\s]/g, '');
     if (texto.includes(',')) {
-        texto = texto.replace(/\./g, '');
-        texto = texto.replace(',', '.');
+        texto = texto.replace(/\./g, '').replace(',', '.');
     } else if (texto.length > 2) {
         texto = texto.slice(0, -2) + '.' + texto.slice(-2);
     }
@@ -430,60 +427,61 @@ function formatarPreco(valor) {
 
 function extrairPrecoNumerico(valor) {
     if (!valor && valor !== 0) return 0;
-    let texto = String(valor);
-    texto = texto.replace(/[R$\s]/g, '');
+    let texto = String(valor).replace(/[R$\s]/g, '');
     if (texto.includes(',')) {
-        texto = texto.replace(/\./g, '');
-        texto = texto.replace(',', '.');
+        texto = texto.replace(/\./g, '').replace(',', '.');
     } else if (texto.length > 2) {
         texto = texto.slice(0, -2) + '.' + texto.slice(-2);
     }
     const numero = parseFloat(texto);
     return isNaN(numero) ? 0 : numero;
 }
-    
-function abrirPainelAdm() { if(usuarioLogado) { document.getElementById('painelAdm').style.display = 'block'; carregarListaProdutosAdm(); } }
-function fecharPainelAdm() { document.getElementById('painelAdm').style.display = 'none'; }
-function validarDadosProduto(dados) {
-const avisos = [];
-    if(!dados.nome || dados.nome.length < 5) avisos.push('Nome precisa ter pelo menos 5 caracteres');
-    if(!dados.preco || isNaN(parseFloat(dados.preco.replace(',','.')))) avisos.push('Preço inválido');
-    if(!dados.loja) avisos.push('Selecione uma loja');
-    if(!dados.categoria) avisos.push('Selecione uma categoria');
-    if(!dados.imagem || !dados.imagem.startsWith('http')) avisos.push('Link da imagem inválido');
-    if(!dados.link || !dados.link.startsWith('http')) avisos.push('Link da oferta inválido');
-    return avisos;
-}
+
 function mostrarAviso(mensagem, tipo = 'aviso') {
     const aviso = document.createElement('div');
     aviso.style.cssText = `
         position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
         padding: 0.9rem 1.5rem; border-radius: 10px; color: white; font-weight: 600;
         z-index: 99999; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        transition: opacity 0.3s ease;
         background: ${tipo === 'erro' ? '#EF4444' : tipo === 'sucesso' ? '#16A34A' : '#F59E0B'};
     `;
     aviso.textContent = mensagem;
     document.body.appendChild(aviso);
-    setTimeout(() => {
-        aviso.style.opacity = '0';
-        setTimeout(() => aviso.remove(), 300);
-    }, 3000);
+    setTimeout(() => { aviso.style.opacity = '0'; setTimeout(() => aviso.remove(), 300); }, 3000);
 }
+
+function validarDadosProduto(dados) {
+    const avisos = [];
+    if (!dados.nome || dados.nome.length < 5) avisos.push('Nome precisa ter pelo menos 5 caracteres');
+    if (!dados.preco || isNaN(extrairPrecoNumerico(dados.preco))) avisos.push('Preço inválido');
+    if (!dados.loja) avisos.push('Selecione uma loja');
+    if (!dados.categoria) avisos.push('Selecione uma categoria');
+    if (!dados.imagem || !dados.imagem.startsWith('http')) avisos.push('Link da imagem inválido');
+    if (!dados.link || !dados.link.startsWith('http')) avisos.push('Link da oferta inválido');
+    return avisos;
+}
+
+function abrirPainelAdm() { if(usuarioLogado) { document.getElementById('painelAdm').style.display = 'block'; carregarListaProdutosAdm(); } }
+function fecharPainelAdm() { document.getElementById('painelAdm').style.display = 'none'; }
 
 // ==================== PRODUTOS PADRÃO ====================
 const PRODUTOS_PADRAO = [
-    { id: 'padrao1', nome: "teste - Smart GoogleTV 50\" 4K HDR10", preco: "R$ 1.879,06", precoNum: 1879.06, loja: "Amazon Brasil", categoria: "eletrodomesticos", imagem: "https://m.media-amazon.com/images/I/61oybFahwGL._AC_SL1000_.jpg", link: "https://www.amazon.com.br/Smart-Semp-Polegadas-Bluetooth-Google/dp/B0FPRFS3L1", status: 'ativo' },
-    { id: 'padrao2', nome: "teste - Teclado Mecânico Gamer RGB", preco: "R$ 115,61", precoNum: 115.61, loja: "Mercado Livre", categoria: "gamer", imagem: "https://http2.mlstatic.com/D_NQ_NP_2X_626318-MLB96986865026_112025-F.webp", link: "https://meli.la/2jWJxe4", status: 'ativo' },
-    { id: 'padrao3', nome: "Teste - Kit Upgrade Ryzen 7 5700x + B550m Aorus Elite", preco: "R$ 2.148,55", precoNum: 2148.55, loja: "Mercado Livre", categoria: "gamer", imagem: "https://http2.mlstatic.com/D_NQ_NP_2X_894040-MLB92282331326_092025-F.webp", link: "https://meli.la/1d4rQpt", status: 'ativo' },
-    { id: 'padrao4', nome: "Teste - Jogo Lençol Queen Size 4 Peças 400 Fios", preco: "R$ 104,41", precoNum: 104.41, loja: "Shopee", categoria: "banho-cama", imagem: "https://down-br.img.susercontent.com/file/br-11134207-820lu-mnye65kliio139.webp", link: "https://s.shopee.com.br/9Uzysz7yrV", status: 'ativo' }
+    { id: 'padrao1', nome: "Smart GoogleTV 50\" 4K HDR10", preco: "R$ 1.879,06", precoNum: 1879.06, loja: "Amazon Brasil", categoria: "eletrodomesticos", imagem: "https://m.media-amazon.com/images/I/61oybFahwGL._AC_SL1000_.jpg", link: "https://www.amazon.com.br/Smart-Semp-Polegadas-Bluetooth-Google/dp/B0FPRFS3L1", status: 'ativo' },
+    { id: 'padrao2', nome: "Teclado Mecânico Gamer RGB", preco: "R$ 115,61", precoNum: 115.61, loja: "Mercado Livre", categoria: "gamer", imagem: "https://http2.mlstatic.com/D_NQ_NP_2X_626318-MLB96986865026_112025-F.webp", link: "https://meli.la/2jWJxe4", status: 'ativo' },
+    { id: 'padrao3', nome: "Kit Upgrade Ryzen 7 5700x + B550m Aorus Elite", preco: "R$ 2.148,55", precoNum: 2148.55, loja: "Mercado Livre", categoria: "gamer", imagem: "https://http2.mlstatic.com/D_NQ_NP_2X_894040-MLB92282331326_092025-F.webp", link: "https://meli.la/1d4rQpt", status: 'ativo' },
+    { id: 'padrao4', nome: "Jogo Lençol Queen Size 4 Peças 400 Fios", preco: "R$ 104,41", precoNum: 104.41, loja: "Shopee", categoria: "banho-cama", imagem: "https://down-br.img.susercontent.com/file/br-11134207-820lu-mnye65kliio139.webp", link: "https://s.shopee.com.br/9Uzysz7yrV", status: 'ativo' }
 ];
 
 // ==================== BANCO DE DADOS ====================
 async function carregarProdutosBanco() {
     try {
-        const snapshot = await colecaoProdutos.where('status', '==', 'ativo').orderBy('dataCadastro', 'desc').get();
-        const produtos = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        const snapshot = await colecaoProdutos.where('status', '==', 'ativo').get();
+        let produtos = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        produtos.sort((a, b) => {
+            const dataA = a.dataCadastro?.toDate?.() || new Date(0);
+            const dataB = b.dataCadastro?.toDate?.() || new Date(0);
+            return dataB - dataA;
+        });
         renderizarProdutos(produtos.length > 0 ? produtos : PRODUTOS_PADRAO);
     } catch (erro) {
         console.error("Erro ao carregar produtos:", erro);
@@ -493,8 +491,13 @@ async function carregarProdutosBanco() {
 
 async function carregarListaProdutosAdm() {
     try {
-        const snapshot = await colecaoProdutos.orderBy('dataCadastro', 'desc').get();
-        const produtos = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        const snapshot = await colecaoProdutos.get();
+        let produtos = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        produtos.sort((a, b) => {
+            const dataA = a.dataCadastro?.toDate?.() || new Date(0);
+            const dataB = b.dataCadastro?.toDate?.() || new Date(0);
+            return dataB - dataA;
+        });
         renderizarListaAdm(produtos);
     } catch (erro) {
         console.error("Erro ao carregar lista administrativa:", erro);
@@ -512,7 +515,6 @@ async function salvarProduto(dados) {
         });
         mostrarAviso("✅ Produto cadastrado com sucesso!", "sucesso");
         limparFormularioAdicionar();
-        carregarProdutosBanco();
         carregarListaProdutosAdm();
     } catch (erro) {
         console.error("Erro ao salvar produto:", erro);
@@ -554,9 +556,7 @@ async function excluirProduto(id) {
 
 async function alterarStatusEmMassa(listaIds, novoStatus) {
     try {
-        const promessas = listaIds.map(id => 
-            colecaoProdutos.doc(id).update({ status: novoStatus })
-        );
+        const promessas = listaIds.map(id => colecaoProdutos.doc(id).update({ status: novoStatus }));
         await Promise.all(promessas);
         mostrarAviso(`✅ ${listaIds.length} produtos atualizados!`, "sucesso");
         carregarProdutosBanco();
@@ -578,10 +578,10 @@ function renderizarProdutos(lista) {
 
     const termoBusca = (document.getElementById('buscaDesktop')?.value || document.getElementById('buscaMobile')?.value || '').toLowerCase();
     if (termoBusca) {
-        filtrados = filtrados.filter(p => 
-            p.nome.toLowerCase().includes(termoBusca) ||
-            p.loja.toLowerCase().includes(termoBusca) ||
-            p.categoria.toLowerCase().includes(termoBusca)
+        filtrados = filtrados.filter(p =>
+            (p.nome || '').toLowerCase().includes(termoBusca) ||
+            (p.loja || '').toLowerCase().includes(termoBusca) ||
+            (p.categoria || '').toLowerCase().includes(termoBusca)
         );
     }
 
@@ -676,7 +676,6 @@ function trocarAbaPainel(nomeAba) {
 document.addEventListener('DOMContentLoaded', () => {
     carregarProdutosBanco();
 
-    // Tema
     document.getElementById('alternarTema').addEventListener('click', () => {
         const body = document.body;
         if (body.dataset.tema === 'neon') {
@@ -688,7 +687,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Menu flutuante
     const btnFlutuante = document.getElementById('btnFlutuante');
     const menuFlutuante = document.getElementById('menuFlutuante');
     btnFlutuante.addEventListener('click', () => {
@@ -702,7 +700,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Menu lateral
     document.getElementById('abrirMenu').addEventListener('click', () => {
         document.getElementById('menuLateral').classList.add('aberto');
         document.getElementById('fundoMenu').classList.add('aberto');
@@ -716,7 +713,6 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('fundoMenu').classList.remove('aberto');
     });
 
-    // Filtros
     document.querySelectorAll('.btn-categoria').forEach(btn => {
         btn.addEventListener('click', () => {
             document.querySelectorAll('.btn-categoria').forEach(b => b.classList.remove('ativo'));
@@ -727,23 +723,23 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('fundoMenu').classList.remove('aberto');
         });
     });
+
     document.getElementById('filtroLoja').addEventListener('change', e => { lojaAtiva = e.target.value; carregarProdutosBanco(); });
     document.getElementById('filtroLojaMobile').addEventListener('change', e => { lojaAtiva = e.target.value; carregarProdutosBanco(); });
     document.getElementById('filtroOrdem').addEventListener('change', e => { ordemAtiva = e.target.value; carregarProdutosBanco(); });
     document.getElementById('filtroOrdemMobile').addEventListener('change', e => { ordemAtiva = e.target.value; carregarProdutosBanco(); });
 
-    // Busca
     const executarBusca = debounce(() => carregarProdutosBanco(), 400);
     document.getElementById('buscaDesktop').addEventListener('input', executarBusca);
     document.getElementById('buscaMobile').addEventListener('input', executarBusca);
 
-    // Login ADM
     document.getElementById('btnAbrirAdmin').addEventListener('click', () => {
         menuFlutuante.classList.remove('visivel');
         btnFlutuante.classList.remove('aberto');
         document.getElementById('modalLogin').classList.add('aberto');
         document.getElementById('senhaAdmin').focus();
     });
+
     document.getElementById('btnEntrar').addEventListener('click', () => {
         const senha = document.getElementById('senhaAdmin').value.trim();
         if (senha === SENHA_ADMIN) {
@@ -752,19 +748,21 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('senhaAdmin').value = '';
             abrirPainelAdm();
             mostrarAviso("🔓 Acesso liberado!", "sucesso");
-            carregarProdutosBanco();
         } else {
             document.getElementById('avisoErro').style.display = 'block';
             setTimeout(() => document.getElementById('avisoErro').style.display = 'none', 2500);
         }
     });
+
     document.getElementById('senhaAdmin').addEventListener('keydown', e => {
         if (e.key === 'Enter') document.getElementById('btnEntrar').click();
     });
+
     document.getElementById('btnVoltarSite').addEventListener('click', () => {
         document.getElementById('modalLogin').classList.remove('aberto');
         document.getElementById('senhaAdmin').value = '';
     });
+
     document.getElementById('btnSairAdm').addEventListener('click', () => {
         usuarioLogado = false;
         fecharPainelAdm();
@@ -772,12 +770,10 @@ document.addEventListener('DOMContentLoaded', () => {
         mostrarAviso("🔐 Sessão encerrada.", "aviso");
     });
 
-    // Abas do Painel
     document.querySelectorAll('.aba-painel').forEach(aba => {
         aba.addEventListener('click', () => trocarAbaPainel(aba.dataset.aba));
     });
 
-    // Salvar novo produto
     document.getElementById('btnSalvarProduto').addEventListener('click', () => {
         const dados = {
             nome: document.getElementById('admNome').value.trim(),
@@ -791,11 +787,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (erros.length) return mostrarAviso("⚠️ " + erros.join(" | "), "erro");
         salvarProduto(dados);
     });
+
     document.getElementById('btnCancelarProduto').addEventListener('click', limparFormularioAdicionar);
 
-    // Salvar edição
     document.getElementById('btnSalvarEdicao').addEventListener('click', () => {
-        if (!idEdicao) return mostrarAviso("❌ Nenhum produto selecionado para edição!", "erro");
+        if (!idEdicao) return mostrarAviso("❌ Nenhum produto selecionado!", "erro");
         const dados = {
             nome: document.getElementById('edtNome').value.trim(),
             loja: document.getElementById('edtLoja').value,
@@ -809,21 +805,23 @@ document.addEventListener('DOMContentLoaded', () => {
         if (erros.length) return mostrarAviso("⚠️ " + erros.join(" | "), "erro");
         atualizarProduto(idEdicao, dados);
     });
+
     document.getElementById('btnCancelarEdicao').addEventListener('click', () => {
         idEdicao = null;
         limparFormularioEditar();
         trocarAbaPainel('revisar');
     });
 
-    // Selecionar todos
     document.getElementById('selecionarTodos').addEventListener('change', e => {
         document.querySelectorAll('.chk-produto').forEach(chk => chk.checked = e.target.checked);
     });
+
     document.getElementById('btnAtivarSelecionados').addEventListener('click', () => {
         const ids = Array.from(document.querySelectorAll('.chk-produto:checked')).map(c => c.value);
         if (!ids.length) return mostrarAviso("Selecione pelo menos um produto!", "aviso");
         alterarStatusEmMassa(ids, 'ativo');
     });
+
     document.getElementById('btnDesativarSelecionados').addEventListener('click', () => {
         const ids = Array.from(document.querySelectorAll('.chk-produto:checked')).map(c => c.value);
         if (!ids.length) return mostrarAviso("Selecione pelo menos um produto!", "aviso");
